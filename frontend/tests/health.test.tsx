@@ -7,7 +7,10 @@ import App from '../src/App';
 describe('Health page', () => {
   it('renders the frontend running message', () => {
     render(
-      <MemoryRouter initialEntries={['/health']}>
+      <MemoryRouter
+        initialEntries={['/health']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <App />
       </MemoryRouter>,
     );

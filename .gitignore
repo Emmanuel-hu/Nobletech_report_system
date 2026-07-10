@@ -4,6 +4,9 @@ frontend/node_modules/
 
 backend/dist/
 frontend/dist/
+dist/
+build/
+generated/
 
 coverage/
 backend/coverage/
@@ -11,6 +14,10 @@ frontend/coverage/
 
 .vscode/
 .DS_Store
+*.tmp
+*.temp
+tmp/
+temp/
 
 .env
 .env.*
