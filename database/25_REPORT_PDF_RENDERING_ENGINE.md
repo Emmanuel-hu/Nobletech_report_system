@@ -1,0 +1,2277 @@
+# Nobletech Education Management Platform (NEMP)
+
+# 25_REPORT_PDF_RENDERING_ENGINE
+
+---
+
+# Document Information
+
+| Item | Details |
+|------|---------|
+| Project | Nobletech Education Management Platform (NEMP) |
+| Document | Report PDF Rendering Engine |
+| Document Code | NEMP-REP-PDF-025 |
+| Version | 1.0 |
+| Status | Approved |
+| Rendering Engine | Server-Side PDF Rendering |
+| Output Format | PDF/A Compatible (Preferred) |
+| Storage | Cloud Storage |
+| Verification | QR Code + Verification Code + Digital Hash |
+
+---
+
+# Purpose
+
+This document defines the enterprise Report PDF Rendering Engine for the Nobletech Education Management Platform (NEMP).
+
+The Report PDF Rendering Engine is responsible for transforming validated academic, assessment, portfolio, attendance, competency, and administrative data into professionally formatted, secure, printable, and verifiable PDF documents.
+
+Unlike conventional school management systems where each module generates documents independently, NEMP employs a centralized rendering engine that serves every module through a unified rendering pipeline.
+
+This architecture guarantees consistency, maintainability, scalability, branding flexibility, and long-term extensibility.
+
+---
+
+# Objectives
+
+The Report PDF Rendering Engine has the following objectives:
+
+- Generate professional PDF reports.
+- Support dynamic report templates.
+- Support school-specific branding.
+- Generate secure and verifiable documents.
+- Support batch PDF generation.
+- Support version control.
+- Ensure consistent document formatting.
+- Produce print-ready documents.
+- Support digital archiving.
+- Reduce duplicated rendering logic.
+- Enable future document types without redesign.
+
+---
+
+# Rendering Philosophy
+
+NEMP follows the principle:
+
+> **"Every document is assembled from validated data, rendered through standardized templates, branded dynamically, securely verified, and permanently archived."**
+
+The rendering engine never calculates academic results.
+
+Its responsibility is strictly to:
+
+- Assemble
+- Format
+- Render
+- Secure
+- Archive
+- Distribute
+
+Academic calculations remain the responsibility of the Assessment Engine.
+
+---
+
+# Report Rendering Architecture
+
+```text
+Student Data
+
+↓
+
+Assessment Engine
+
+↓
+
+Attendance Engine
+
+↓
+
+Curriculum Engine
+
+↓
+
+Portfolio Engine
+
+↓
+
+Report Builder
+
+↓
+
+Template Engine
+
+↓
+
+Branding Engine
+
+↓
+
+Layout Engine
+
+↓
+
+Rendering Engine
+
+↓
+
+PDF Generator
+
+↓
+
+Verification Engine
+
+↓
+
+Archive
+
+↓
+
+Distribution
+```
+
+Every report follows this standardized workflow.
+
+---
+
+# Core Rendering Components
+
+The Report PDF Rendering Engine consists of the following major components.
+
+1. Report Builder
+2. Template Engine
+3. Branding Engine
+4. Layout Engine
+5. Rendering Engine
+6. PDF Generator
+7. Verification Engine
+8. Archive Engine
+9. Distribution Engine
+10. Audit Engine
+
+Each component performs a dedicated responsibility.
+
+---
+
+# Responsibilities of Each Component
+
+| Component | Responsibility |
+|-----------|----------------|
+| Report Builder | Assemble validated report data |
+| Template Engine | Select the appropriate report template |
+| Branding Engine | Apply school identity and branding |
+| Layout Engine | Arrange document sections and pagination |
+| Rendering Engine | Convert structured data into printable layout |
+| PDF Generator | Produce final PDF document |
+| Verification Engine | Generate QR code, verification code, and document hash |
+| Archive Engine | Store immutable copies of generated documents |
+| Distribution Engine | Deliver reports to users |
+| Audit Engine | Record rendering and distribution activities |
+
+---
+
+# Supported Document Types
+
+The engine supports multiple document categories.
+
+## Academic Documents
+
+- Nursery Report Cards
+- Primary Report Cards
+- Secondary Report Cards
+- Mid-Term Reports
+- Continuous Assessment Reports
+- Examination Reports
+
+---
+
+## Skills-Based Reports
+
+- Coding Reports
+- Robotics Reports
+- STEAM Reports
+- Artificial Intelligence Reports
+- Python Reports
+- Web Development Reports
+- Arduino Reports
+- Electronics Reports
+- Cybersecurity Reports
+- IoT Reports
+- Animation Reports
+
+---
+
+## Programme Reports
+
+- Summer Camp Reports
+- Bootcamp Reports
+- Holiday Programme Reports
+- STEM Competition Reports
+- Coding Challenge Reports
+
+---
+
+## Administrative Documents
+
+- Student Profile
+- Student Transcript (Future)
+- Admission Letter
+- Student Clearance Letter
+- Promotion Letter
+- Graduation Report
+
+---
+
+## Certificates
+
+- Completion Certificate
+- Achievement Certificate
+- Participation Certificate
+- Competition Certificate
+- Merit Award
+- Coding Certificate
+- Robotics Certificate
+
+---
+
+## Identity Documents
+
+- Student ID Card
+- Staff ID Card
+- Visitor Pass (Future)
+
+---
+
+# Rendering Pipeline
+
+Every document generated by NEMP follows a standardized pipeline.
+
+```text
+Request
+
+↓
+
+Permission Validation
+
+↓
+
+Retrieve Data
+
+↓
+
+Validate Data
+
+↓
+
+Select Template
+
+↓
+
+Load School Branding
+
+↓
+
+Build Layout
+
+↓
+
+Render Pages
+
+↓
+
+Generate PDF
+
+↓
+
+Generate QR Code
+
+↓
+
+Generate Verification Code
+
+↓
+
+Generate Digital Hash
+
+↓
+
+Archive
+
+↓
+
+Distribute
+```
+
+This pipeline ensures every generated document follows the same quality standards.
+
+---
+
+# Data Sources
+
+The rendering engine retrieves information from multiple modules.
+
+Supported data sources include:
+
+- Student Management
+- Teacher Management
+- Curriculum Engine
+- Assessment Engine
+- Attendance Engine
+- Psychomotor Assessment
+- Affective Assessment
+- CBT Engine
+- Portfolio Engine
+- Achievement Engine
+- Certificate Engine
+- School Settings
+- Branding Settings
+- Academic Session
+- Academic Term
+
+No data should be entered directly into the rendering engine.
+
+---
+
+# Report Builder
+
+The Report Builder assembles all required information before rendering.
+
+Responsibilities include:
+
+- Collect report data
+- Validate completeness
+- Organize sections
+- Resolve references
+- Prepare structured rendering object
+
+The builder produces a normalized report structure independent of presentation.
+
+---
+
+# Template Engine
+
+The Template Engine determines how a document should appear.
+
+Templates remain independent from the underlying data.
+
+Templates may vary by:
+
+- School
+- Educational Level
+- Programme
+- Report Type
+- Academic Session
+- School Branding
+
+Templates should remain configurable without modifying application code.
+
+---
+
+# Template Selection Workflow
+
+```text
+Generate Report
+
+↓
+
+Identify School
+
+↓
+
+Identify Report Type
+
+↓
+
+Identify Educational Level
+
+↓
+
+Load Assigned Template
+
+↓
+
+Render
+```
+
+If no custom template exists, the system should use the default NEMP template.
+
+---
+
+# Branding Engine
+
+The Branding Engine dynamically applies school identity to every document.
+
+Supported branding elements include:
+
+- School Logo
+- School Name
+- Motto
+- Address
+- Contact Information
+- Website
+- Email Address
+- Primary Colour
+- Secondary Colour
+- Accent Colour
+- Signature Images
+- Official Stamp
+
+Branding is loaded automatically based on the current school.
+
+---
+
+# Layout Engine
+
+The Layout Engine controls the visual structure of every document.
+
+Responsibilities include:
+
+- Page margins
+- Headers
+- Footers
+- Section ordering
+- Page numbering
+- Tables
+- Images
+- Charts
+- Signature placement
+- QR code positioning
+
+The layout engine is independent of report calculations.
+
+---
+
+# Rendering Engine
+
+The Rendering Engine converts structured report data into printable content.
+
+Responsibilities include:
+
+- Typography
+- Positioning
+- Alignment
+- Image rendering
+- Table rendering
+- Dynamic sections
+- Conditional sections
+- Pagination
+- Overflow handling
+
+Rendering should remain deterministic.
+
+The same input data should always produce the same output.
+
+---
+
+# PDF Generator
+
+The PDF Generator converts rendered layouts into finalized PDF documents.
+
+Supported features:
+
+- Multi-page rendering
+- Embedded fonts
+- High-resolution images
+- Compression
+- Optimized printing
+- Embedded metadata
+
+Generated PDFs should be platform-independent.
+
+---
+
+# Supported Output Formats
+
+Current supported outputs:
+
+- PDF
+
+Future outputs:
+
+- PDF/A
+- HTML Preview
+- DOCX
+- ODT
+- EPUB
+- Image Export
+- Accessible PDF
+
+The architecture should accommodate additional formats without redesign.
+
+---
+
+# Rendering Workflow
+
+```text
+User Requests Report
+
+↓
+
+Authorization Check
+
+↓
+
+Report Builder
+
+↓
+
+Template Selection
+
+↓
+
+Branding Applied
+
+↓
+
+Layout Generated
+
+↓
+
+PDF Rendered
+
+↓
+
+Verification Added
+
+↓
+
+Archived
+
+↓
+
+Distribution
+```
+
+---
+
+# Design Principles
+
+The Report PDF Rendering Engine follows these principles:
+
+- Separation of Data and Presentation
+- Reusable Templates
+- Modular Rendering
+- School Branding Support
+- Immutable Published Documents
+- Enterprise Security
+- Print Optimization
+- High Performance
+- Accessibility
+- Scalability
+- Maintainability
+
+---
+
+# Business Rules
+
+- Every generated document must originate from validated data.
+- Rendering must never modify source data.
+- Templates are selected dynamically.
+- School branding is applied automatically.
+- Documents must be rendered consistently across environments.
+- Reports must support future template versions.
+- Published reports become immutable after approval.
+- Every rendered document proceeds to verification before publication.
+- Every generated document must be archived.
+- Every rendering operation must be logged for auditing.
+
+---
+
+# Relationship Overview
+
+```text
+Academic Data
+
+↓
+
+Report Builder
+
+↓
+
+Template Engine
+
+↓
+
+Branding Engine
+
+↓
+
+Layout Engine
+
+↓
+
+Rendering Engine
+
+↓
+
+PDF Generator
+
+↓
+
+Verification Engine
+
+↓
+
+Archive
+
+↓
+
+Distribution
+```
+
+---
+
+# End of Part 1
+
+# Report Rendering Engine
+
+The Report Rendering Engine is responsible for transforming validated report data into professionally formatted academic documents.
+
+It assembles all approved report sections according to the selected template, school branding, and layout configuration before passing the final layout to the PDF Generator.
+
+The rendering engine must remain independent of business logic and should never calculate scores or modify academic data.
+
+---
+
+# Supported Report Types
+
+The rendering engine supports multiple report formats.
+
+## Academic Reports
+
+- Nursery Report
+- Primary Report
+- Secondary Report
+- Mid-Term Report
+- Continuous Assessment Report
+- End-of-Term Report
+- Annual Report
+
+---
+
+## Skills-Based Reports
+
+- Coding Report
+- Robotics Report
+- STEAM Report
+- Artificial Intelligence Report
+- Python Report
+- Web Development Report
+- Arduino Report
+- IoT Report
+- Electronics Report
+- Cybersecurity Report
+- Animation Report
+
+---
+
+## Programme Reports
+
+- Summer Camp Report
+- Holiday Coding Camp Report
+- Bootcamp Report
+- Competition Report
+- Club Activity Report
+
+---
+
+# Dynamic Report Structure
+
+Unlike traditional report systems, NEMP reports are completely dynamic.
+
+The rendering engine determines which sections appear based on:
+
+- Report Template
+- School Configuration
+- Educational Level
+- Programme
+- Display Rules
+- User Permissions
+
+Every section may be enabled or disabled without modifying application code.
+
+---
+
+# Standard Report Layout
+
+A report is rendered using the following structure.
+
+```text
+Header
+
+↓
+
+Student Information
+
+↓
+
+Academic Summary
+
+↓
+
+Programme Components
+
+↓
+
+Attendance
+
+↓
+
+Psychomotor
+
+↓
+
+Affective Domain
+
+↓
+
+Curriculum Coverage
+
+↓
+
+Projects
+
+↓
+
+Learning Outcomes
+
+↓
+
+Achievements
+
+↓
+
+Teacher Remarks
+
+↓
+
+Supervisor Remarks
+
+↓
+
+Principal Remarks
+
+↓
+
+Signature Section
+
+↓
+
+Verification Section
+
+↓
+
+Footer
+```
+
+Schools may customize the order where permitted.
+
+---
+
+# Student Information Section
+
+Displays essential student details.
+
+Standard fields include:
+
+- Student Photograph
+- Student Name
+- Admission Number
+- Student ID
+- Class
+- Arm
+- Academic Session
+- Academic Term
+- Gender
+- Date of Birth (Optional)
+- House (Optional)
+- School Logo
+
+This section appears on the first page of every report.
+
+---
+
+# Academic Performance Section
+
+Displays academic results.
+
+Supports:
+
+- Subjects
+- Programme Components
+- Continuous Assessment
+- Examination Score
+- Total Score
+- Grade
+- Position
+- Class Average
+- Teacher
+
+Columns are determined by the active report template.
+
+---
+
+# Skills-Based Performance Section
+
+Supports modern educational programmes.
+
+Examples
+
+- Coding
+- Robotics
+- Artificial Intelligence
+- Python
+- Web Development
+- Arduino
+- Electronics
+- Cybersecurity
+- IoT
+- Animation
+
+Each programme may include:
+
+- Topics Covered
+- Assessment Score
+- Competency Level
+- Learning Outcome
+- Teacher Comment
+
+---
+
+# Attendance Section
+
+Displays attendance information.
+
+Standard fields:
+
+- Days School Opened
+- Days Present
+- Days Absent
+- Attendance Percentage
+
+Attendance may optionally include graphical indicators.
+
+---
+
+# Psychomotor Section
+
+Displays learner development in practical and behavioral skills.
+
+Examples:
+
+- Creativity
+- Handwriting
+- Coordination
+- Neatness
+- Practical Skills
+- Teamwork
+
+Rating scales remain configurable by each school.
+
+---
+
+# Affective Domain Section
+
+Displays behavioral development.
+
+Examples
+
+- Honesty
+- Leadership
+- Respect
+- Punctuality
+- Responsibility
+- Cooperation
+- Self-Control
+
+The rating scale is configurable.
+
+---
+
+# Curriculum Coverage Section
+
+Displays topics taught during the reporting period.
+
+Examples
+
+```text
+Introduction to Scratch
+
+Variables
+
+Loops
+
+HTML Basics
+
+Arduino LEDs
+
+Micro:bit Programming
+```
+
+Schools may display:
+
+- Topics Only
+- Topics + Software
+- Topics + Learning Outcomes
+
+---
+
+# Project Showcase Section
+
+Displays completed projects.
+
+Examples
+
+- Calculator
+- Smart Traffic Light
+- Portfolio Website
+- Robot Car
+- Weather Application
+- AI Chatbot
+- Smart Dustbin
+
+Each project may include:
+
+- Title
+- Completion Status
+- Grade
+- Score
+- Thumbnail (Optional)
+
+---
+
+# Learning Outcomes Section
+
+Displays measurable competencies achieved.
+
+Examples
+
+- Can write Scratch programs.
+- Can build Arduino circuits.
+- Can develop responsive web pages.
+- Understands AI fundamentals.
+- Demonstrates computational thinking.
+
+Learning outcomes are retrieved from the Curriculum Engine.
+
+---
+
+# Achievement Section
+
+Displays student accomplishments.
+
+Examples
+
+- Coding Explorer
+- Robotics Champion
+- AI Innovator
+- Perfect Attendance
+- Leadership Award
+- Innovation Award
+
+Achievements are synchronized from the Assessment and Portfolio Engines.
+
+---
+
+# Teacher Remarks Section
+
+Displays personalized teacher comments.
+
+Comment sources include:
+
+- Manual Entry
+- Auto-generated Comment Library
+- AI-Assisted Suggestions (Future)
+
+Comments should remain editable before report approval.
+
+---
+
+# Supervisor Remarks
+
+Displays academic supervisor observations.
+
+May include:
+
+- Curriculum Review
+- Teacher Evaluation
+- Student Progress Summary
+
+Displayed only where enabled by the report template.
+
+---
+
+# Principal Remarks
+
+Displays final school remarks.
+
+Examples
+
+- Promotion Decision
+- Graduation Recommendation
+- General Encouragement
+
+This section may require report approval before publication.
+
+---
+
+# Signature Section
+
+Supports configurable signature blocks.
+
+Possible signatories:
+
+- Subject Teacher
+- Class Teacher
+- Coding Instructor
+- Robotics Instructor
+- Supervisor
+- Academic Head
+- Principal
+- Director
+
+Schools determine which signatures are required.
+
+Digital signature images are supported.
+
+---
+
+# School Stamp
+
+The report may include the official school stamp.
+
+Supported formats:
+
+- PNG
+- SVG
+- Transparent Image
+
+The stamp should never obscure report content.
+
+---
+
+# Watermark Engine
+
+Supports optional document watermarks.
+
+Examples
+
+- Official Copy
+- Duplicate Copy
+- Draft
+- Confidential
+- Sample
+
+Watermarks remain configurable per report template.
+
+---
+
+# QR Code Integration
+
+Every published report may contain a QR Code.
+
+The QR Code links to:
+
+- Online Report Verification
+- Student Verification
+- Certificate Verification
+
+QR Codes are generated automatically during rendering.
+
+---
+
+# Barcode Support
+
+Optional barcode generation is supported.
+
+Typical use cases:
+
+- Internal Filing
+- Bulk Printing
+- Archive Management
+
+---
+
+# Verification Block
+
+Every published report contains a verification section.
+
+Standard fields include:
+
+- Verification Number
+- QR Code
+- Verification URL
+- Digital Hash
+- Issue Date
+
+This section is automatically generated.
+
+---
+
+# Charts and Visualizations
+
+Reports may include graphical summaries.
+
+Supported charts:
+
+- Performance Trend
+- Subject Distribution
+- Attendance Chart
+- Skill Progress
+- Competency Distribution
+
+Charts should be optional and configurable.
+
+---
+
+# Multi-Page Rendering
+
+Large reports automatically span multiple pages.
+
+Examples:
+
+- Portfolio Reports
+- Secondary School Reports
+- Coding Reports
+- Combined Academic Reports
+
+Pagination is handled automatically.
+
+---
+
+# Page Numbering
+
+Standard footer format:
+
+```text
+Page X of Y
+```
+
+Page numbering should remain consistent throughout the document.
+
+---
+
+# Report Preview Engine
+
+Before publication, users may preview reports.
+
+Preview features include:
+
+- Zoom
+- Search
+- Print Preview
+- Page Navigation
+- Full Screen
+- Download Draft
+
+Preview does not generate an official published report.
+
+---
+
+# Rendering Validation
+
+Before rendering begins, the engine validates:
+
+- Student Information
+- Assessment Completeness
+- Attendance Availability
+- Required Comments
+- Required Signatures
+- Template Integrity
+- Branding Configuration
+
+Validation failures prevent report publication.
+
+---
+
+# Business Rules
+
+- Every report uses an approved template.
+- Report sections are rendered dynamically.
+- Empty optional sections are hidden automatically.
+- Required sections cannot be removed.
+- QR Codes are generated only for published reports.
+- Charts remain optional.
+- Watermarks are template-driven.
+- Multi-page rendering is automatic.
+- Report previews never create official report records.
+- Every published report proceeds to the Verification Engine.
+
+---
+
+# End of Part 2
+
+# Certificate & Document Generation Engine
+
+The Certificate & Document Generation Engine is a specialized component of the NEMP Report PDF Rendering Engine responsible for generating official school documents beyond academic report cards.
+
+Unlike report rendering, certificate generation focuses on producing secure, branded, verifiable, and printable documents for students, teachers, schools, and administrative purposes.
+
+All generated documents follow the same rendering pipeline to ensure consistency, traceability, and long-term maintainability.
+
+---
+
+# Certificate Generation Architecture
+
+```text
+Certificate Request
+
+↓
+
+Permission Validation
+
+↓
+
+Retrieve Approved Data
+
+↓
+
+Certificate Builder
+
+↓
+
+Certificate Template
+
+↓
+
+School Branding
+
+↓
+
+Layout Engine
+
+↓
+
+Rendering Engine
+
+↓
+
+PDF Generator
+
+↓
+
+Verification Engine
+
+↓
+
+Archive
+
+↓
+
+Distribution
+```
+
+---
+
+# Supported Certificate Types
+
+The engine supports multiple certificate categories.
+
+## Academic Certificates
+
+- Graduation Certificate
+- Completion Certificate
+- Academic Excellence Certificate
+- Merit Award
+- Best Student Award
+
+---
+
+## Coding & Robotics Certificates
+
+- Coding Foundation
+- Coding Intermediate
+- Coding Advanced
+- Robotics Foundation
+- Robotics Intermediate
+- Robotics Advanced
+- Artificial Intelligence Essentials
+- Python Programming
+- Arduino Programming
+- Web Development
+- Scratch Programming
+- MIT App Inventor
+- Cybersecurity Foundation
+- IoT Foundation
+- Animation Foundation
+
+---
+
+## Participation Certificates
+
+- Summer Coding Camp
+- Robotics Bootcamp
+- Holiday Technology Camp
+- STEM Competition
+- Coding Challenge
+- Hackathon
+- Innovation Fair
+- Science Exhibition
+
+---
+
+## Achievement Certificates
+
+- Best Programmer
+- Best Robotics Project
+- Innovation Award
+- Team Leadership
+- Perfect Attendance
+- Outstanding Creativity
+- Best Team Player
+- Problem Solver Award
+
+---
+
+# Administrative Documents
+
+The rendering engine also generates official administrative documents.
+
+Supported documents include:
+
+- Student Admission Letter
+- Student Promotion Letter
+- Student Clearance Letter
+- Student Graduation Letter
+- Student Recommendation Letter
+- Student Reference Letter
+- Student Transcript (Future)
+- Teacher Employment Letter
+- Teacher Appointment Letter
+- Teacher Promotion Letter
+- Teacher Service Certificate
+
+---
+
+# Student Identity Documents
+
+Supported identity documents include:
+
+- Student ID Card
+- Teacher ID Card
+- Visitor Pass (Future)
+- Examination Pass
+- Temporary Identity Card
+
+---
+
+# Certificate Builder
+
+The Certificate Builder assembles validated information required for certificate generation.
+
+Responsibilities include:
+
+- Validate recipient
+- Validate programme completion
+- Validate achievement
+- Retrieve template
+- Retrieve branding
+- Assemble rendering object
+
+No calculations occur during certificate generation.
+
+---
+
+# Certificate Template Engine
+
+Certificate templates are completely configurable.
+
+Templates may vary by:
+
+- School
+- Programme
+- Certificate Type
+- Orientation
+- Branding
+- Language (Future)
+
+Template modifications do not require application code changes.
+
+---
+
+# Standard Certificate Layout
+
+```text
+School Logo
+
+↓
+
+Certificate Title
+
+↓
+
+Recipient Name
+
+↓
+
+Certificate Statement
+
+↓
+
+Programme Information
+
+↓
+
+Completion Date
+
+↓
+
+Authorized Signatures
+
+↓
+
+School Stamp
+
+↓
+
+QR Code
+
+↓
+
+Verification Number
+
+↓
+
+Footer
+```
+
+---
+
+# Certificate Sections
+
+Each certificate may contain the following sections.
+
+## Header
+
+Displays
+
+- School Logo
+- School Name
+- Motto
+- Certificate Title
+
+---
+
+## Recipient Section
+
+Displays
+
+- Student Name
+- Student ID
+- Admission Number (Optional)
+- Class (Optional)
+
+---
+
+## Programme Section
+
+Displays
+
+- Programme Name
+- Duration
+- Level
+- Completion Date
+- Instructor
+
+---
+
+## Achievement Section
+
+Displays
+
+- Award
+- Performance
+- Competition
+- Recognition
+
+---
+
+## Authorization Section
+
+Displays
+
+Authorized signatures such as:
+
+- Instructor
+- Supervisor
+- Academic Head
+- Principal
+- Director
+
+Schools determine which signatures appear.
+
+---
+
+## Verification Section
+
+Displays
+
+- QR Code
+- Verification Number
+- Verification URL
+- Digital Hash
+
+Automatically generated by the Verification Engine.
+
+---
+
+# Student ID Card Generation
+
+The engine supports professional identity card generation.
+
+Standard information includes:
+
+Front
+
+- School Logo
+- Student Photograph
+- Student Name
+- Student ID
+- Admission Number
+- Class
+- Blood Group (Optional)
+- QR Code
+
+Back
+
+- Emergency Contact
+- School Address
+- School Contact
+- School Website
+- Terms of Use
+
+Future versions may support NFC-enabled cards.
+
+---
+
+# Batch Certificate Generation
+
+Administrators may generate certificates in bulk.
+
+Supported batch operations:
+
+- Entire Class
+- Programme Cohort
+- Summer Camp Participants
+- Competition Participants
+- Graduation Class
+- Selected Students
+
+The engine processes certificates asynchronously.
+
+---
+
+# Batch Rendering Workflow
+
+```text
+Select Students
+
+↓
+
+Validate Records
+
+↓
+
+Generate Queue
+
+↓
+
+Background Rendering
+
+↓
+
+Generate PDFs
+
+↓
+
+Archive
+
+↓
+
+Notify User
+```
+
+Batch rendering should not block the user interface.
+
+---
+
+# Bulk PDF Generation
+
+The engine supports generating multiple reports simultaneously.
+
+Examples
+
+- Entire Class Reports
+- Entire School Reports
+- Graduation Reports
+- Coding Programme Reports
+
+Bulk generation uses background processing.
+
+---
+
+# Compression Engine
+
+Generated documents should be optimized.
+
+Objectives include:
+
+- Small file size
+- High print quality
+- Fast download
+- Efficient storage
+
+Compression must not reduce readability.
+
+---
+
+# Cloud Storage
+
+Generated documents are stored securely.
+
+Supported storage:
+
+- Cloud Object Storage
+- School Archive
+- Version Archive
+
+Documents remain retrievable using their unique identifiers.
+
+---
+
+# Version Control
+
+Every published document supports version tracking.
+
+Example
+
+```text
+Version 1
+
+↓
+
+Correction
+
+↓
+
+Version 2
+
+↓
+
+Published
+
+↓
+
+Archived
+```
+
+Older versions remain available for auditing but cannot be modified.
+
+---
+
+# Distribution Engine
+
+Generated documents may be distributed through multiple channels.
+
+Supported methods
+
+- Parent Portal
+- Student Portal
+- School Administrator Portal
+- Teacher Portal
+- Direct Download
+- Email
+- Secure Share Link
+
+Future:
+
+- Mobile App
+- WhatsApp
+- SMS Notification
+
+---
+
+# Download Management
+
+Users may download documents according to their permissions.
+
+Downloads are logged.
+
+Information recorded includes:
+
+- User
+- Time
+- IP Address
+- Device
+- Document
+- Version
+
+---
+
+# Printing Standards
+
+Generated documents must support:
+
+- A4
+- Letter
+- Portrait
+- Landscape
+- High Resolution
+- Borderless Printing (Where Supported)
+
+Print layouts should remain consistent across platforms.
+
+---
+
+# Archive Management
+
+Every official document is archived automatically.
+
+Archive records include:
+
+- Document Version
+- Generated By
+- Generation Date
+- Verification Code
+- Digital Hash
+- School
+- Academic Session
+- Academic Term
+
+Archives remain immutable.
+
+---
+
+# Retention Policy
+
+Schools may configure document retention.
+
+Examples
+
+- Permanent
+- 5 Years
+- 10 Years
+
+Archived records should never be physically deleted unless permitted by policy.
+
+---
+
+# Business Rules
+
+- Certificates may only be generated from approved records.
+- Reports may only be published after approval.
+- Every official document receives a unique verification number.
+- QR Codes are automatically generated.
+- Every document is archived.
+- Every generated document supports version control.
+- Batch generation executes in the background.
+- Downloads are audited.
+- Templates remain independent of rendering logic.
+- Branding is applied dynamically.
+
+---
+
+# End of Part 3
+
+# Enterprise PDF Rendering Standards
+
+This section defines the enterprise standards governing document rendering throughout the Nobletech Education Management Platform (NEMP).
+
+These standards ensure that every generated document is secure, consistent, verifiable, professionally formatted, and suitable for both digital distribution and high-quality printing.
+
+The standards apply to all reports, certificates, transcripts, identity cards, administrative letters, and future printable documents.
+
+---
+
+# Document Rendering Standards
+
+Every generated document must satisfy the following requirements:
+
+- Generated from validated data only.
+- Rendered using an approved template.
+- Dynamically branded.
+- Print-ready.
+- Digitally verifiable.
+- Version controlled.
+- Archived automatically.
+- Auditable.
+- Consistent across all schools.
+
+No document should bypass the centralized rendering engine.
+
+---
+
+# Document Consistency Standards
+
+Regardless of the template selected by a school, all generated documents should maintain consistent standards.
+
+Examples include:
+
+- Typography
+- Page Margins
+- Header Placement
+- Footer Placement
+- Table Alignment
+- Image Scaling
+- QR Code Positioning
+- Signature Placement
+- Page Numbering
+
+Consistency improves professionalism and simplifies maintenance.
+
+---
+
+# Branding Standards
+
+Every document must automatically apply the branding assigned to the active school.
+
+Supported branding includes:
+
+- School Logo
+- School Name
+- Motto
+- Official Address
+- Contact Information
+- Website
+- Email Address
+- Primary Colour
+- Secondary Colour
+- Accent Colour
+- Official Stamp
+- Authorized Signatures
+
+Branding must be data-driven and configurable without requiring code changes.
+
+---
+
+# Template Standards
+
+Templates must remain independent of business logic.
+
+Every template should support:
+
+- Dynamic Sections
+- Conditional Rendering
+- Variable Content
+- Configurable Layouts
+- Multi-page Support
+- Portrait Orientation
+- Landscape Orientation
+- School Branding
+- Future Versioning
+
+Templates should never contain academic calculations.
+
+---
+
+# Typography Standards
+
+The rendering engine should use professional, print-friendly fonts.
+
+Recommended fonts include:
+
+- Inter
+- Roboto
+- Noto Sans
+- Source Sans Pro
+
+Fallback fonts should be configured for unsupported environments.
+
+Typography should maintain:
+
+- Readability
+- Consistency
+- Accessibility
+- International character support
+
+---
+
+# Image Standards
+
+Supported image types include:
+
+- PNG
+- JPG
+- SVG
+- WEBP (Future)
+
+Images include:
+
+- School Logo
+- Student Photograph
+- Teacher Photograph
+- Signature Images
+- School Stamp
+
+Images should be optimized automatically before rendering.
+
+---
+
+# Pagination Standards
+
+Multi-page documents should support:
+
+- Automatic Page Breaks
+- Page Headers
+- Page Footers
+- Page Numbers
+- Repeating Table Headers
+- Section Continuation
+
+Standard format:
+
+```text
+Page X of Y
+```
+
+---
+
+# Verification Standards
+
+Every published official document must be verifiable.
+
+Verification includes:
+
+- Verification Number
+- QR Code
+- Verification URL
+- Digital Hash
+- Generation Timestamp
+- Version Number
+
+Verification information must be embedded automatically during rendering.
+
+---
+
+# QR Code Standards
+
+QR Codes should support:
+
+- Online Verification
+- Report Verification
+- Certificate Verification
+- Student Verification
+
+QR Codes must remain readable after printing.
+
+---
+
+# Digital Hash Standards
+
+Every published document receives a cryptographic hash.
+
+The hash is used to:
+
+- Detect tampering
+- Verify authenticity
+- Support archival integrity
+
+Hash values should be generated using modern cryptographic algorithms such as SHA-256 or stronger.
+
+---
+
+# Digital Signature Support
+
+Future versions of NEMP may support digital signatures.
+
+Supported signature types include:
+
+- Image Signature
+- Cryptographic Signature
+- PKI Certificate Signature
+- Government-Approved Electronic Signature
+
+Digital signatures should integrate with the Verification Engine.
+
+---
+
+# PDF Versioning Standards
+
+Published documents are immutable.
+
+When corrections are required:
+
+```text
+Version 1
+
+↓
+
+Correction
+
+↓
+
+Version 2
+
+↓
+
+Published
+
+↓
+
+Archived
+```
+
+Previous versions remain available for auditing but cannot be edited.
+
+---
+
+# Performance Standards
+
+The rendering engine should support enterprise-scale processing.
+
+Recommended performance targets:
+
+| Operation | Target |
+|-----------|--------|
+| Single Report | < 3 Seconds |
+| Certificate | < 2 Seconds |
+| Student ID Card | < 2 Seconds |
+| Batch of 100 Reports | < 2 Minutes |
+| Batch of 1,000 Reports | Background Processing |
+| Batch of 10,000 Reports | Queue-Based Processing |
+
+Performance targets may be adjusted based on deployment infrastructure.
+
+---
+
+# Background Processing Standards
+
+Large rendering jobs should execute asynchronously.
+
+Examples include:
+
+- Entire School Reports
+- Graduation Certificates
+- Student ID Cards
+- Bulk Portfolio Exports
+
+Users should receive progress notifications during long-running operations.
+
+---
+
+# Storage Standards
+
+Generated documents should be stored securely.
+
+Storage requirements include:
+
+- Cloud Object Storage
+- Immutable Archives
+- Version Tracking
+- Redundant Backup
+- Disaster Recovery Support
+
+Documents should not be regenerated unnecessarily if an approved version already exists.
+
+---
+
+# Distribution Standards
+
+Supported distribution channels include:
+
+- Parent Portal
+- Student Portal
+- Teacher Portal
+- School Administrator Portal
+- Email
+- Secure Download
+- Secure Share Link
+
+Future support:
+
+- Mobile Application
+- WhatsApp Business
+- SMS Notification
+
+---
+
+# Accessibility Standards
+
+Generated PDFs should support accessibility where possible.
+
+Requirements include:
+
+- Selectable Text
+- Searchable Content
+- Unicode Character Support
+- Proper Reading Order
+- High Contrast Compatibility
+
+Future versions should target PDF/UA compliance.
+
+---
+
+# Security Standards
+
+Every generated document must comply with NEMP security policies.
+
+Requirements include:
+
+- Permission Validation
+- Tenant Validation
+- Secure File Storage
+- Encrypted Transmission (HTTPS)
+- Download Authorization
+- Audit Logging
+
+Unauthorized users must never access protected documents.
+
+---
+
+# Audit Standards
+
+Every rendering activity should be recorded.
+
+Audit information includes:
+
+- User
+- School
+- Document Type
+- Template Used
+- Version
+- Generation Time
+- Download History
+- Distribution History
+
+Audit records are immutable.
+
+---
+
+# Error Handling Standards
+
+Rendering failures should provide meaningful diagnostics.
+
+Possible failures include:
+
+- Missing Template
+- Missing Branding
+- Missing Student Data
+- Invalid Assessment Data
+- Corrupt Image
+- Rendering Timeout
+- Storage Failure
+
+Failures should never expose sensitive implementation details to end users.
+
+---
+
+# Monitoring Standards
+
+The rendering engine should continuously monitor:
+
+- Rendering Time
+- Failed Jobs
+- Queue Length
+- Storage Usage
+- Download Volume
+- Verification Requests
+- Batch Processing Performance
+
+Monitoring data should be available through the Analytics Dashboard.
+
+---
+
+# AI-Assisted Development Standards
+
+When generating PDF rendering code using GitHub Copilot or other AI tools:
+
+- Use the centralized Rendering Engine.
+- Separate rendering from business logic.
+- Use reusable templates.
+- Apply branding dynamically.
+- Support version control.
+- Implement verification automatically.
+- Follow the approved folder structure.
+- Maintain accessibility and print standards.
+- Integrate with audit logging.
+
+All AI-generated rendering code must undergo manual review before production deployment.
+
+---
+
+# Future Enhancements
+
+The architecture supports future enterprise capabilities, including:
+
+- Interactive HTML Reports
+- PDF/A Long-Term Archival
+- PDF/UA Accessibility Compliance
+- Digital Transcript Generation
+- Blockchain Certificate Verification
+- Electronic Signature Integration
+- Watermark Customization
+- Multi-language Document Generation
+- AI-Generated Narrative Summaries
+- Dynamic Data Visualizations
+- Parent Acknowledgement Workflow
+- Offline PDF Synchronization
+- Cloud-Based Print Services
+
+These enhancements can be introduced without redesigning the rendering engine.
+
+---
+
+# Relationship Overview
+
+```text
+Validated Academic Data
+
+↓
+
+Report Builder
+
+↓
+
+Template Engine
+
+↓
+
+Branding Engine
+
+↓
+
+Layout Engine
+
+↓
+
+Rendering Engine
+
+↓
+
+PDF Generator
+
+↓
+
+Verification Engine
+
+↓
+
+Archive Engine
+
+↓
+
+Distribution Engine
+
+↓
+
+Audit Logging
+
+↓
+
+Analytics Dashboard
+```
+
+---
+
+# Summary
+
+The Report PDF Rendering Engine is the centralized document generation framework of the Nobletech Education Management Platform (NEMP). It transforms validated academic, assessment, portfolio, attendance, and administrative data into professionally formatted, branded, secure, and verifiable PDF documents.
+
+By separating data processing from presentation, the engine enables reusable templates, dynamic school branding, centralized verification, version control, automatic archiving, and scalable batch processing. Its modular architecture ensures that all reports, certificates, identity cards, and future printable documents are generated consistently while supporting enterprise-grade security, auditability, accessibility, and long-term maintainability.
+
+Designed for future growth, the engine can seamlessly support digital signatures, blockchain verification, multi-language documents, AI-generated summaries, PDF/A archival, and additional document types without requiring significant architectural changes.
+
+This document serves as the definitive standard for document rendering across all current and future NEMP modules and integrations.
+
+---
+
+# End of Document

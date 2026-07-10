@@ -1,0 +1,477 @@
+# Nobletech Education Management Platform (NEMP)
+
+## System Modules
+
+Version: 1.0
+
+---
+
+# Purpose
+
+This document defines every module that makes up the Nobletech Education Management Platform.
+
+Each module is designed as an independent component that can evolve without affecting the rest of the platform.
+
+---
+
+# Module 1
+
+Dashboard
+
+Purpose
+
+Provides an overview of activities.
+
+Features
+
+• Statistics
+
+• Recent Reports
+
+• Pending Approvals
+
+• Quick Actions
+
+• Notifications
+
+Users
+
+Super Admin
+
+School Administrator
+
+Supervisor
+
+Teacher
+
+---
+
+# Module 2
+
+School Management
+
+Purpose
+
+Manage schools using the platform.
+
+Features
+
+Create School
+
+Edit School
+
+School Branding
+
+School Settings
+
+Academic Calendar
+
+Status
+
+Logo Upload
+
+Primary Colour
+
+Secondary Colour
+
+Report Templates
+
+---
+
+# Module 3
+
+User Management
+
+Purpose
+
+Manage system users.
+
+Features
+
+Create User
+
+Edit User
+
+Delete User
+
+Reset Password
+
+Assign Role
+
+Assign School
+
+Activate
+
+Deactivate
+
+---
+
+# Module 4
+
+Role & Permission Management
+
+Purpose
+
+Control access.
+
+Roles
+
+Super Admin
+
+School Admin
+
+Supervisor
+
+Teacher
+
+Data Entry Officer
+
+Viewer
+
+Future
+
+Parent
+
+Student
+
+---
+
+# Module 5
+
+Teacher Management
+
+Purpose
+
+Manage instructors.
+
+Features
+
+Teacher Profile
+
+Signature
+
+Qualifications
+
+Assigned Schools
+
+Assigned Classes
+
+Attendance
+
+Performance
+
+---
+
+# Module 6
+
+Student Management
+
+Purpose
+
+Manage students.
+
+Features
+
+Student Registration
+
+Admission Number
+
+Photo
+
+Parent Information
+
+Promotion History
+
+Current Class
+
+Current Session
+
+Status
+
+---
+
+# Module 7
+
+Academic Management
+
+Purpose
+
+Manage academic structure.
+
+Features
+
+Sessions
+
+Terms
+
+Classes
+
+Subjects
+
+Class Teachers
+
+Promotion
+
+---
+
+# Module 8
+
+Assessment Templates
+
+Purpose
+
+Create assessment structures.
+
+Features
+
+Coding
+
+Robotics
+
+STEAM
+
+ICT
+
+AI
+
+Future Subjects
+
+---
+
+# Module 9
+
+Skill Management
+
+Purpose
+
+Create skill assessment lists.
+
+Features
+
+Coding Skills
+
+Robotics Skills
+
+STEAM Skills
+
+Soft Skills
+
+Future Skills
+
+---
+
+# Module 10
+
+Project Evaluation
+
+Purpose
+
+Evaluate practical projects.
+
+Features
+
+Project Library
+
+Scoring
+
+Comments
+
+Evidence Upload
+
+---
+
+# Module 11
+
+Report Cards
+
+Purpose
+
+Generate reports.
+
+Features
+
+Draft
+
+Approval
+
+Revision
+
+Lock
+
+PDF
+
+Print
+
+Download
+
+History
+
+---
+
+# Module 12
+
+PDF Engine
+
+Purpose
+
+Generate professional reports.
+
+Requirements
+
+Pixel Perfect
+
+A4
+
+Portrait
+
+Landscape
+
+School Branding
+
+Multiple Templates
+
+Unlimited Pages
+
+QR Code
+
+Watermark
+
+---
+
+# Module 13
+
+School Branding
+
+Purpose
+
+Customize each school's identity.
+
+Features
+
+Logo
+
+Colours
+
+Header
+
+Footer
+
+Signature
+
+Stamp
+
+Fonts
+
+Background
+
+---
+
+# Module 14
+
+Analytics
+
+Purpose
+
+Provide reports and insights.
+
+Features
+
+Performance Charts
+
+Teacher Statistics
+
+Student Progress
+
+School Summary
+
+Term Summary
+
+---
+
+# Module 15
+
+Notification Centre
+
+Purpose
+
+Notify users.
+
+Methods
+
+Email
+
+SMS
+
+WhatsApp
+
+Push Notification
+
+Future
+
+Mobile Notification
+
+---
+
+# Module 16
+
+System Settings
+
+Purpose
+
+Configure platform-wide settings.
+
+Features
+
+Academic Settings
+
+Backup
+
+Security
+
+Email
+
+SMS
+
+Storage
+
+Audit
+
+System Logs
+
+---
+
+# Future Modules
+
+Parent Portal
+
+Student Portal
+
+Teacher Portal
+
+Attendance
+
+Assignments
+
+Learning Management System
+
+CBT Examination
+
+Certificate Generator
+
+Billing
+
+Subscription
+
+AI Assistant
+
+AI Comment Generator
+
+AI Performance Analysis
+
+AI Lesson Planner
+
+Competition Management
+
+Mobile Application
+
+API Integration

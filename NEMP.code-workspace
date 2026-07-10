@@ -1,0 +1,37 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "backend"
+    },
+    {
+      "path": "frontend"
+    },
+    {
+      "path": "docs"
+    },
+    {
+      "path": "database"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "eslint.validate": [
+      "javascript",
+      "typescript",
+      "typescriptreact"
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/coverage": true
+    },
+    "files.exclude": {
+      "**/dist": true,
+      "**/coverage": true
+    }
+  }
+}
