@@ -541,7 +541,7 @@ Analytics
 
 The Curriculum Module defines the educational structure used across all academic programmes within NEMP.
 
-Every curriculum belongs to a school and may be reused across multiple academic sessions.
+Every curriculum belongs to a school and is assigned by session, term, class, and programme component context.
 
 ---
 
@@ -567,6 +567,16 @@ Curriculum
 ∞
 
 Programme Components
+
+↓
+
+1
+
+↓
+
+∞
+
+Curriculum Units
 
 ↓
 
@@ -624,6 +634,18 @@ Programme Components
 
 ∞
 
+Curriculum Units
+```
+
+```text
+Curriculum Units
+
+1
+
+↓
+
+∞
+
 Topics
 ```
 
@@ -664,6 +686,22 @@ Lesson Resources
 ```
 
 Curriculum entities form the instructional foundation for every programme delivered within the platform.
+
+Curriculum state transitions must follow the lifecycle GENERATED_DRAFT -> DRAFT -> UNDER_REVIEW -> REVISION_REQUIRED/APPROVED -> PUBLISHED -> ARCHIVED.
+
+Approval and publication are separate workflow steps and must remain distinct in relationship-level business rules.
+
+Concept modelling recommendation for future schema mapping:
+
+- Concepts should be reusable instructional entities associated with Topics.
+- A Topic may teach multiple Concepts.
+- Concepts should remain linkable to lesson notes, assessments, learner progress, and reporting.
+- This should be implemented without breaking the approved core hierarchy.
+
+Learner dashboard visibility rule:
+
+- Only approved and published assigned curriculum content should be visible to learners.
+- Draft, review, revision, and unpublished content must remain hidden from learner views.
 
 ---
 
@@ -2902,3 +2940,251 @@ This document serves as the definitive reference for all entity relationships, f
 ---
 
 # End of Document
+
+---
+
+# Phase 2D Academic Relationship Alignment Notes
+
+Phase 2D implementation confirms the following canonical academic relationship chain for foundation schema:
+
+```text
+Schools
+
+1
+
+↓
+
+∞
+
+Academic Sessions
+
+1
+
+↓
+
+∞
+
+Terms
+
+1
+
+↓
+
+∞
+
+Academic Classes
+
+1
+
+↓
+
+∞
+
+Student Enrolments
+```
+
+Learner placement and history handling:
+
+- Student-to-class placement is represented through enrolment records, not mutable class overwrite on student identity.
+- Promotion, repetition, transfer, withdrawal, graduation, correction, and re-enrolment are supported through additional enrolment rows and linked history references.
+- Historical reports and assessments remain linked to historical enrolment context.
+
+Teacher assignment in Phase 2D foundation:
+
+- Class-level assignment is represented through `academic_class_teacher_assignments`.
+- Assignment is school-scoped and session-scoped, with optional term scope.
+- Subject- and programme-component-specific assignment remains deferred to later milestone implementation.
+
+Tenant-isolation enforcement notes:
+
+- Composite school-scoped foreign keys are implemented on key academic joins to prevent cross-tenant linkage.
+- Additional service validation is still required for date containment rules such as term-within-session windows.
+
+---
+
+# Phase 2E Programme Component and Subject/Domain Relationship Alignment Notes
+
+Phase 2E implementation confirms the following additional relationship chain for foundation schema:
+
+```text
+Subjects
+
+1
+
+↓
+
+∞
+
+School Subjects
+
+Subjects
+
+∞
+
+↔
+
+∞
+
+Integration Domains
+
+(through subject_integration_domains)
+
+Programme Components
+
+∞
+
+↔
+
+∞
+
+Subjects
+
+(through programme_component_subjects)
+
+Programme Components
+
+∞
+
+↔
+
+∞
+
+Integration Domains
+
+(through programme_component_integration_domains)
+
+Schools
+
+1
+
+↓
+
+∞
+
+School Programme Components
+
+1
+
+↓
+
+∞
+
+Term Programme Components
+
+1
+
+↓
+
+∞
+
+Class Programme Components
+```
+
+Tenant-isolation and history handling:
+
+- Composite school-scoped foreign keys are implemented on term and class programme-component links to prevent cross-school joins.
+- Partial unique indexes enforce one active scoped configuration while preserving archival history via archived rows.
+- Subject and programme-component local school codes are unique per school only for active non-archived rows.
+
+Assignment boundary retained:
+
+- Subject-level or programme-component-level teacher assignment remains deferred from Phase 2E operational implementation.
+
+---
+
+# Phase 2F Master Content and Curriculum Source Relationship Alignment Notes
+
+Phase 2F implementation adds the reusable source and master relationship foundation before operational curriculum publication workflows.
+
+```text
+Curriculum Sources
+
+1
+
+↓
+
+∞
+
+Curriculum Source Contents
+
+Curriculum Sources
+
+1
+
+↓
+
+∞
+
+Curriculum Source Master Content Links
+
+Curriculum Source Master Content Links
+
+∞
+
+→
+
+1
+
+Exactly one target master entity per link row
+```
+
+```text
+Master Curriculum Units
+
+1
+
+↓
+
+∞
+
+Master Topics
+
+Master Topics
+
+∞
+
+↔
+
+∞
+
+Master Concepts / Master Skills / Master Learning Outcomes
+
+Master Topics
+
+∞
+
+↔
+
+∞
+
+Master Activities / Master Projects
+```
+
+```text
+Master Projects
+
+1
+
+↓
+
+∞
+
+Master Project Implementations
+
+Master Activities and Master Projects
+
+∞
+
+↔
+
+∞
+
+Master Resources
+```
+
+Governance and isolation alignment:
+
+- Global reusable records are represented by nullable `school_id`; school-owned records use non-null `school_id`.
+- Source-type checks enforce ownership shape for school-scheme and internal Nobletech source records.
+- Lineage rows enforce single-target integrity per record for auditable provenance.
+- Cross-tenant visibility and authorization remain service-layer and RBAC controls, while referential integrity remains database-enforced.

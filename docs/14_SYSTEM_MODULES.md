@@ -440,6 +440,108 @@ System Logs
 
 ---
 
+# Module 17
+
+Curriculum Lifecycle and Publishing Governance
+
+Purpose
+
+Control curriculum drafting, review, approval, publication, versioning, and archival with complete traceability.
+
+Features
+
+Curriculum Unit hierarchy management
+
+Master-to-school derivation tracking
+
+Generated Draft workflow
+
+Review and revision cycle
+
+Approval workflow
+
+Publication workflow
+
+Version history
+
+Archive and restore controls
+
+Audit trail integration
+
+---
+
+# Module 18
+
+Learner Identity and Access
+
+Purpose
+
+Manage permanent learner identity, tenant-safe username login, administrator-controlled credential recovery, and strict learner data isolation.
+
+Features
+
+Permanent student identity mapping
+
+System-generated learner username policy
+
+Optional learner email model
+
+Administrator password reset for learners
+
+Recovery code and guardian-assisted recovery support
+
+Username change audit tracking
+
+---
+
+# Module 19
+
+External Learning Resource Launch
+
+Purpose
+
+Provide safe and policy-compliant launch of approved third-party learning activities from NEMP.
+
+Features
+
+Resource approval and activation controls
+
+Launch mode control (EMBEDDED, NEW_TAB, SAME_WINDOW, INTERNAL_RESOURCE)
+
+Embedding policy detection and fallback behavior
+
+Assignment-aware and class-aware access validation
+
+External launch logging and monitoring
+
+---
+
+# Module 20
+
+Student Curriculum Dashboard
+
+Purpose
+
+Render learner-facing curriculum navigation with strict publication-state and assignment filtering.
+
+Features
+
+Assigned curriculum view
+
+Current week and lesson context
+
+Topic and concept visibility
+
+Learning objective and teacher instruction display
+
+Assignment, project, and progress status widgets
+
+Assessment and feedback visibility
+
+Approved-and-published content gating
+
+---
+
 # Future Modules
 
 Parent Portal

@@ -84,7 +84,7 @@ Print
 
 User enters
 
-Email
+Username or Login ID
 
 Password
 
@@ -109,6 +109,40 @@ Display error message
 ↓
 
 Allow retry
+
+---
+
+# Learner Account Recovery Workflow
+
+Learner cannot access account
+
+↓
+
+School Administrator Verification
+
+OR
+
+Guardian Verification
+
+OR
+
+Recovery Code Verification
+
+↓
+
+Administrator Resets Password
+
+↓
+
+System Issues Temporary Password
+
+↓
+
+Learner Login
+
+↓
+
+Mandatory Password Change
 
 ---
 
@@ -294,6 +328,44 @@ Print
 
 ---
 
+# One-Page End-of-Term Report Workflow
+
+Approved Report Data
+
+↓
+
+Apply One-Page Template (A4 Portrait Default)
+
+↓
+
+Summarize Long Sections Using Configurable Limits
+
+↓
+
+Preview One-Page Layout
+
+↓
+
+Overflow Risk Check
+
+↓
+
+If Overflow Risk
+
+↓
+
+Warn Administrator and Require Layout Decision
+
+↓
+
+Generate PDF
+
+↓
+
+Archive Immutable Version
+
+---
+
 # Student Search Workflow
 
 Search by
@@ -453,6 +525,146 @@ Highlight Incorrect Field
 ↓
 
 Prevent Submission
+
+---
+
+# Curriculum Authoring Workflow
+
+Select School
+
+↓
+
+Select Session
+
+↓
+
+Select Term
+
+↓
+
+Select Class
+
+↓
+
+Select Programme Component
+
+↓
+
+Load Master Curriculum Units (Optional)
+
+↓
+
+Generate or Create Curriculum
+
+↓
+
+Status: GENERATED_DRAFT
+
+↓
+
+Edit Curriculum Units, Topics, Projects, Learning Outcomes
+
+↓
+
+Convert to DRAFT
+
+↓
+
+Submit for Review
+
+↓
+
+Status: UNDER_REVIEW
+
+↓
+
+Approve OR Request Revision
+
+↓
+
+Status: APPROVED or REVISION_REQUIRED
+
+↓
+
+Publish Approved Version
+
+↓
+
+Status: PUBLISHED
+
+↓
+
+Assign to Classes and Reports
+
+---
+
+# Curriculum Governance Workflow
+
+Generated content cannot be published directly.
+
+Approval and publication are separate workflow actions.
+
+Published curricula are immutable.
+
+Any correction after publication requires creating a new DRAFT version from the published baseline.
+
+Every status transition must write an audit trail entry with actor, timestamp, tenant, and change summary.
+
+---
+
+# External Learning Resource Launch Workflow
+
+Learner opens assigned lesson from dashboard
+
+↓
+
+System validates assignment, class, term, and publication status
+
+↓
+
+System validates resource approval and active status
+
+↓
+
+Determine launch mode
+
+↓
+
+Attempt EMBEDDED where allowed
+
+↓
+
+If embedding blocked by platform policy
+
+↓
+
+Open secure NEW_TAB fallback
+
+↓
+
+Log launch event
+
+---
+
+# Learner Dashboard Content Workflow
+
+Learner Login
+
+↓
+
+Load assigned school, class, session, term, programme context
+
+↓
+
+Filter content by APPROVED and PUBLISHED status
+
+↓
+
+Hide GENERATED_DRAFT, DRAFT, UNDER_REVIEW, REVISION_REQUIRED, and unpublished items
+
+↓
+
+Render learner dashboard curriculum navigation
 
 ---
 

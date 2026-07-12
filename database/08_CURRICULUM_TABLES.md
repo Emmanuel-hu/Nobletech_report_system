@@ -32,7 +32,7 @@ The system supports:
 - Mixing Master and Custom curriculum.
 - Assigning curriculum to schools, sessions, terms, and classes.
 - Enabling or disabling Programme Components per term.
-- Supporting multiple Concepts, Topics, Projects, Resources, and Learning Outcomes.
+- Supporting multiple Curriculum Units, Topics, Projects, Resources, and Learning Outcomes.
 - Controlling curriculum visibility on reports and printed documents.
 - Generating Compact or Detailed Curriculum PDFs.
 - Providing curriculum data for Assessments, CBT, Student Portfolios, Analytics, and Student Reports.
@@ -66,7 +66,7 @@ Curriculum
 
 ↓
 
-Concept
+Curriculum Unit
 
 ↓
 
@@ -111,7 +111,7 @@ The Curriculum Engine consists of the following operational tables:
 
 1. curricula
 2. curriculum_components
-3. curriculum_concepts
+3. curriculum_units
 4. curriculum_topics
 5. curriculum_projects
 6. curriculum_project_implementations
@@ -138,7 +138,7 @@ Examples include:
 - Summer Bootcamp
 - Holiday Coding Camp
 
-Each curriculum serves as the parent record for all Concepts, Topics, Projects, Learning Outcomes, Resources, Assessments, and Curriculum PDFs associated with that academic period.
+Each curriculum serves as the parent record for all Curriculum Units, Topics, Projects, Learning Outcomes, Resources, Assessments, and Curriculum PDFs associated with that academic period.
 
 ---
 
@@ -154,7 +154,7 @@ Each curriculum serves as the parent record for all Concepts, Topics, Projects, 
 | curriculum_name | VARCHAR(200) |
 | description | TEXT |
 | source_type | ENUM (Master, Custom, Mixed) |
-| status | ENUM (Draft, Review, Approved, Published, Archived) |
+| status | ENUM (GENERATED_DRAFT, DRAFT, UNDER_REVIEW, REVISION_REQUIRED, APPROVED, PUBLISHED, ARCHIVED) |
 | version | VARCHAR(20) |
 | created_by | UUID |
 | approved_by | UUID |
@@ -171,7 +171,10 @@ Each curriculum serves as the parent record for all Concepts, Topics, Projects, 
 - One curriculum belongs to one academic term.
 - One curriculum belongs to one class.
 - Curriculum names should be unique within the same school, session, term, and class.
-- Published curricula become read-only and must be versioned before further modifications.
+- Generated curricula must always begin as GENERATED_DRAFT.
+- Generated content must never be automatically approved or published.
+- Approval and publication must remain separate actions.
+- Published curricula become immutable and must be versioned before further modifications.
 - A curriculum may be created from the Master Content Library, entirely from custom content, or as a combination of both.
 
 # Table: curriculum_components
@@ -228,13 +231,13 @@ This allows different schools or classes to offer different combinations of Prog
 
 ---
 
-# Table: curriculum_concepts
+# Table: curriculum_units
 
 ## Purpose
 
-Stores Concepts under each Programme Component.
+Stores Curriculum Units under each Programme Component.
 
-A Concept represents a major learning area that groups together related Topics.
+A Curriculum Unit represents a major learning area that groups together related Topics.
 
 Examples include:
 
@@ -268,10 +271,10 @@ Web Development
 
 | Column | Type |
 |---------|------|
-| curriculum_concept_id | UUID |
+| curriculum_unit_id | UUID |
 | curriculum_component_id | UUID |
-| master_concept_id | UUID NULL |
-| concept_name | VARCHAR(200) |
+| master_curriculum_unit_id | UUID NULL |
+| curriculum_unit_name | VARCHAR(200) |
 | description | TEXT |
 | display_order | INTEGER |
 | created_at | TIMESTAMP |
@@ -281,10 +284,10 @@ Web Development
 
 ## Business Rules
 
-- One Programme Component may contain multiple Concepts.
-- Concepts may originate from the Master Content Library or be created specifically for a school.
+- One Programme Component may contain multiple Curriculum Units.
+- Curriculum Units may originate from the Master Content Library or be created specifically for a school.
 - Display order determines the teaching sequence.
-- Concepts remain editable until the curriculum is published.
+- Curriculum Units remain editable until the curriculum is published.
 
 ---
 
@@ -292,11 +295,11 @@ Web Development
 
 ## Purpose
 
-Stores Topics under each Concept.
+Stores Topics under each Curriculum Unit.
 
 Topics define the specific lessons to be delivered.
 
-A Concept may contain an unlimited number of Topics.
+A Curriculum Unit may contain an unlimited number of Topics.
 
 Examples
 
@@ -361,7 +364,7 @@ Sensors
 | Column | Type |
 |---------|------|
 | curriculum_topic_id | UUID |
-| curriculum_concept_id | UUID |
+| curriculum_unit_id | UUID |
 | master_topic_id | UUID NULL |
 | topic_name | VARCHAR(200) |
 | description | TEXT |
@@ -374,12 +377,38 @@ Sensors
 
 ## Business Rules
 
-- A Concept may contain unlimited Topics.
+- A Curriculum Unit may contain unlimited Topics.
 - Topics may be imported from the Master Content Library.
 - Schools may create additional custom Topics.
 - Multiple Topics may be taught within a single lesson or teaching period.
 - Display order determines the recommended teaching sequence.
 - Topics form the foundation for Projects, Resources, Learning Outcomes, Assessments, Student Reports, and Curriculum PDFs.
+
+---
+
+## Topic and Concept Planning Guidance
+
+Concepts are instructional ideas taught within Topics.
+
+Example:
+
+Topic: Traffic Light System
+
+Concepts:
+
+- Sequence
+- Timing
+- Input and output
+- Electrical circuits
+- Conditional behaviour
+- Road safety
+
+Future modelling recommendation:
+
+- Maintain Topic as the delivery anchor.
+- Represent Concept as a reusable instructional entity linked to one or more Topics.
+- Allow concepts to be referenced in lesson notes, assessments, progress reporting, curriculum filtering, and future AI-assisted generation.
+- Preserve the approved hierarchy without introducing a mandatory extra hierarchy layer in this phase.
 
 ---
 
@@ -625,6 +654,27 @@ Examples
 | curriculum_topic_id | UUID NULL |
 | curriculum_project_id | UUID NULL |
 | master_resource_id | UUID |
+| resource_title | VARCHAR(200) NULL |
+| platform_name | VARCHAR(150) NULL |
+| website_url | TEXT NULL |
+| activity_url | TEXT NULL |
+| resource_type | VARCHAR(100) NULL |
+| launch_mode | ENUM (EMBEDDED, NEW_TAB, SAME_WINDOW, INTERNAL_RESOURCE) NULL |
+| embedded_access_permitted | BOOLEAN NULL |
+| login_required | BOOLEAN NULL |
+| external_class_code | VARCHAR(100) NULL |
+| student_instructions | TEXT NULL |
+| teacher_instructions | TEXT NULL |
+| class_or_grade_restriction | VARCHAR(100) NULL |
+| estimated_duration_minutes | INTEGER NULL |
+| safety_privacy_note | TEXT NULL |
+| active_status | BOOLEAN NULL |
+| verification_status | ENUM (PENDING_REVIEW, VERIFIED, BROKEN, ACCESS_RESTRICTED, EMBED_BLOCKED, DEACTIVATED) NULL |
+| last_verified_at | TIMESTAMP NULL |
+| last_verified_by | UUID NULL |
+| next_review_due_at | TIMESTAMP NULL |
+| approved_by | UUID NULL |
+| reviewed_at | TIMESTAMP NULL |
 | display_order | INTEGER |
 | is_required | BOOLEAN |
 | created_at | TIMESTAMP |
@@ -641,6 +691,16 @@ Examples
 - Resources remain stored even when hidden from reports.
 - Visibility of Resources is controlled by Curriculum Visibility Settings.
 - Resources support curriculum delivery but do not affect assessment scores.
+- Embedded launch must be attempted only where target platforms allow embedded access.
+- NEMP must not bypass third-party platform iframe or security restrictions.
+- When embedding is blocked, launch should fall back to secure NEW_TAB mode.
+- External links should be validated and approved before learner publication.
+- Only approved active resources may be visible on learner dashboards.
+- Broken or outdated links must remain reviewable and deactivatable.
+- Resource links should use HTTPS unless an authorized exception is approved and audited.
+- Third-party credentials or join codes must never be stored in plain text.
+- Approved resources must be reverified at least once per academic term.
+- If embedding fails but the resource is still safe and approved, launch mode may fall back to NEW_TAB.
 
 ---
 
@@ -706,7 +766,7 @@ This allows schools to customize printed output without changing the underlying 
 | visibility_setting_id | UUID |
 | curriculum_id | UUID |
 | show_programme_components | BOOLEAN |
-| show_concepts | BOOLEAN |
+| show_curriculum_units | BOOLEAN |
 | show_topics | BOOLEAN |
 | show_projects | BOOLEAN |
 | show_project_implementations | BOOLEAN |
@@ -826,8 +886,8 @@ Supports multiple printable formats without modifying the curriculum.
 - One curriculum belongs to one academic term.
 - One curriculum belongs to one class.
 - A curriculum may contain multiple Programme Components.
-- A Programme Component may contain multiple Concepts.
-- A Concept may contain multiple Topics.
+- A Programme Component may contain multiple Curriculum Units.
+- A Curriculum Unit may contain multiple Topics.
 - A Topic may contain multiple Projects.
 - A Project may contain multiple Implementations.
 - A Topic or Project may reference multiple Resources.
@@ -849,7 +909,7 @@ Select Programme Components
 
 ↓
 
-Add Concepts
+Add Curriculum Units
 
 ↓
 
@@ -873,7 +933,23 @@ Configure Visibility
 
 ↓
 
-Review
+Save as Generated Draft
+
+↓
+
+Administrative Editing
+
+↓
+
+Convert to Draft
+
+↓
+
+Submit for Review
+
+↓
+
+Revision or Approval
 
 ↓
 
@@ -910,11 +986,99 @@ Generate Student Reports
 
 ---
 
+# Curriculum Lifecycle Transition Table
+
+| Current Status | Permitted Action | Required Permission | Resulting Status | Audit Requirement |
+|----------------|------------------|---------------------|------------------|-------------------|
+| GENERATED_DRAFT | Edit generated content | curriculum.edit | GENERATED_DRAFT | Log field-level changes |
+| GENERATED_DRAFT | Convert to draft | curriculum.edit | DRAFT | Log conversion event |
+| DRAFT | Edit structure/content | curriculum.edit | DRAFT | Log field-level changes |
+| DRAFT | Reorder units/topics/projects | curriculum.reorder | DRAFT | Log ordering changes |
+| DRAFT | Regenerate selected section | curriculum.regenerate_section | DRAFT | Log regeneration scope and source |
+| DRAFT | Submit for review | curriculum.submit_review | UNDER_REVIEW | Log submit action |
+| UNDER_REVIEW | Request revision | curriculum.request_revision | REVISION_REQUIRED | Log reason for revision |
+| UNDER_REVIEW | Approve | curriculum.approve | APPROVED | Log approver and timestamp |
+| REVISION_REQUIRED | Edit and resubmit | curriculum.edit + curriculum.submit_review | UNDER_REVIEW | Log corrective edits and resubmission |
+| APPROVED | Publish | curriculum.publish | PUBLISHED | Log publication actor and timestamp |
+| PUBLISHED | Archive | curriculum.archive | ARCHIVED | Log archival reason |
+| PUBLISHED | Create correction draft version | curriculum.restore_version | DRAFT (new version) | Log source version and change summary |
+| ARCHIVED | Restore authorized version | curriculum.restore_version | DRAFT or APPROVED (policy-based) | Log restore decision and actor |
+
+---
+
+# Curriculum Versioning Rules
+
+The curriculum_versions table is the authoritative version history for each curriculum.
+
+Each version record should retain:
+
+- curriculum identifier
+- version number
+- source version
+- creation method
+- generation source
+- created by
+- edited by
+- review status
+- approved by and date
+- published by and date
+- change summary
+- snapshot or version data
+- current-version indicator
+- publication state
+
+Semantic versioning should be used where practical:
+
+- 1.0 for the first approved release
+- 1.1 for minor approved revisions
+- 2.0 for major curriculum restructuring
+
+Published versions must never be overwritten.
+
+---
+
+# Phase 2E Dependency Note
+
+Phase 2E foundation implementation is now complete for subject, integration-domain, and programme-component enablement schema.
+
+Delivered prerequisite tables include:
+
+- `subjects`, `school_subjects`, `integration_domains`, `subject_integration_domains`
+- `programme_components`, `programme_component_subjects`, `programme_component_integration_domains`
+- `school_programme_components`, `term_programme_components`, `class_programme_components`
+- `programme_component_settings`, `programme_component_status_history`
+
+Scope boundary reminder:
+
+- The curriculum operational tables defined in this document remain the authoritative later-phase implementation target.
+- Phase 2E did not introduce or publish operational curriculum content records.
+
+---
+
+# Phase 2F Boundary Note
+
+Phase 2F implemented only the reusable master-content and curriculum-source foundation needed before operational curriculum authoring.
+
+Implemented in Phase 2F:
+
+- Raw curriculum source registry and structured source-content extraction storage.
+- Master content hierarchy tables for units, topics, concepts, skills, learning outcomes, activities, projects, project implementations, resources, assessment templates, and rubrics.
+- Source-lineage links from curriculum sources to master content items.
+
+Not implemented in Phase 2F:
+
+- Operational school curriculum records in `curricula`, `curriculum_components`, `curriculum_units`, `curriculum_topics`, `curriculum_projects`, `curriculum_project_implementations`, `curriculum_resources`, and `curriculum_learning_outcomes`.
+- Curriculum publication, assignment, learner delivery, and generated curriculum workflows.
+
+Operational curriculum implementation remains deferred to Phase 2G.
+
+---
+
 # Summary
 
 The Curriculum Tables form the operational layer of the NEMP Curriculum Engine.
 
-They enable schools to build flexible, configurable curricula while leveraging the Master Content Library, supporting multiple Programme Components, Concepts, Topics, Projects, Resources, Learning Outcomes, and curriculum versions.
+They enable schools to build flexible, configurable curricula while leveraging the Master Content Library, supporting multiple Programme Components, Curriculum Units, Topics, Projects, Resources, Learning Outcomes, and curriculum versions.
 
 The design allows curriculum information to be presented as either Compact or Detailed PDF documents, supports optional disclosure of instructional tools and resources, and provides the foundation for assessment, CBT, student portfolios, analytics, and report generation without requiring structural database changes.
 

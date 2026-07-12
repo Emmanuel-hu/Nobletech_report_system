@@ -1,0 +1,14 @@
+- Preserve existing documentation and architecture.
+- Do not create duplicate modules, tables, documents, or schemas.
+- Read the relevant requirements and approved docs before making changes.
+- Follow approved naming conventions and canonical terminology.
+- Maintain multi-tenant isolation in all designs and changes.
+- Apply RBAC to all protected actions.
+- Audit privileged and state-changing operations.
+- Do not automatically publish generated content.
+- Separate draft, review, approval, and publication states.
+- Keep published curriculum and reports immutable.
+- Do not expose secrets, passwords, tokens, or credentials.
+- Stay within the active milestone scope.
+- Run the required validation commands before reporting completion.
+- Report all files changed and any unresolved issues.

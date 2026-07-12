@@ -18,64 +18,25 @@
 
 ---
 
-# Purpose
-
 This document defines how the approved NEMP database architecture will be converted into a real PostgreSQL physical database schema.
 
-It provides the implementation standard for:
-
-- Tables
-- Columns
-- Data types
-- Primary keys
-- Foreign keys
-- Indexes
-- Constraints
-- ENUM types
-- Default values
-- Seed data
 - Migration order
 
 This document serves as the bridge between the database design documents and actual PostgreSQL implementation.
-
----
-
 # Objectives
 
 The PostgreSQL Physical Schema aims to:
-
-- Convert logical database design into executable PostgreSQL structures.
-- Maintain consistency across all tables.
-- Enforce referential integrity.
 - Support multi-tenant isolation.
 - Improve query performance.
 - Support safe migrations.
-- Prepare the database for backend development.
 - Reduce implementation errors.
 - Provide a stable foundation for Prisma or any approved ORM.
 
----
-
-# Physical Schema Strategy
-
-NEMP will use a migration-based database implementation strategy.
-
-```text
-Approved Database Documentation
 
 ↓
 
-Physical Schema Design
-
-↓
-
-PostgreSQL DDL Scripts
-
-↓
 
 Migration Files
-
-↓
 
 Seed Data
 
@@ -89,6 +50,149 @@ Production Database
 ```
 
 All physical database changes must be implemented through version-controlled migration files.
+
+## Phase 2B Foundation Scope
+
+The first Prisma implementation slice currently covers:
+
+- schools
+- users
+- roles
+- permissions
+- role_permissions
+- user_roles
+- students
+- guardians
+- student_guardians
+- audit_logs
+
+The foundation slice requires PostgreSQL `citext` support for case-insensitive username and email handling where enforced by the approved design.
+
+Curriculum, academic, report, external-resource, assessment, CBT, and file-storage tables remain deferred to later milestones.
+
+## Phase 2C Migration Status
+
+The first controlled migration has now been created and applied in local development:
+
+- Migration: `20260712181640_foundation_identity_rbac`.
+- Scope: Foundation identity, RBAC, learner, guardian, and audit tables only.
+- Extension enabled: `citext`.
+
+Custom SQL indexes applied:
+
+- `roles_global_role_code_active_key`
+- `user_roles_active_scoped_unique_idx`
+- `user_roles_active_global_unique_idx`
+
+Verification status:
+
+- Migration status: clean.
+- Prisma validation: passed.
+- Prisma client generation: passed.
+- Database health check: passed.
+- Foundation constraint checks: passed.
+
+Deferred constraints:
+
+- One-primary-guardian-per-student partial uniqueness remains deferred pending explicit policy approval.
+
+## Phase 2D Migration Status
+
+The academic foundation migration has now been implemented and applied in local development:
+
+- Migration: `20260712221000_academic_structure_foundation`.
+- Scope: Academic session, term, academic class, student enrolment, class-level teacher assignment, and required supporting constraints only.
+
+Tables added:
+
+- `academic_sessions`
+- `terms`
+- `academic_classes`
+- `student_enrolments`
+- `academic_class_teacher_assignments`
+
+Enums added:
+
+- `AcademicSessionStatus`
+- `TermStatus`
+- `AcademicClassStatus`
+- `EnrolmentStatus`
+- `AcademicClassTeacherAssignmentType`
+
+Key constraint additions:
+
+- School-scoped unique academic session code and name.
+- School-scoped unique class code and name.
+- Session-scoped unique term code, name, and sequence.
+- School-scoped student number uniqueness.
+- Partial uniqueness for one current active session per school.
+- Partial uniqueness for one current active term per school.
+- Partial uniqueness for active or pending enrolment per student and session.
+- Partial uniqueness for active class teacher assignments by scope.
+- Date-range check constraints for sessions, terms, enrolments, and assignments.
+
+Tenant integrity hardening:
+
+- Composite foreign keys `(entity_id, school_id)` enforce school-bound academic joins for sessions, terms, classes, enrolments, and teacher class assignments.
+
+Verification status:
+
+- Prisma schema validation passed.
+- Prisma client generation passed.
+- Migration status is clean and up to date.
+- Database health check passed.
+- Academic structure constraint checks passed.
+- Phase 2C foundation constraint checks re-passed.
+
+## Phase 2E Migration Status
+
+The programme component and subject/integration-domain foundation migration has now been implemented and applied in local development:
+
+- Migration: `20260712233500_programme_component_subject_foundation`.
+- Scope: subject and integration-domain foundation, programme-component foundation, school-term-class enablement, component settings, and status history.
+
+Tables added:
+
+- `subjects`
+- `school_subjects`
+- `integration_domains`
+- `subject_integration_domains`
+- `programme_components`
+- `programme_component_subjects`
+- `programme_component_integration_domains`
+- `school_programme_components`
+- `term_programme_components`
+- `class_programme_components`
+- `programme_component_settings`
+- `programme_component_status_history`
+
+Enums added:
+
+- `SubjectStatus`
+- `IntegrationDomainStatus`
+- `ProgrammeComponentStatus`
+
+Key constraint additions:
+
+- Date-range checks for school and term scoped subject/component activation windows.
+- Positive-value checks for weekly frequency and lesson duration fields.
+- Partial unique indexes for one active school subject or component link while preserving archival history.
+- Partial unique indexes for one active term/class configuration per scoped component.
+
+Tenant integrity hardening:
+
+- Composite foreign keys `(entity_id, school_id)` enforce school-bound joins on term and class programme-component tables.
+
+Verification status:
+
+- Prisma schema validation passed.
+- Prisma client generation passed.
+- Migration deploy succeeded and migration status is clean and up to date.
+- Database health check passed.
+- Phase 2E table or index or constraint verification passed.
+- Phase 2E constraint behavior suite passed (12 of 12).
+- Phase 2D academic structure constraint checks re-passed.
+- Phase 2C foundation constraint checks re-passed.
 
 ---
 
@@ -1258,10 +1362,41 @@ Users
 
 ↓
 
+∞
+
+Learner Identities (Planned)
+
+```
+
+```text
+Users
+
+1
+
+↓
+
 1
 
 Authentication Account
 ```
+
+---
+
+### Phase 1.1 Planned Extension Notes
+
+For learner-supporting accounts, planned identity guidance is:
+
+- `email` should be nullable for pupil and student account profiles.
+- `username` remains the primary login identifier for learner accounts.
+- uniqueness strategy should be globally unique or tenant-safe according to final implementation policy.
+- username changes require restricted permission and full audit logging.
+
+Identity distinction to preserve during schema mapping:
+
+- student_id = immutable internal identity
+- student_number or admission_number = academic reference
+- username = login identifier
+- email = optional contact or optional login attribute
 
 ---
 
@@ -2062,6 +2197,22 @@ Students
 
 Student Enrolments
 ```
+
+---
+
+### Phase 1.1 Planned Extension Notes
+
+Future schema mapping should include explicit identity distinctions:
+
+- immutable `student_id`
+- school-facing `student_number` (or equivalent)
+- login linkage to learner `username`
+
+Student identity persistence rule:
+
+- `student_id` must not change because of class, term, session, branch, or programme movement.
+
+Guardian contact linkage should remain separate from learner authentication credentials.
 
 ```text
 Students
@@ -2888,16 +3039,24 @@ Reports
 
 ## Purpose
 
-Stores curriculum records for each school, subject, programme component, class, session, and term.
+Stores curriculum root records for each school, session, term, and class.
 
-The curriculum defines what should be taught and assessed.
+This module is the lifecycle and versioning root for operational curriculum delivery.
+
+This module must be used together with child hierarchy tables for:
+
+- curriculum_components
+- curriculum_units
+- curriculum_topics
+- curriculum_projects
+- curriculum_learning_outcomes
 
 ---
 
 ### Primary Table
 
 ```text
-curriculum
+curricula
 ```
 
 ---
@@ -2920,13 +3079,17 @@ curriculum_id UUID
 | term_id | UUID |
 | class_id | UUID |
 | subject_id | UUID NULL |
-| programme_component_id | UUID NULL |
 | curriculum_title | VARCHAR(255) |
 | description | TEXT |
-| curriculum_status | VARCHAR(50) |
+| status | ENUM (GENERATED_DRAFT, DRAFT, UNDER_REVIEW, REVISION_REQUIRED, APPROVED, PUBLISHED, ARCHIVED) |
+| current_version_number | VARCHAR(20) NULL |
+| derived_from_master | BOOLEAN |
+| master_derivation_metadata | JSONB NULL |
 | created_by | UUID |
 | approved_by | UUID NULL |
 | approved_at | TIMESTAMPTZ NULL |
+| published_by | UUID NULL |
+| published_at | TIMESTAMPTZ NULL |
 | active | BOOLEAN |
 | created_at | TIMESTAMPTZ |
 | updated_at | TIMESTAMPTZ |
@@ -2948,11 +3111,11 @@ fk_curriculum_class
 
 fk_curriculum_subject
 
-fk_curriculum_programme_component
-
 fk_curriculum_created_by
 
 fk_curriculum_approved_by
+
+fk_curriculum_published_by
 ```
 
 ---
@@ -2968,9 +3131,11 @@ idx_curriculum_class
 
 idx_curriculum_subject
 
-idx_curriculum_programme_component
-
 idx_curriculum_status
+
+idx_curriculum_version
+
+idx_curriculum_derivation
 ```
 
 ---
@@ -2998,11 +3163,35 @@ Curriculum
 
 ∞
 
+Curriculum Components
+```
+
+```text
+Curriculum Components
+
+1
+
+↓
+
+∞
+
+Curriculum Units
+```
+
+```text
+Curriculum Units
+
+1
+
+↓
+
+∞
+
 Curriculum Topics
 ```
 
 ```text
-Curriculum
+Curriculum Topics
 
 1
 
@@ -3014,7 +3203,7 @@ Curriculum Projects
 ```
 
 ```text
-Curriculum
+Curriculum Topics
 
 1
 
@@ -3027,7 +3216,30 @@ Learning Outcomes
 
 ---
 
-# Module 21 — Curriculum Topics
+### Governance Rules
+
+- GENERATED_DRAFT is required for generated curriculum content.
+- APPROVED and PUBLISHED are separate states controlled by separate permissions.
+- PUBLISHED curricula are immutable.
+- Post-publication edits require a new DRAFT version.
+- Master Library records cannot be published directly; only derived operational curricula can be published.
+
+Phase 1.1 concept planning notes:
+
+- Topics may teach multiple Concepts.
+- Concepts are planned as reusable instructional entities linked to topics.
+- Concept structures should remain compatible with skills and learning outcomes.
+
+Phase 1.1 external resource planning notes:
+
+- curriculum resources should support launch mode metadata: EMBEDDED, NEW_TAB, SAME_WINDOW, INTERNAL_RESOURCE.
+- embedding should be attempted only where target platform policy permits it.
+- blocked embedding must fall back to secure NEW_TAB launch.
+- only approved active resources should be learner-visible.
+
+---
+
+# Module 21 — Curriculum Topics (Legacy Numbering)
 
 ## Purpose
 
@@ -3112,7 +3324,7 @@ idx_curriculum_topics_order
 
 ---
 
-# Module 22 — Curriculum Projects
+# Module 22 — Curriculum Projects (Legacy Numbering)
 
 ## Purpose
 
@@ -4207,6 +4419,23 @@ Reports
 1
 
 ↓
+
+∞
+
+Report Versions
+
+```
+
+---
+
+### Phase 1.1 Planned Extension Notes
+
+One-page end-of-term report planning rules:
+
+- A4 Portrait is default.
+- A4 Landscape is an approved template exception only.
+- one-page mode should include preview and overflow warning prior to publication.
+- published outputs are immutable and corrections generate revised versions and snapshots.
 
 1
 

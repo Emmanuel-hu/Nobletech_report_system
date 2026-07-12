@@ -207,7 +207,7 @@ The Users table serves as the primary identity repository for all authenticated 
 | username | VARCHAR(100) |
 | first_name | VARCHAR(100) |
 | last_name | VARCHAR(100) |
-| email | VARCHAR(255) |
+| email | VARCHAR(255) NULL |
 | phone_number | VARCHAR(30) |
 | profile_photo | TEXT NULL |
 | preferred_language | VARCHAR(20) |
@@ -280,7 +280,8 @@ Access Granted Based on Assigned Roles & Permissions
 ## Business Rules
 
 - Every User has a globally unique identity.
-- Email addresses must be unique across the platform.
+- Email addresses should be unique where provided.
+- Email is optional for pupil and student accounts.
 - Passwords are stored using secure hashing algorithms.
 - Account Status determines login eligibility.
 - Failed Login Count contributes to automatic account lockout.
@@ -293,6 +294,8 @@ Access Granted Based on Assigned Roles & Permissions
 - The system assigns a temporary password during account creation.
 - Users must change their temporary password upon first login.
 - Access permissions are granted based on assigned Roles and Permissions.
+- Username changes must be restricted, explicitly approved, and fully auditable.
+- Usernames must not be silently reassigned to different learners.
 
 ---
 
@@ -886,7 +889,7 @@ Failed Login Attempts are used to detect brute-force attacks, credential stuffin
 | Column | Type |
 |---------|------|
 | failed_login_attempt_id | UUID |
-| email | VARCHAR(255) |
+| login_identifier | VARCHAR(255) |
 | ip_address | VARCHAR(100) |
 | browser | VARCHAR(150) |
 | operating_system | VARCHAR(150) |
@@ -1009,6 +1012,7 @@ Password Reset Requests provide a secure recovery process while preventing token
 | password_reset_request_id | UUID |
 | user_id | UUID |
 | reset_token | TEXT |
+| recovery_method | ENUM (Admin Verification, Guardian Verification, Recovery Code, Email, Other) |
 | requested_ip | VARCHAR(100) |
 | requested_by | UUID NULL |
 | expires_at | TIMESTAMP |
@@ -1024,6 +1028,7 @@ Password Reset Requests provide a secure recovery process while preventing token
 - Tokens expire automatically.
 - Used Tokens cannot be reused.
 - Every Password Reset Request is audited.
+- Recovery and reset must not depend only on learner email availability.
 
 ---
 
@@ -1303,6 +1308,14 @@ Permission Groups simplify role management by allowing administrators to assign 
 - Security Policies are configurable without code changes.
 - Compliance records are retained according to regulatory requirements.
 - All security-related tables support enterprise monitoring, auditing, and analytics.
+
+Curriculum governance audit requirements:
+
+- Every curriculum lifecycle transition must be logged with previous_status, new_status, actor, timestamp, tenant, and reason.
+- Approval and publication events must be captured as separate audit events.
+- Generated curriculum actions (generate, regenerate section, convert to draft) must be explicitly tagged in audit metadata.
+- Master-to-operational derivation actions must preserve source lineage identifiers in audit payloads.
+- Publish, archive, and restore version actions must include immutable version references.
 
 ---
 

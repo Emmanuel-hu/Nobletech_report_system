@@ -2,7 +2,6 @@
 
 # 37_DATABASE_IMPLEMENTATION_ROADMAP
 
----
 
 # Document Information
 
@@ -17,7 +16,6 @@
 | ORM Recommendation | Prisma |
 | Purpose | Transition from Database Documentation to Implementation |
 
----
 
 # Purpose
 
@@ -29,7 +27,6 @@ This document does not introduce new database requirements.
 
 Its purpose is to guide implementation.
 
----
 
 # Implementation Principle
 
@@ -39,7 +36,6 @@ NEMP will now follow this principle:
 
 After this document, no new database architecture documents should be created unless a critical implementation gap is discovered during technical review.
 
----
 
 # Implementation Roadmap Overview
 
@@ -83,7 +79,6 @@ Testing
 Deployment
 ```
 
----
 
 # Phase 1 — Freeze Database Documentation
 
@@ -91,7 +86,6 @@ Deployment
 
 Lock the completed database documentation as Version 1.0.
 
----
 
 ## Activities
 
@@ -100,11 +94,12 @@ Lock the completed database documentation as Version 1.0.
 - Confirm table numbering.
 - Confirm module boundaries.
 - Confirm relationship rules.
+- Confirm curriculum terminology standardization to Curriculum Units.
+- Confirm curriculum lifecycle statuses and transition policy.
 - Confirm migration order.
 - Mark documents as approved.
 - Prevent uncontrolled additions.
 
----
 
 ## Deliverable
 
@@ -112,7 +107,184 @@ Lock the completed database documentation as Version 1.0.
 Database Documentation v1.0 Approved
 ```
 
----
+
+# Phase 2A — Documentation-to-Prisma Schema Mapping
+
+## Objective
+
+Translate the approved documentation into a Prisma-first schema design without creating migrations, modifying the database, generating Prisma Client, or implementing application code.
+
+## Activities
+
+- Review approved documentation from Phases 1, 1.1, and 1.2.
+- Confirm Prisma baseline and naming conventions.
+- Map entities, enums, relations, constraints, indexes, and deletion rules.
+- Identify custom PostgreSQL requirements such as case-insensitive username enforcement.
+- Document deferred entities and open questions for implementation planning.
+
+## Deliverable
+
+```text
+Phase 2A Prisma Mapping Draft Approved
+```
+
+## Exit Criteria
+
+- No schema.prisma edits are required for approval of the mapping draft.
+- No migration files are created.
+- No database commands are run.
+- No backend or frontend implementation is started.
+
+## Next Milestone
+
+Phase 2B: Prisma Schema Foundation Implementation, limited to the approved first model group.
+
+
+# Phase 2B — Prisma Schema Foundation Implementation
+
+## Objective
+
+Implement the first Prisma slice for school, user identity, RBAC, learner identity, guardian relationships, and immutable audit logging.
+
+## Completed Scope
+
+- School tenant foundation.
+- Shared user identity foundation.
+- Roles, permissions, role-permission joins, and user-role joins.
+- Learner identity separated from login identity.
+- Guardian profiles and learner-guardian joins.
+- Minimum audit-log foundation.
+
+## Validation Status
+
+- Prisma schema validation passed.
+- Prisma Client generation passed.
+- No migrations were run.
+- No database commands were executed.
+
+## Remaining Implementation Work
+
+- Review and migrate the foundation schema.
+- Add PostgreSQL `citext` extension support in the first migration.
+- Add custom SQL for any partial uniqueness rule required by active scoped user-role assignments.
+
+## Next Milestone
+
+Phase 2C: Review and migrate the foundation schema.
+
+
+# Phase 2C — Foundation Schema Review and First Migration
+
+## Objective
+
+Review the Phase 2B schema, correct foundation-level defects, create and apply the first controlled development migration, and verify core constraints.
+
+## Completed Outcomes
+
+- Foundation schema reviewed and corrected.
+- First migration created and applied: `20260712181640_foundation_identity_rbac`.
+- PostgreSQL `citext` extension enabled in migration SQL.
+- Custom partial unique indexes added for global role-code and active user-role scope rules.
+- Migration status confirmed clean.
+- Prisma validation, Prisma client generation, and DB health checks passed.
+- Constraint verification suite passed for foundation identity and RBAC rules.
+
+## Deferred Items
+
+- One-primary-guardian-per-student uniqueness remains deferred pending explicit policy approval.
+- Academic structure, curriculum, reports, assessments, CBT, external resources, and file storage remain out of scope.
+
+## Next Milestone
+
+Phase 2D: Academic Structure Schema Mapping and Implementation.
+
+
+# Phase 2D — Academic Structure Schema Mapping and Implementation
+
+## Objective
+
+Implement academic structure foundation models and constraints required before programme component and subject-domain expansion.
+
+## Completed Outcomes
+
+- Added academic foundation models: AcademicSession, Term, AcademicClass, StudentEnrolment, AcademicClassTeacherAssignment.
+- Added approved academic enums for session, term, class, and enrolment status.
+- Added school-scoped composite foreign keys for tenant-safe academic references.
+- Added partial unique constraints for one current active session and one current active term per school.
+- Added partial unique constraints for active learner enrolment and class-level teacher assignment deduplication.
+- Added date-range check constraints for session, term, enrolment, assignment, and class-age range consistency.
+- Corrected student number policy from global uniqueness to school-scoped uniqueness.
+- Clarified student email as optional profile contact, with user email remaining account-auth authority where email login is used.
+- Re-ran Phase 2C foundation constraints successfully after Phase 2D migration.
+
+## Deferred Items
+
+- Class arms remain deferred from this phase.
+- Subject or integration-domain models remain deferred to next milestone.
+- Programme-component-linked assignment remains deferred.
+- Cross-table term-within-session date containment remains service validation or trigger-level follow-up.
+
+## Next Milestone
+
+Phase 2E: Programme Component and Subject or Integration-Domain Foundation.
+
+
+# Phase 2E - Programme Component and Subject or Integration-Domain Foundation
+
+## Objective
+
+Implement subject, integration-domain, and programme-component foundation models and constraints required before master content library and curriculum source implementation.
+
+## Completed Outcomes
+
+- Added foundation models: Subject, SchoolSubject, IntegrationDomain, SubjectIntegrationDomain.
+- Added programme-component foundation models: ProgrammeComponent, ProgrammeComponentSubject, ProgrammeComponentIntegrationDomain.
+- Added school-term-class enablement models: SchoolProgrammeComponent, TermProgrammeComponent, ClassProgrammeComponent.
+- Added supporting models: ProgrammeComponentSetting and ProgrammeComponentStatusHistory.
+- Added approved enums for subject, integration-domain, and programme-component lifecycle statuses.
+- Added school-scoped composite foreign keys for tenant-safe term and class component joins.
+- Added partial unique constraints for active school, term, and class component or subject deduplication.
+- Added date-range and positive-value check constraints for activation windows and frequency or duration fields.
+- Re-ran Phase 2D academic constraints successfully after Phase 2E migration.
+- Re-ran Phase 2C foundation constraints successfully after Phase 2E migration.
+
+## Deferred Items
+
+- Master content library operational tables remain deferred to next milestone.
+- Curriculum source ingestion, extraction, and publication workflows remain deferred.
+- Subject-level or programme-component-level instructor assignment beyond class-level foundation remains deferred unless explicitly approved later.
+
+## Next Milestone
+
+Phase 2F: Master Content Library and Curriculum Source Foundation.
+
+
+# Phase 2F - Master Content Library and Curriculum Source Foundation
+
+## Objective
+
+Implement the approved schema foundation for curriculum source ingestion and reusable master content before operational curriculum workflows.
+
+## Completed Outcomes
+
+- Added curriculum source foundation models: CurriculumSource and CurriculumSourceContent.
+- Added master library foundation models: MasterCurriculumUnit, MasterTopic, MasterConcept, MasterSkill, MasterLearningOutcome, MasterActivity, MasterProject, MasterProjectImplementation, MasterResource, MasterAssessmentTemplate, MasterRubric, MasterRubricCriterion, MasterRubricLevel.
+- Added lineage and mapping models: CurriculumSourceMasterContentLink and all approved master join tables for subjects, integration domains, programme components, concepts, skills, outcomes, activities, projects, and resources.
+- Added approved enums for source type and format, review and publication states, and activity, implementation, resource, and assessment classifications.
+- Added custom SQL checks for source ownership scope, lifecycle consistency, positive sequencing or duration rules, assessment and rubric score consistency, and single-target lineage enforcement.
+- Added partial unique indexes for case-insensitive active source and master code uniqueness and typed lineage deduplication.
+- Applied migration `20260713001000_master_content_source_foundation` and verified clean migration status.
+- Re-ran validation suites and confirmed Phase 2F checks passed together with Phase 2C, 2D, and 2E regression checks.
+
+## Deferred Items
+
+- Operational curriculum drafting, review, approval, versioning, and publication workflows remain deferred.
+- Backend services, API endpoints, frontend integration, and AI generation remain out of scope for this milestone.
+
+## Next Milestone
+
+Phase 2G: Operational Curriculum Draft, Review, Approval, Versioning and Publication Foundation.
+
 
 # Phase 2 — Create Migration Folder Structure
 
@@ -140,7 +312,6 @@ database/
 └── README.md
 ```
 
----
 
 # Phase 3 — Create PostgreSQL Migration Files
 
@@ -182,7 +353,6 @@ database/
 
 This order prevents foreign key dependency issues.
 
----
 
 # Phase 4 — Core Implementation Order
 
@@ -196,7 +366,6 @@ pgcrypto
 citext
 ```
 
----
 
 ## Step 2
 
@@ -218,7 +387,6 @@ upload_status
 notification_status
 ```
 
----
 
 ## Step 3
 
@@ -240,7 +408,6 @@ user_roles
 audit_logs
 ```
 
----
 
 ## Step 4
 
@@ -272,23 +439,49 @@ student_enrolments
 teacher_assignments
 ```
 
----
 
 ## Step 5
 
 Create curriculum tables.
 
 ```text
-curriculum
+curricula
+
+curriculum_components
+
+curriculum_units
 
 curriculum_topics
 
 curriculum_projects
 
+curriculum_project_implementations
+
 learning_outcomes
+
+curriculum_versions
 ```
 
----
+Curriculum lifecycle states must be implemented as:
+
+```text
+GENERATED_DRAFT
+
+DRAFT
+
+UNDER_REVIEW
+
+REVISION_REQUIRED
+
+APPROVED
+
+PUBLISHED
+
+ARCHIVED
+```
+
+Approval and publication must be implemented as separate permissions and workflow transitions.
+
 
 ## Step 6
 
@@ -312,7 +505,6 @@ settings
 analytics
 ```
 
----
 
 # Phase 5 — Seed Default Data
 
@@ -344,7 +536,6 @@ Default Report Settings
 
 Seed scripts must be repeatable and must not create duplicates.
 
----
 
 # Phase 6 — Prisma Setup
 
@@ -372,7 +563,6 @@ Run migrations
 Test database connection
 ```
 
----
 
 # Phase 7 — Backend Database Foundation
 
@@ -396,7 +586,6 @@ Logging
 Validation
 ```
 
----
 
 ## Required Backend Folders
 
@@ -426,7 +615,6 @@ backend/
 │   └── app.ts
 ```
 
----
 
 # Phase 8 — First Backend Modules to Build
 
@@ -456,7 +644,6 @@ Build the backend in this order:
 
 These modules are required before Assessment, CBT, Reports, Portfolio, and Analytics.
 
----
 
 # Phase 9 — API Implementation Order
 
@@ -488,7 +675,6 @@ These modules are required before Assessment, CBT, Reports, Portfolio, and Analy
 /curriculum
 ```
 
----
 
 ## Next APIs
 
@@ -512,7 +698,6 @@ These modules are required before Assessment, CBT, Reports, Portfolio, and Analy
 /analytics
 ```
 
----
 
 # Phase 10 — Testing Order
 
@@ -527,7 +712,6 @@ Verify:
 - Seed data loads.
 - Rollback works.
 
----
 
 ## Backend Testing
 
@@ -541,7 +725,6 @@ Verify:
 - Error handling.
 - Tenant isolation.
 
----
 
 ## API Testing
 
@@ -555,7 +738,6 @@ Verify:
 - Sorting.
 - Error responses.
 
----
 
 # Phase 11 — Frontend Integration
 
@@ -581,7 +763,6 @@ Students
 Teachers
 ```
 
----
 
 # Phase 12 — Implementation Control Rule
 
@@ -613,7 +794,6 @@ Documentation Update
 Implementation
 ```
 
----
 
 # Final Database Implementation Checklist
 
@@ -629,7 +809,18 @@ Before coding starts, confirm:
 - First implementation modules are confirmed.
 - Database architecture is frozen.
 
----
+Phase 1.2 alignment gate before Prisma mapping:
+
+- Pupil and student email optionality is documented.
+- Permanent learner identity separation (student_id vs student_number vs username vs email) is documented.
+- Username uniqueness, change control, and recovery policy is documented.
+- Concept modelling recommendation is documented without breaking approved hierarchy.
+- External learning resource launch modes and embedding fallback policy are documented.
+- External learning resource termly review policy is documented.
+- One-page end-of-term report constraints and overflow handling are documented.
+- Rendered-height measurement is documented as the final overflow authority.
+- Learner dashboard visibility gates for approved and published content are documented.
+
 
 # Final Recommendation
 
@@ -653,20 +844,6 @@ The audit should check:
 
 After the audit is complete, the project should move into coding.
 
----
-
-# Summary
-
-The Database Implementation Roadmap marks the end of the database documentation phase and the beginning of the implementation phase.
-
-It provides the practical sequence for converting the approved NEMP database architecture into PostgreSQL migration files, Prisma models, backend services, APIs, tests, and frontend integration.
-
-This document should be treated as the final database transition document.
-
-Future database changes should be controlled through formal change requests rather than additional architecture documents.
-
----
-
 # AI-Assisted Implementation Workflow
 
 The NEMP implementation process will follow the workflow below:
@@ -685,4 +862,19 @@ Use GitHub Copilot with Saved Project Prompts
 Copilot Generates the Code
         ↓
 Review, Test, Correct, and Commit Each Module
+```
+
+This workflow establishes GitHub Copilot as the primary code-generation assistant while ensuring that every generated module remains subject to human review, testing, correction, documentation, and version control.
+
+# Summary
+
+The Database Implementation Roadmap marks the end of the database documentation phase and the beginning of the implementation phase.
+
+It provides the practical sequence for converting the approved NEMP database architecture into PostgreSQL migration files, Prisma models, backend services, APIs, tests, and frontend integration.
+
+This document should be treated as the final database transition document.
+
+Future database changes should be controlled through formal change requests rather than additional architecture documents.
+
+
 # End of Document
