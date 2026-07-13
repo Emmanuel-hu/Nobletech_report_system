@@ -1,3 +1,12 @@
+## Phase 2J UI/UX Hardening Update
+
+- Assignment forms now use API-provided lookup selections for sessions, terms, classes, programme components, and teachers.
+- Term options are context-filtered by selected academic session to reduce scope mismatch errors.
+- Assignment creation is explicitly gated to published curriculum versions, with empty-state guidance when none exist.
+- Effective date-range controls enforce `effectiveTo >= effectiveFrom` in the UX layer before submission.
+- Version comparison surfaces structured, sectioned differences (metadata, units, topics, concepts, projects, implementations, outcomes, resources, visibility).
+- Version history includes snapshot-preview interaction and draft-version creation controls aligned to lifecycle constraints.
+
 ## Phase 2I UI Foundation Update
 
 - Added administrative curriculum portal layout with responsive sidebar navigation and content workspace.

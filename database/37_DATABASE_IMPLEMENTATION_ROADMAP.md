@@ -1,3 +1,13 @@
+## Phase 2J Status Update
+
+- Completed: Curriculum Portal UX hardening and backend data integration completion for assignment and version-management pathways.
+- Completed backend endpoint additions for curriculum editor lookups, mapping maintenance, and project implementation maintenance.
+- Completed frontend integration for published-version-gated assignments, dependent session-term lookups, and structured version comparison rendering.
+- Added regression tests for new validator contracts and frontend structured diff utility behavior.
+- Validation evidence: backend test suite passed with Phase 2J test additions; frontend regression tests passed in stable runs, while command-shell variability remains an execution environment risk.
+- Next milestone recommendation: extend full curriculum structure editor surface and integration tests across all edit paths with consistent terminal profile controls.
+- Deferred boundary retained: AI-assisted curriculum generation remains out of scope.
+
 ## Phase 2G Status Update
 
 - Completed: operational curriculum draft, review, approval, versioning, publication, and assignment persistence foundation.

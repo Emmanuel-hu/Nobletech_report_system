@@ -1,3 +1,12 @@
+## Phase 2J Delivery Update
+
+- Milestone completed: Curriculum Portal UX Hardening and Backend Data Integration Completion.
+- Scope delivered: editor lookup integration, richer version comparison rendering, version snapshot preview, and draft-version creation controls.
+- Assignment hardening delivered: published-version-only source selection, dependent session-term lookup flow, and effective date-range validation.
+- Backend integration delivered: editor lookup endpoint and explicit structure-link or implementation maintenance endpoints for topic concepts, project-topic links, and outcome mappings.
+- Data integrity posture: optimistic concurrency tokens remain mandatory for update actions on mutable entities.
+- Deferred boundary remains active: AI-assisted curriculum generation/regeneration is not implemented in this milestone.
+
 ## Phase 2I Delivery Update
 
 - Milestone completed: Curriculum Authoring and Review Administrative Portal Foundation.

@@ -47,6 +47,15 @@ export const getCurriculum = async (req: Request, res: Response): Promise<void> 
   res.status(200).json({ success: true, message: 'Curriculum fetched.', data });
 };
 
+export const getEditorLookups = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.getEditorLookups(
+    getAuth(req),
+    param(req, 'curriculumId'),
+    req.query.sessionId ? String(req.query.sessionId) : undefined,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum editor lookups fetched.', data });
+};
+
 export const updateCurriculum = async (req: Request, res: Response): Promise<void> => {
   const data = await curriculumService.updateCurriculum(
     getAuth(req),
@@ -138,6 +147,21 @@ export const addTopicConcept = async (req: Request, res: Response): Promise<void
   res.status(201).json({ success: true, message: 'Topic concept mapping created.', data });
 };
 
+export const updateTopicConcept = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateTopicConcept(
+    getAuth(req),
+    param(req, 'mappingId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Topic concept mapping updated.', data });
+};
+
+export const deleteTopicConcept = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteTopicConcept(getAuth(req), param(req, 'mappingId'), req.requestId);
+  res.status(200).json({ success: true, message: 'Topic concept mapping removed.', data });
+};
+
 export const createProject = async (req: Request, res: Response): Promise<void> => {
   const data = await curriculumService.createProject(getAuth(req), param(req, 'unitId'), req.body, req.requestId);
   res.status(201).json({ success: true, message: 'Project created.', data });
@@ -167,6 +191,40 @@ export const linkProjectTopic = async (req: Request, res: Response): Promise<voi
     req.requestId,
   );
   res.status(201).json({ success: true, message: 'Project-topic mapping created.', data });
+};
+
+export const deleteTopicProjectLink = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteTopicProjectLink(getAuth(req), param(req, 'linkId'), req.requestId);
+  res.status(200).json({ success: true, message: 'Project-topic mapping removed.', data });
+};
+
+export const createProjectImplementation = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.createProjectImplementation(
+    getAuth(req),
+    param(req, 'projectId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(201).json({ success: true, message: 'Project implementation created.', data });
+};
+
+export const updateProjectImplementation = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateProjectImplementation(
+    getAuth(req),
+    param(req, 'implementationId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Project implementation updated.', data });
+};
+
+export const deleteProjectImplementation = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteProjectImplementation(
+    getAuth(req),
+    param(req, 'implementationId'),
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Project implementation removed.', data });
 };
 
 export const createLearningOutcome = async (req: Request, res: Response): Promise<void> => {
@@ -200,6 +258,15 @@ export const linkTopicLearningOutcome = async (req: Request, res: Response): Pro
   res.status(201).json({ success: true, message: 'Topic-learning outcome mapping created.', data });
 };
 
+export const deleteTopicLearningOutcomeLink = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteTopicLearningOutcomeLink(
+    getAuth(req),
+    param(req, 'linkId'),
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Topic-learning outcome mapping removed.', data });
+};
+
 export const linkProjectLearningOutcome = async (req: Request, res: Response): Promise<void> => {
   const data = await curriculumService.mapLearningOutcomeToProject(
     getAuth(req),
@@ -209,6 +276,15 @@ export const linkProjectLearningOutcome = async (req: Request, res: Response): P
     req.requestId,
   );
   res.status(201).json({ success: true, message: 'Project-learning outcome mapping created.', data });
+};
+
+export const deleteProjectLearningOutcomeLink = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteProjectLearningOutcomeLink(
+    getAuth(req),
+    param(req, 'linkId'),
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Project-learning outcome mapping removed.', data });
 };
 
 export const createResource = async (req: Request, res: Response): Promise<void> => {

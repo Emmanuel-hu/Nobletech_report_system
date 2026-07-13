@@ -211,6 +211,45 @@ export class CurriculumService {
     return curriculum;
   }
 
+  async getEditorLookups(auth: AuthContext, curriculumId: string, sessionId?: string) {
+    const curriculum = await this.requireCurriculumInScope(curriculumId, auth);
+
+    const [
+      sessions,
+      terms,
+      academicClasses,
+      schoolProgrammeComponents,
+      teachers,
+      masterConcepts,
+      masterLearningOutcomes,
+      masterResources,
+    ] = await Promise.all([
+      curriculumRepository.listSessions(curriculum.schoolId),
+      curriculumRepository.listTerms(curriculum.schoolId, sessionId),
+      curriculumRepository.listAcademicClasses(curriculum.schoolId),
+      curriculumRepository.listEnabledSchoolProgrammeComponents(curriculum.schoolId),
+      curriculumRepository.listEligibleSchoolUsers(curriculum.schoolId),
+      curriculumRepository.listMasterConcepts(curriculum.schoolId),
+      curriculumRepository.listMasterLearningOutcomes(curriculum.schoolId),
+      curriculumRepository.listMasterResources(curriculum.schoolId),
+    ]);
+
+    return {
+      sessions,
+      terms,
+      academicClasses,
+      schoolProgrammeComponents,
+      teachers,
+      publishedVersions: curriculum.versions.filter(
+        (version) => version.isPublished && version.status === 'PUBLISHED' && version.archivedAt === null,
+      ),
+      masterConcepts,
+      masterLearningOutcomes,
+      masterResources,
+      curriculum,
+    };
+  }
+
   async updateCurriculum(
     auth: AuthContext,
     curriculumId: string,
@@ -708,6 +747,115 @@ export class CurriculumService {
     return this.reloadCurriculum(curriculum.id);
   }
 
+  async updateTopicConcept(
+    auth: AuthContext,
+    mappingId: string,
+    payload: {
+      sequenceOrder?: number;
+      teacherNote?: string;
+      importanceLevel?: string;
+      expectedDepth?: string;
+      instructionalEmphasis?: string;
+      isCore?: boolean;
+      assessmentRelevance?: string;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const mapping = await prisma.curriculumTopicConcept.findUnique({
+      where: { id: mappingId },
+      include: {
+        curriculumTopic: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!mapping) {
+      throw notFound('Curriculum topic concept mapping not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(mapping.curriculumTopic.curriculumUnit.curriculumId, auth);
+    this.assertNoConcurrentModification(mapping.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.curriculumTopicConcept.update({
+        where: { id: mappingId },
+        data: {
+          sequenceOrder: payload.sequenceOrder,
+          teacherNote: payload.teacherNote,
+          importanceLevel: payload.importanceLevel,
+          expectedDepth: payload.expectedDepth,
+          instructionalEmphasis: payload.instructionalEmphasis,
+          isCore: payload.isCore,
+          assessmentRelevance: payload.assessmentRelevance,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.topic.concept.edit',
+        entityType: 'curriculum_topic_concept',
+        entityId: mappingId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          sequenceOrder: mapping.sequenceOrder,
+          importanceLevel: mapping.importanceLevel,
+          expectedDepth: mapping.expectedDepth,
+          instructionalEmphasis: mapping.instructionalEmphasis,
+          isCore: mapping.isCore,
+          assessmentRelevance: mapping.assessmentRelevance,
+        },
+        newValues: {
+          sequenceOrder: updated.sequenceOrder,
+          importanceLevel: updated.importanceLevel,
+          expectedDepth: updated.expectedDepth,
+          instructionalEmphasis: updated.instructionalEmphasis,
+          isCore: updated.isCore,
+          assessmentRelevance: updated.assessmentRelevance,
+        },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async deleteTopicConcept(auth: AuthContext, mappingId: string, requestId?: string): Promise<CurriculumAggregate> {
+    const mapping = await prisma.curriculumTopicConcept.findUnique({
+      where: { id: mappingId },
+      include: {
+        curriculumTopic: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!mapping) {
+      throw notFound('Curriculum topic concept mapping not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(mapping.curriculumTopic.curriculumUnit.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumTopicConcept.delete({
+        where: { id: mappingId },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.topic.concept.unlink',
+        entityType: 'curriculum_topic_concept',
+        entityId: mappingId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only mapping removal',
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
   async createProject(
     auth: AuthContext,
     unitId: string,
@@ -904,6 +1052,225 @@ export class CurriculumService {
     return this.reloadCurriculum(curriculum.id);
   }
 
+  async deleteTopicProjectLink(auth: AuthContext, linkId: string, requestId?: string): Promise<CurriculumAggregate> {
+    const link = await prisma.curriculumTopicProject.findUnique({
+      where: { id: linkId },
+      include: {
+        curriculumProject: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!link) {
+      throw notFound('Project-topic link not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(link.curriculumProject.curriculumUnit.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumTopicProject.delete({ where: { id: linkId } });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.project.topic.unlink',
+        entityType: 'curriculum_topic_project',
+        entityId: linkId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only mapping removal',
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async createProjectImplementation(
+    auth: AuthContext,
+    projectId: string,
+    payload: {
+      title: string;
+      implementationType: Prisma.EnumMasterProjectImplementationTypeFieldUpdateOperationsInput['set'] | string;
+      description?: string;
+      sequenceOrder: number;
+      requiredInternet?: boolean;
+      requiredDeviceCount?: number;
+      estimatedDurationMinutes?: number;
+      learnerInstructions?: string;
+      teacherInstructions?: string;
+      safetyInstructions?: string;
+      masterProjectImplementationId?: string;
+    },
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const project = await prisma.curriculumProject.findUnique({
+      where: { id: projectId },
+      include: { curriculumUnit: true },
+    });
+
+    if (!project || project.archivedAt) {
+      throw notFound('Curriculum project not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(project.curriculumUnit.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      const implementation = await tx.curriculumProjectImplementation.create({
+        data: {
+          curriculumProjectId: projectId,
+          title: payload.title,
+          implementationType: payload.implementationType as never,
+          description: payload.description,
+          sequenceOrder: payload.sequenceOrder,
+          requiredInternet: payload.requiredInternet,
+          requiredDeviceCount: payload.requiredDeviceCount,
+          estimatedDurationMinutes: payload.estimatedDurationMinutes,
+          learnerInstructions: payload.learnerInstructions,
+          teacherInstructions: payload.teacherInstructions,
+          safetyInstructions: payload.safetyInstructions,
+          masterProjectImplementationId: payload.masterProjectImplementationId,
+          createdById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.project.implementation.create',
+        entityType: 'curriculum_project_implementation',
+        entityId: implementation.id,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          projectId,
+          sequenceOrder: implementation.sequenceOrder,
+          title: implementation.title,
+          implementationType: implementation.implementationType,
+        },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async updateProjectImplementation(
+    auth: AuthContext,
+    implementationId: string,
+    payload: {
+      title?: string;
+      implementationType?: Prisma.EnumMasterProjectImplementationTypeFieldUpdateOperationsInput['set'] | string;
+      description?: string;
+      sequenceOrder?: number;
+      requiredInternet?: boolean;
+      requiredDeviceCount?: number;
+      estimatedDurationMinutes?: number;
+      learnerInstructions?: string;
+      teacherInstructions?: string;
+      safetyInstructions?: string;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const implementation = await prisma.curriculumProjectImplementation.findUnique({
+      where: { id: implementationId },
+      include: {
+        curriculumProject: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!implementation || implementation.archivedAt) {
+      throw notFound('Curriculum project implementation not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(implementation.curriculumProject.curriculumUnit.curriculumId, auth);
+    this.assertNoConcurrentModification(implementation.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.curriculumProjectImplementation.update({
+        where: { id: implementationId },
+        data: {
+          title: payload.title,
+          implementationType: payload.implementationType as never,
+          description: payload.description,
+          sequenceOrder: payload.sequenceOrder,
+          requiredInternet: payload.requiredInternet,
+          requiredDeviceCount: payload.requiredDeviceCount,
+          estimatedDurationMinutes: payload.estimatedDurationMinutes,
+          learnerInstructions: payload.learnerInstructions,
+          teacherInstructions: payload.teacherInstructions,
+          safetyInstructions: payload.safetyInstructions,
+          updatedById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.project.implementation.edit',
+        entityType: 'curriculum_project_implementation',
+        entityId: implementationId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          title: implementation.title,
+          sequenceOrder: implementation.sequenceOrder,
+          implementationType: implementation.implementationType,
+        },
+        newValues: {
+          title: updated.title,
+          sequenceOrder: updated.sequenceOrder,
+          implementationType: updated.implementationType,
+        },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async deleteProjectImplementation(
+    auth: AuthContext,
+    implementationId: string,
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const implementation = await prisma.curriculumProjectImplementation.findUnique({
+      where: { id: implementationId },
+      include: {
+        curriculumProject: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!implementation || implementation.archivedAt) {
+      throw notFound('Curriculum project implementation not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(implementation.curriculumProject.curriculumUnit.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumProjectImplementation.update({
+        where: { id: implementationId },
+        data: {
+          archivedAt: new Date(),
+          isActive: false,
+          updatedById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.project.implementation.delete',
+        entityType: 'curriculum_project_implementation',
+        entityId: implementationId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only soft delete',
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
   async createLearningOutcome(
     auth: AuthContext,
     curriculumId: string,
@@ -991,6 +1358,43 @@ export class CurriculumService {
     return this.reloadCurriculum(curriculum.id);
   }
 
+  async deleteTopicLearningOutcomeLink(
+    auth: AuthContext,
+    linkId: string,
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const link = await prisma.curriculumTopicLearningOutcome.findUnique({
+      where: { id: linkId },
+      include: {
+        curriculumTopic: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!link) {
+      throw notFound('Topic-learning outcome link not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(link.curriculumTopic.curriculumUnit.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumTopicLearningOutcome.delete({ where: { id: linkId } });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.learning_outcome.topic.unlink',
+        entityType: 'curriculum_topic_learning_outcome',
+        entityId: linkId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only mapping removal',
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
   async mapLearningOutcomeToProject(
     auth: AuthContext,
     projectId: string,
@@ -1030,6 +1434,43 @@ export class CurriculumService {
         schoolId: curriculum.schoolId,
         actorUserId: auth.userId,
         newValues: { projectId, outcomeId },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async deleteProjectLearningOutcomeLink(
+    auth: AuthContext,
+    linkId: string,
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const link = await prisma.curriculumProjectLearningOutcome.findUnique({
+      where: { id: linkId },
+      include: {
+        curriculumProject: {
+          include: { curriculumUnit: true },
+        },
+      },
+    });
+
+    if (!link) {
+      throw notFound('Project-learning outcome link not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(link.curriculumProject.curriculumUnit.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumProjectLearningOutcome.delete({ where: { id: linkId } });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.learning_outcome.project.unlink',
+        entityType: 'curriculum_project_learning_outcome',
+        entityId: linkId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only mapping removal',
         requestId,
       });
     });
@@ -1402,25 +1843,29 @@ export class CurriculumService {
     const left = await this.getVersion(auth, curriculumId, leftVersionId);
     const right = await this.getVersion(auth, curriculumId, rightVersionId);
 
+    const leftSerialized = serializeStableSnapshot(left.snapshotData);
+    const rightSerialized = serializeStableSnapshot(right.snapshotData);
+
     return {
       left: {
         id: left.id,
         versionNumber: left.versionNumber,
         status: left.status,
         checksum: left.snapshotChecksum,
+        snapshotData: left.snapshotData,
       },
       right: {
         id: right.id,
         versionNumber: right.versionNumber,
         status: right.status,
         checksum: right.snapshotChecksum,
+        snapshotData: right.snapshotData,
       },
       metadata: {
         checksumMatch: left.snapshotChecksum && right.snapshotChecksum
           ? left.snapshotChecksum === right.snapshotChecksum
           : false,
-        serializedLengthDelta:
-          serializeStableSnapshot(left.snapshotData).length - serializeStableSnapshot(right.snapshotData).length,
+        serializedLengthDelta: leftSerialized.length - rightSerialized.length,
       },
     };
   }

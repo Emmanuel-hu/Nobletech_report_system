@@ -104,6 +104,107 @@ export class CurriculumRepository {
     return this.db.user.findFirst({ where: { id: userId, schoolId, status: 'ACTIVE' } });
   }
 
+  async listSessions(schoolId: string) {
+    return this.db.academicSession.findMany({
+      where: { schoolId, archivedAt: null },
+      orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],
+    });
+  }
+
+  async listTerms(schoolId: string, sessionId?: string) {
+    return this.db.term.findMany({
+      where: {
+        schoolId,
+        archivedAt: null,
+        ...(sessionId ? { academicSessionId: sessionId } : {}),
+      },
+      orderBy: [{ academicSessionId: 'desc' }, { sequenceOrder: 'asc' }],
+    });
+  }
+
+  async listAcademicClasses(schoolId: string) {
+    return this.db.academicClass.findMany({
+      where: { schoolId, archivedAt: null },
+      orderBy: [{ levelOrder: 'asc' }, { name: 'asc' }],
+    });
+  }
+
+  async listEnabledSchoolProgrammeComponents(schoolId: string) {
+    return this.db.schoolProgrammeComponent.findMany({
+      where: { schoolId, archivedAt: null, isEnabled: true },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async listEligibleSchoolUsers(schoolId: string) {
+    return this.db.user.findMany({
+      where: { schoolId, status: 'ACTIVE' },
+      orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        username: true,
+      },
+    });
+  }
+
+  async listMasterConcepts(schoolId: string) {
+    return this.db.masterConcept.findMany({
+      where: {
+        archivedAt: null,
+        status: 'APPROVED',
+        OR: [{ schoolId: null }, { schoolId }],
+      },
+      orderBy: [{ schoolId: 'desc' }, { name: 'asc' }],
+      select: {
+        id: true,
+        schoolId: true,
+        name: true,
+        code: true,
+        definition: true,
+      },
+    });
+  }
+
+  async listMasterLearningOutcomes(schoolId: string) {
+    return this.db.masterLearningOutcome.findMany({
+      where: {
+        archivedAt: null,
+        status: 'APPROVED',
+        OR: [{ schoolId: null }, { schoolId }],
+      },
+      orderBy: [{ schoolId: 'desc' }, { createdAt: 'asc' }],
+      select: {
+        id: true,
+        schoolId: true,
+        statement: true,
+        code: true,
+        bloomLevel: true,
+        measurableVerb: true,
+      },
+    });
+  }
+
+  async listMasterResources(schoolId: string) {
+    return this.db.masterResource.findMany({
+      where: {
+        archivedAt: null,
+        status: 'APPROVED',
+        OR: [{ schoolId: null }, { schoolId }],
+      },
+      orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      select: {
+        id: true,
+        schoolId: true,
+        title: true,
+        resourceType: true,
+        description: true,
+      },
+    });
+  }
+
   async createAuditLog(data: Prisma.AuditLogUncheckedCreateInput): Promise<void> {
     await this.db.auditLog.create({ data });
   }

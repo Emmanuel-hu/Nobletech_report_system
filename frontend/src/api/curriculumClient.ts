@@ -1,8 +1,11 @@
 import type {
   CurriculumAssignment,
   CurriculumDetail,
+  CurriculumEditorLookups,
   CurriculumListFilters,
   CurriculumSummary,
+  CurriculumVersionComparison,
+  CurriculumVersionSnapshot,
   CurriculumVersion,
   CurriculumVisibility,
 } from '../types/curriculum';
@@ -40,6 +43,12 @@ export const curriculumClient = {
   },
   getCurriculum: (session: AuthSession, curriculumId: string) =>
     apiRequest<CurriculumDetail>(`/curriculum/curricula/${curriculumId}`, { method: 'GET' }, session),
+  getEditorLookups: (session: AuthSession, curriculumId: string, sessionId?: string) =>
+    apiRequest<CurriculumEditorLookups>(
+      `/curriculum/curricula/${curriculumId}/editor-lookups${queryString({ sessionId })}`,
+      { method: 'GET' },
+      session,
+    ),
   createCurriculum: (
     session: AuthSession,
     payload: { schoolProgrammeComponentId: string; title: string; code: string; description?: string },
@@ -253,15 +262,29 @@ export const curriculumClient = {
   getVersions: (session: AuthSession, curriculumId: string) =>
     apiRequest<CurriculumVersion[]>(`/curriculum/curricula/${curriculumId}/versions`, { method: 'GET' }, session),
   compareVersions: (session: AuthSession, curriculumId: string, leftVersionId: string, rightVersionId: string) =>
-    apiRequest<{
-      left: Record<string, unknown>;
-      right: Record<string, unknown>;
-      metadata: Record<string, unknown>;
-    }>(
+    apiRequest<CurriculumVersionComparison>(
       `/curriculum/curricula/${curriculumId}/versions/compare${queryString({ leftVersionId, rightVersionId })}`,
       { method: 'GET' },
       session,
     ),
+  getVersionSnapshot: (session: AuthSession, curriculumId: string, versionId: string) =>
+    apiRequest<CurriculumVersionSnapshot>(
+      `/curriculum/curricula/${curriculumId}/versions/${versionId}/snapshot`,
+      { method: 'GET' },
+      session,
+    ),
+  createDraftVersion: (
+    session: AuthSession,
+    curriculumId: string,
+    payload: {
+      basedOnVersionId?: string;
+      changeSummary?: string;
+      majorVersion?: number;
+      minorVersion?: number;
+      patchVersion?: number;
+      versionLabel?: string;
+    },
+  ) => apiRequest<CurriculumDetail>(`/curriculum/curricula/${curriculumId}/versions`, { method: 'POST', body: payload }, session),
   submitReview: (session: AuthSession, curriculumId: string, comment: string) =>
     apiRequest<CurriculumDetail>(
       `/curriculum/curricula/${curriculumId}/submit-review`,

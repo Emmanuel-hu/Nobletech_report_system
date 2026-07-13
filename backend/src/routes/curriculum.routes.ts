@@ -7,6 +7,7 @@ import {
   archiveAssignment,
   archiveCurriculum,
   compareVersions,
+  createProjectImplementation,
   completeAssignment,
   createAssignment,
   createCurriculum,
@@ -17,9 +18,15 @@ import {
   createUnit,
   createVersion,
   deleteProject,
+  deleteProjectImplementation,
+  deleteProjectLearningOutcomeLink,
   deleteResource,
+  deleteTopicConcept,
+  deleteTopicLearningOutcomeLink,
+  deleteTopicProjectLink,
   deleteTopic,
   deleteUnit,
+  getEditorLookups,
   getCurriculum,
   getSnapshot,
   getVersion,
@@ -40,7 +47,9 @@ import {
   updateCurriculum,
   updateLearningOutcome,
   updateProject,
+  updateProjectImplementation,
   updateResource,
+  updateTopicConcept,
   updateTopic,
   updateUnit,
   updateVisibility,
@@ -54,20 +63,27 @@ import {
   addTopicConceptSchema,
   archiveCurriculumSchema,
   assignmentIdParamSchema,
+  conceptMappingIdParamSchema,
   createAssignmentSchema,
   createCurriculumSchema,
   createLearningOutcomeSchema,
   createProjectSchema,
+  createProjectImplementationSchema,
   createResourceSchema,
   createTopicSchema,
   createUnitSchema,
   createVersionSchema,
+  editorLookupsQuerySchema,
   curriculumIdParamSchema,
   curriculumUnitIdParamSchema,
   listCurriculaQuerySchema,
   linkProjectTopicSchema,
   mapLearningOutcomeSchema,
+  implementationIdParamSchema,
+  projectOutcomeLinkIdParamSchema,
   outcomeIdParamSchema,
+  topicOutcomeLinkIdParamSchema,
+  topicProjectLinkIdParamSchema,
   projectIdParamSchema,
   publishSchema,
   reorderTopicsSchema,
@@ -82,7 +98,9 @@ import {
   updateCurriculumSchema,
   updateLearningOutcomeSchema,
   updateProjectSchema,
+  updateProjectImplementationSchema,
   updateResourceSchema,
+  updateTopicConceptSchema,
   updateTopicSchema,
   updateUnitSchema,
   updateVisibilitySchema,
@@ -122,6 +140,14 @@ curriculumRouter.patch(
   validateParams(curriculumIdParamSchema),
   validateBody(updateCurriculumSchema),
   asyncHandler(updateCurriculum),
+);
+
+curriculumRouter.get(
+  '/curricula/:curriculumId/editor-lookups',
+  requirePermission('curriculum.view'),
+  validateParams(curriculumIdParamSchema),
+  validateQuery(editorLookupsQuerySchema),
+  asyncHandler(getEditorLookups),
 );
 
 curriculumRouter.post(
@@ -202,6 +228,21 @@ curriculumRouter.post(
   asyncHandler(addTopicConcept),
 );
 
+curriculumRouter.patch(
+  '/curriculum-topic-concepts/:mappingId',
+  requirePermission('curriculum.edit'),
+  validateParams(conceptMappingIdParamSchema),
+  validateBody(updateTopicConceptSchema),
+  asyncHandler(updateTopicConcept),
+);
+
+curriculumRouter.delete(
+  '/curriculum-topic-concepts/:mappingId',
+  requirePermission('curriculum.edit'),
+  validateParams(conceptMappingIdParamSchema),
+  asyncHandler(deleteTopicConcept),
+);
+
 curriculumRouter.post(
   '/curriculum-units/:unitId/projects',
   requirePermission('curriculum.edit'),
@@ -233,6 +274,36 @@ curriculumRouter.post(
   asyncHandler(linkProjectTopic),
 );
 
+curriculumRouter.delete(
+  '/curriculum-topic-project-links/:linkId',
+  requirePermission('curriculum.edit'),
+  validateParams(topicProjectLinkIdParamSchema),
+  asyncHandler(deleteTopicProjectLink),
+);
+
+curriculumRouter.post(
+  '/curriculum-projects/:projectId/implementations',
+  requirePermission('curriculum.edit'),
+  validateParams(projectIdParamSchema),
+  validateBody(createProjectImplementationSchema),
+  asyncHandler(createProjectImplementation),
+);
+
+curriculumRouter.patch(
+  '/curriculum-project-implementations/:implementationId',
+  requirePermission('curriculum.edit'),
+  validateParams(implementationIdParamSchema),
+  validateBody(updateProjectImplementationSchema),
+  asyncHandler(updateProjectImplementation),
+);
+
+curriculumRouter.delete(
+  '/curriculum-project-implementations/:implementationId',
+  requirePermission('curriculum.edit'),
+  validateParams(implementationIdParamSchema),
+  asyncHandler(deleteProjectImplementation),
+);
+
 curriculumRouter.post(
   '/curricula/:curriculumId/learning-outcomes',
   requirePermission('curriculum.edit'),
@@ -257,12 +328,26 @@ curriculumRouter.post(
   asyncHandler(linkTopicLearningOutcome),
 );
 
+curriculumRouter.delete(
+  '/curriculum-topic-learning-outcome-links/:linkId',
+  requirePermission('curriculum.edit'),
+  validateParams(topicOutcomeLinkIdParamSchema),
+  asyncHandler(deleteTopicLearningOutcomeLink),
+);
+
 curriculumRouter.post(
   '/curriculum-projects/:projectId/learning-outcomes',
   requirePermission('curriculum.edit'),
   validateParams(projectIdParamSchema),
   validateBody(mapLearningOutcomeSchema),
   asyncHandler(linkProjectLearningOutcome),
+);
+
+curriculumRouter.delete(
+  '/curriculum-project-learning-outcome-links/:linkId',
+  requirePermission('curriculum.edit'),
+  validateParams(projectOutcomeLinkIdParamSchema),
+  asyncHandler(deleteProjectLearningOutcomeLink),
 );
 
 curriculumRouter.post(

@@ -1,3 +1,11 @@
+## Phase 2J Workflow Additions
+
+- Editor lookup workflow: on entry, load curriculum-scoped sessions, terms, classes, components, teachers, published versions, and approved master-library references.
+- Assignment workflow hardening: select published version -> select session -> filter term choices -> validate date range -> create assignment.
+- Version maintenance workflow: review version history metadata -> open snapshot preview -> create next draft from approved or published baseline.
+- Structure maintenance workflow now supports explicit edit or unlink actions for concept mappings and topic/project or outcome links.
+- Project delivery workflow now supports implementation variant creation, update, and draft-safe removal.
+
 ## Phase 2I Workflow Additions
 
 - Administrative navigation flow: `Admin Dashboard -> Curriculum List -> Detail/Edit/Review/Versions/Assignments/Archive`.

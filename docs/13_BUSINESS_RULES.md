@@ -9,6 +9,15 @@
 	- only published versions may be activated in assignments,
 	- strict immutability write controls for review-action history,
 	- cross-table policy checks that cannot be safely encoded as single-row constraints.
+
+## Phase 2J Rules
+
+- Assignment creation must use curriculum-scoped lookup data served by backend authority, not free-form identifiers.
+- Assignment source version must be in `PUBLISHED` state and belong to the selected curriculum.
+- `term_id` must belong to selected `academic_session_id`; scope mismatches are invalid.
+- Assignment effective date range must satisfy `effective_to >= effective_from` when `effective_to` is provided.
+- Concept mapping, topic-project mapping, and topic/project learning-outcome links are editable only while curriculum remains in editable lifecycle states.
+- Project implementations follow draft-only mutability and require audit entries for create, edit, and remove actions.
 # Nobletech Report System (NRS)
 
 # Business Rules

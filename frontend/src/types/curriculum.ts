@@ -101,6 +101,8 @@ export type CurriculumTopic = {
   difficultyLevel: string | null;
   teacherNote: string | null;
   conceptLinks: CurriculumTopicConcept[];
+  topicProjects?: CurriculumTopicProjectLink[];
+  topicLearningOutcomes?: CurriculumTopicLearningOutcomeLink[];
 };
 
 export type CurriculumTopicConcept = {
@@ -108,11 +110,26 @@ export type CurriculumTopicConcept = {
   curriculumConceptId: string | null;
   masterConceptId: string | null;
   sequenceOrder: number | null;
+  teacherNote?: string | null;
   importanceLevel: string | null;
   expectedDepth: string | null;
   instructionalEmphasis: string | null;
   isCore: boolean;
   assessmentRelevance: string | null;
+};
+
+export type CurriculumTopicProjectLink = {
+  id: string;
+  curriculumProjectId: string;
+  curriculumTopicId: string;
+  sequenceOrder: number | null;
+};
+
+export type CurriculumTopicLearningOutcomeLink = {
+  id: string;
+  curriculumTopicId: string;
+  curriculumLearningOutcomeId: string;
+  sequenceOrder: number | null;
 };
 
 export type CurriculumProjectImplementation = {
@@ -121,6 +138,18 @@ export type CurriculumProjectImplementation = {
   implementationType: string;
   sequenceOrder: number;
   estimatedDurationMinutes: number | null;
+  requiredInternet?: boolean;
+  requiredDeviceCount?: number | null;
+  learnerInstructions?: string | null;
+  teacherInstructions?: string | null;
+  safetyInstructions?: string | null;
+};
+
+export type CurriculumProjectOutcomeLink = {
+  id: string;
+  curriculumProjectId: string;
+  curriculumLearningOutcomeId: string;
+  sequenceOrder: number | null;
 };
 
 export type CurriculumProject = {
@@ -134,6 +163,8 @@ export type CurriculumProject = {
   difficultyLevel: string | null;
   safetyNote: string | null;
   implementations: CurriculumProjectImplementation[];
+  topicLinks?: CurriculumTopicProjectLink[];
+  projectLearningOutcomes?: CurriculumProjectOutcomeLink[];
 };
 
 export type CurriculumLearningOutcome = {
@@ -142,6 +173,7 @@ export type CurriculumLearningOutcome = {
   code: string | null;
   bloomLevel: string | null;
   measurableVerb: string | null;
+  masterLearningOutcomeId?: string | null;
 };
 
 export type CurriculumResource = {
@@ -154,6 +186,125 @@ export type CurriculumResource = {
   requiresInternet: boolean;
   requiresLogin: boolean;
   safetyNote: string | null;
+  masterResourceId?: string | null;
+  externalUrl?: string | null;
+  internalFileReference?: string | null;
+};
+
+export type CurriculumConcept = {
+  id: string;
+  name: string;
+  code: string | null;
+  definition: string;
+  explanation: string | null;
+  masterConceptId: string | null;
+};
+
+export type AcademicSessionLookup = {
+  id: string;
+  name: string;
+  code: string;
+  isCurrent: boolean;
+};
+
+export type TermLookup = {
+  id: string;
+  name: string;
+  code: string;
+  academicSessionId: string;
+  sequenceOrder: number;
+};
+
+export type AcademicClassLookup = {
+  id: string;
+  name: string;
+  code: string;
+  displayName: string | null;
+};
+
+export type SchoolProgrammeComponentLookup = {
+  id: string;
+  displayName: string | null;
+  localCode: string | null;
+  isEnabled: boolean;
+};
+
+export type TeacherLookup = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string | null;
+  username: string;
+};
+
+export type MasterConceptLookup = {
+  id: string;
+  schoolId: string | null;
+  name: string;
+  code: string | null;
+  definition: string;
+};
+
+export type MasterLearningOutcomeLookup = {
+  id: string;
+  schoolId: string | null;
+  statement: string;
+  code: string | null;
+  bloomLevel: string | null;
+  measurableVerb: string | null;
+};
+
+export type MasterResourceLookup = {
+  id: string;
+  schoolId: string | null;
+  title: string;
+  description: string | null;
+  resourceType: string;
+};
+
+export type CurriculumEditorLookups = {
+  sessions: AcademicSessionLookup[];
+  terms: TermLookup[];
+  academicClasses: AcademicClassLookup[];
+  schoolProgrammeComponents: SchoolProgrammeComponentLookup[];
+  teachers: TeacherLookup[];
+  publishedVersions: CurriculumVersion[];
+  masterConcepts: MasterConceptLookup[];
+  masterLearningOutcomes: MasterLearningOutcomeLookup[];
+  masterResources: MasterResourceLookup[];
+  curriculum: {
+    id: string;
+    schoolProgrammeComponentId: string;
+    status: CurriculumStatus;
+  };
+};
+
+export type CurriculumVersionSnapshot = {
+  versionId: string;
+  versionNumber: string;
+  snapshotData: Record<string, unknown>;
+  snapshotChecksum: string | null;
+};
+
+export type CurriculumVersionComparison = {
+  left: {
+    id: string;
+    versionNumber: string;
+    status: CurriculumStatus;
+    checksum: string | null;
+    snapshotData: Record<string, unknown>;
+  };
+  right: {
+    id: string;
+    versionNumber: string;
+    status: CurriculumStatus;
+    checksum: string | null;
+    snapshotData: Record<string, unknown>;
+  };
+  metadata: {
+    checksumMatch: boolean;
+    serializedLengthDelta: number;
+  };
 };
 
 export type CurriculumAssignment = {
@@ -208,6 +359,7 @@ export type CurriculumDetail = CurriculumSummary & {
   approvedById: string | null;
   publishedById: string | null;
   units: CurriculumUnit[];
+  concepts: CurriculumConcept[];
   learningOutcomes: CurriculumLearningOutcome[];
   resources: CurriculumResource[];
   versions: CurriculumVersion[];

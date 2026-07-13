@@ -1,3 +1,11 @@
+## Phase 2J Module Scope Update
+
+- Extended Curriculum Administration module with backend-driven editor lookup orchestration.
+- Extended Version Management module with structured comparison rendering, snapshot preview, and draft-version creation controls.
+- Extended Assignment Management module with published-version-only gating, dependent session-term selection, and date-range validation UX.
+- Extended Curriculum Structure module with API support for concept mapping edit or unlink, project-topic unlink, learning-outcome unlink, and project implementation CRUD.
+- Added targeted test coverage for Phase 2J validator behavior and structured diff utility behavior.
+
 ## Phase 2G Module Scope
 
 - Added database module foundation for operational curriculum lifecycle, versioning, review trail, visibility, and assignment.

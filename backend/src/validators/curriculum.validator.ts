@@ -23,10 +23,15 @@ export const unitTopicIdParamSchema = z.object({ unitId: uuid, topicId: uuid });
 export const unitIdParamSchema = z.object({ unitId: uuid });
 export const topicIdParamSchema = z.object({ topicId: uuid });
 export const projectIdParamSchema = z.object({ projectId: uuid });
+export const implementationIdParamSchema = z.object({ implementationId: uuid });
 export const outcomeIdParamSchema = z.object({ outcomeId: uuid });
 export const resourceIdParamSchema = z.object({ resourceId: uuid });
 export const assignmentIdParamSchema = z.object({ assignmentId: uuid });
 export const versionIdParamSchema = z.object({ curriculumId: uuid, versionId: uuid });
+export const conceptMappingIdParamSchema = z.object({ mappingId: uuid });
+export const topicProjectLinkIdParamSchema = z.object({ linkId: uuid });
+export const topicOutcomeLinkIdParamSchema = z.object({ linkId: uuid });
+export const projectOutcomeLinkIdParamSchema = z.object({ linkId: uuid });
 
 export const listCurriculaQuerySchema = z.object({
   status: curriculumStatusSchema.optional(),
@@ -143,6 +148,55 @@ export const updateProjectSchema = z.object({
   estimatedDurationMinutes: positiveInt.optional(),
   difficultyLevel: nonEmpty(50).optional(),
   safetyNote: optionalText(2000),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const createProjectImplementationSchema = z.object({
+  title: nonEmpty(200),
+  implementationType: z.enum([
+    'PHYSICAL_ROBOTICS',
+    'SIMULATION_ONLY',
+    'LOW_RESOURCE',
+    'NO_LAPTOP',
+    'INDIVIDUAL',
+    'GROUP',
+    'OTHER',
+  ]),
+  description: optionalText(4000),
+  sequenceOrder: positiveInt,
+  requiredInternet: z.boolean().optional(),
+  requiredDeviceCount: z.number().int().nonnegative().optional(),
+  estimatedDurationMinutes: positiveInt.optional(),
+  learnerInstructions: optionalText(4000),
+  teacherInstructions: optionalText(4000),
+  safetyInstructions: optionalText(4000),
+  masterProjectImplementationId: uuid.optional(),
+});
+
+export const updateProjectImplementationSchema = z.object({
+  title: nonEmpty(200).optional(),
+  implementationType: z
+    .enum(['PHYSICAL_ROBOTICS', 'SIMULATION_ONLY', 'LOW_RESOURCE', 'NO_LAPTOP', 'INDIVIDUAL', 'GROUP', 'OTHER'])
+    .optional(),
+  description: optionalText(4000),
+  sequenceOrder: positiveInt.optional(),
+  requiredInternet: z.boolean().optional(),
+  requiredDeviceCount: z.number().int().nonnegative().optional(),
+  estimatedDurationMinutes: positiveInt.optional(),
+  learnerInstructions: optionalText(4000),
+  teacherInstructions: optionalText(4000),
+  safetyInstructions: optionalText(4000),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const updateTopicConceptSchema = z.object({
+  sequenceOrder: positiveInt.optional(),
+  teacherNote: optionalText(4000),
+  importanceLevel: nonEmpty(50).optional(),
+  expectedDepth: nonEmpty(50).optional(),
+  instructionalEmphasis: nonEmpty(100).optional(),
+  isCore: z.boolean().optional(),
+  assessmentRelevance: nonEmpty(100).optional(),
   lastKnownUpdatedAt: z.string().datetime(),
 });
 
@@ -282,4 +336,8 @@ export const updateAssignmentSchema = z.object({
 export const versionCompareQuerySchema = z.object({
   leftVersionId: uuid,
   rightVersionId: uuid,
+});
+
+export const editorLookupsQuerySchema = z.object({
+  sessionId: uuid.optional(),
 });
