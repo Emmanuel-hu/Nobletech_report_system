@@ -247,6 +247,14 @@ Update Assessment Template
 
 10. External resources must be rechecked when broken reports, embedding changes, login changes, privacy concerns, or curriculum revisions occur.
 
+## Phase 2H Update: Curriculum Lifecycle Rules
+
+- Curriculum status cannot be mutated through generic update payloads.
+- Lifecycle progression is action-driven and constrained to allowed transitions.
+- Editing mutable curriculum content is restricted to editable states.
+- Cross-tenant access is rejected when school scope does not match authenticated context.
+- Permission checks are mandatory for create, edit, review, publish, archive, and assignment operations.
+
 ---
 
 # Future Rules

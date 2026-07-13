@@ -688,4 +688,13 @@ Online Payment
 
 AI Report Assistant
 
+## Phase 2H Update: Curriculum Authoring Workflow
+
+1. Author creates draft curriculum in school scope.
+2. Author edits curriculum structure (units, topics, concepts, projects, outcomes, resources).
+3. Author snapshots/version-controls draft for review readiness.
+4. Reviewer executes explicit review actions (request revision or approve).
+5. Publisher executes publish action after approval checks.
+6. Assignment owner assigns published version and manages explicit assignment lifecycle actions.
+
 Mobile Application

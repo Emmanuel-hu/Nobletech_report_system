@@ -582,3 +582,11 @@ Competition Management
 Mobile Application
 
 API Integration
+
+## Phase 2H Update: Backend Module Coverage
+
+- Added curriculum module foundation components:
+- middleware: request context, authentication, RBAC, request validation.
+- repository: curriculum data aggregation and scoped loading.
+- service: transactional authoring, versioning, lifecycle transitions, assignment actions, audit writes.
+- controller/routes: explicit curriculum APIs with per-endpoint permission and validation guards.

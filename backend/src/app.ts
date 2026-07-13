@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import { env } from './config/env';
 import { errorHandler } from './middleware/error.middleware';
 import { notFoundHandler } from './middleware/not-found.middleware';
+import { requestContextMiddleware } from './middleware/request-context.middleware';
 import apiRouter from './routes';
 
 const app = express();
@@ -19,6 +20,7 @@ app.use(
 );
 app.use(compression());
 app.use(morgan('dev'));
+app.use(requestContextMiddleware);
 app.use(express.json());
 
 app.get('/', (_req: Request, res: Response): void => {

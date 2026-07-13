@@ -886,3 +886,9 @@ Future database changes should be controlled through formal change requests rath
 
 
 # End of Document
+
+## Phase 2H Progress Update
+
+- Backend implementation now covers curriculum authoring/review/publication service foundation over approved schema.
+- API wiring and validation middleware are in place for school-scoped curriculum operations.
+- Phase 2H AI generation capabilities remain intentionally deferred.

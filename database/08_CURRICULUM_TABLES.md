@@ -1094,3 +1094,9 @@ The design allows curriculum information to be presented as either Compact or De
 ---
 
 # End of Document
+
+## Phase 2H Update: Operational Usage
+
+- Phase 2H backend services now orchestrate existing operational curriculum tables for authoring workflows.
+- Curriculum versions and snapshots are consumed by API endpoints for controlled review and publication.
+- Assignment lifecycle actions are exposed as explicit API operations and recorded in audit trails.

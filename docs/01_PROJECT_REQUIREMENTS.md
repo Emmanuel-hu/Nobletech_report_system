@@ -2083,4 +2083,12 @@ The platform shall be accepted when:
 
 ---
 
+## Phase 2H Update: Curriculum Backend Foundation
+
+- Added backend-only curriculum authoring foundation endpoints for manual workflow actions.
+- Enforced explicit lifecycle action endpoints for submit, review, approve, publish, and archive.
+- Preserved multi-tenant school isolation and permission-gated access controls for protected operations.
+- Added audit trail capture for curriculum lifecycle and structure mutations.
+- Deferred AI-assisted curriculum generation and regeneration features to later milestones.
+
 **End of Document**

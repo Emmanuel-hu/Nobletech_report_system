@@ -601,3 +601,9 @@ Validation summary:
 - Phase 2F artifact verification passed.
 - Phase 2F rollback-safe constraint suite passed.
 - Phase 2C, Phase 2D, and Phase 2E regression suites re-passed.
+
+## Phase 2H Update: Schema Usage Notes
+
+- No new Phase 2H schema migration was introduced in this step.
+- Existing operational curriculum lifecycle tables are now exercised by backend service and API layers.
+- Publication and assignment status changes are executed through explicit action flows and audited.

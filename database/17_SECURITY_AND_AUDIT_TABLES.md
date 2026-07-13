@@ -1413,3 +1413,9 @@ Its modular architecture integrates seamlessly with every NEMP subsystem—inclu
 ---
 
 # End of Document
+
+## Phase 2H Update: Security and Audit Enforcement
+
+- Curriculum authoring endpoints now require authenticated identity and permission-based authorization.
+- School-scoped tenant isolation checks are enforced in service and repository operations.
+- Privileged and state-changing curriculum operations write structured audit records with actor and action metadata.
