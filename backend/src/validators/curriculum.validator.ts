@@ -26,6 +26,7 @@ export const projectIdParamSchema = z.object({ projectId: uuid });
 export const implementationIdParamSchema = z.object({ implementationId: uuid });
 export const outcomeIdParamSchema = z.object({ outcomeId: uuid });
 export const resourceIdParamSchema = z.object({ resourceId: uuid });
+export const conceptIdParamSchema = z.object({ conceptId: uuid });
 export const assignmentIdParamSchema = z.object({ assignmentId: uuid });
 export const versionIdParamSchema = z.object({ curriculumId: uuid, versionId: uuid });
 export const conceptMappingIdParamSchema = z.object({ mappingId: uuid });
@@ -127,6 +128,27 @@ export const addTopicConceptSchema = z
     message: 'Either curriculumConceptId or masterConceptId is required.',
   });
 
+export const createConceptSchema = z.object({
+  name: nonEmpty(200),
+  code: nonEmpty(100).optional(),
+  definition: nonEmpty(4000),
+  explanation: optionalText(4000),
+  masterConceptId: uuid.optional(),
+});
+
+export const updateConceptSchema = z.object({
+  name: nonEmpty(200).optional(),
+  code: nonEmpty(100).optional(),
+  definition: nonEmpty(4000).optional(),
+  explanation: optionalText(4000),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const reorderTopicConceptsSchema = z.object({
+  orderedMappingIds: z.array(uuid).min(1),
+  lastKnownTopicUpdatedAt: z.string().datetime(),
+});
+
 export const createProjectSchema = z.object({
   title: nonEmpty(200),
   description: nonEmpty(4000),
@@ -187,6 +209,11 @@ export const updateProjectImplementationSchema = z.object({
   teacherInstructions: optionalText(4000),
   safetyInstructions: optionalText(4000),
   lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const reorderProjectImplementationsSchema = z.object({
+  orderedImplementationIds: z.array(uuid).min(1),
+  lastKnownProjectUpdatedAt: z.string().datetime(),
 });
 
 export const updateTopicConceptSchema = z.object({
@@ -273,6 +300,7 @@ export const updateVisibilitySchema = z.object({
   visibleToTeachers: z.boolean(),
   visibleToLearners: z.boolean(),
   visibleToGuardians: z.boolean(),
+  lastKnownUpdatedAt: z.string().datetime(),
 });
 
 export const createVersionSchema = z.object({

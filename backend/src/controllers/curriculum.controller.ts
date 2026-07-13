@@ -147,6 +147,42 @@ export const addTopicConcept = async (req: Request, res: Response): Promise<void
   res.status(201).json({ success: true, message: 'Topic concept mapping created.', data });
 };
 
+export const createConcept = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.createConcept(
+    getAuth(req),
+    param(req, 'curriculumId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(201).json({ success: true, message: 'Operational concept created.', data });
+};
+
+export const updateConcept = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateConcept(
+    getAuth(req),
+    param(req, 'conceptId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Operational concept updated.', data });
+};
+
+export const deleteConcept = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteConcept(getAuth(req), param(req, 'conceptId'), req.requestId);
+  res.status(200).json({ success: true, message: 'Operational concept deleted.', data });
+};
+
+export const reorderTopicConcepts = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.reorderTopicConcepts(
+    getAuth(req),
+    param(req, 'topicId'),
+    req.body.orderedMappingIds,
+    req.body.lastKnownTopicUpdatedAt,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Topic concept mappings reordered.', data });
+};
+
 export const updateTopicConcept = async (req: Request, res: Response): Promise<void> => {
   const data = await curriculumService.updateTopicConcept(
     getAuth(req),
@@ -227,6 +263,17 @@ export const deleteProjectImplementation = async (req: Request, res: Response): 
   res.status(200).json({ success: true, message: 'Project implementation removed.', data });
 };
 
+export const reorderProjectImplementations = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.reorderProjectImplementations(
+    getAuth(req),
+    param(req, 'projectId'),
+    req.body.orderedImplementationIds,
+    req.body.lastKnownProjectUpdatedAt,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Project implementations reordered.', data });
+};
+
 export const createLearningOutcome = async (req: Request, res: Response): Promise<void> => {
   const data = await curriculumService.createLearningOutcome(
     getAuth(req),
@@ -245,6 +292,11 @@ export const updateLearningOutcome = async (req: Request, res: Response): Promis
     req.requestId,
   );
   res.status(200).json({ success: true, message: 'Learning outcome updated.', data });
+};
+
+export const deleteLearningOutcome = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteLearningOutcome(getAuth(req), param(req, 'outcomeId'), req.requestId);
+  res.status(200).json({ success: true, message: 'Learning outcome deleted.', data });
 };
 
 export const linkTopicLearningOutcome = async (req: Request, res: Response): Promise<void> => {

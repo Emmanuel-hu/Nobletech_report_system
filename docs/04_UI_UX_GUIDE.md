@@ -1,3 +1,11 @@
+## Phase 2J.1 UI/UX Completion Update
+
+- Added complete curriculum structure editing surfaces for topics, concepts, projects, implementations, learning outcomes, resources, and visibility settings in the existing admin architecture.
+- Added explicit UI states for loading, empty, saving, saved, validation error, permission denied, read-only lifecycle, and concurrency conflict (with reload-latest action).
+- Added keyboard-accessible reorder controls using explicit action buttons and meaningful labels.
+- Added lineage labeling in mapping views to distinguish approved master references from adapted operational content.
+- Accessibility posture retained: form labels, actionable button text, ARIA-compatible expandable sections, and status feedback not relying on color alone.
+
 ## Phase 2J UI/UX Hardening Update
 
 - Assignment forms now use API-provided lookup selections for sessions, terms, classes, programme components, and teachers.

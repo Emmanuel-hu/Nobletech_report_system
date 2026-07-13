@@ -7,6 +7,7 @@ import {
   archiveAssignment,
   archiveCurriculum,
   compareVersions,
+  createConcept,
   createProjectImplementation,
   completeAssignment,
   createAssignment,
@@ -20,6 +21,8 @@ import {
   deleteProject,
   deleteProjectImplementation,
   deleteProjectLearningOutcomeLink,
+  deleteLearningOutcome,
+  deleteConcept,
   deleteResource,
   deleteTopicConcept,
   deleteTopicLearningOutcomeLink,
@@ -38,11 +41,14 @@ import {
   listCurricula,
   listVersions,
   publishCurriculum,
+  reorderProjectImplementations,
+  reorderTopicConcepts,
   reorderTopics,
   reorderUnits,
   requestRevision,
   submitReview,
   suspendAssignment,
+  updateConcept,
   updateAssignment,
   updateCurriculum,
   updateLearningOutcome,
@@ -64,6 +70,8 @@ import {
   archiveCurriculumSchema,
   assignmentIdParamSchema,
   conceptMappingIdParamSchema,
+  conceptIdParamSchema,
+  createConceptSchema,
   createAssignmentSchema,
   createCurriculumSchema,
   createLearningOutcomeSchema,
@@ -81,6 +89,8 @@ import {
   mapLearningOutcomeSchema,
   implementationIdParamSchema,
   projectOutcomeLinkIdParamSchema,
+  reorderProjectImplementationsSchema,
+  reorderTopicConceptsSchema,
   outcomeIdParamSchema,
   topicOutcomeLinkIdParamSchema,
   topicProjectLinkIdParamSchema,
@@ -96,6 +106,7 @@ import {
   unitTopicIdParamSchema,
   updateAssignmentSchema,
   updateCurriculumSchema,
+  updateConceptSchema,
   updateLearningOutcomeSchema,
   updateProjectSchema,
   updateProjectImplementationSchema,
@@ -244,6 +255,37 @@ curriculumRouter.delete(
 );
 
 curriculumRouter.post(
+  '/curricula/:curriculumId/concepts',
+  requirePermission('curriculum.edit'),
+  validateParams(curriculumIdParamSchema),
+  validateBody(createConceptSchema),
+  asyncHandler(createConcept),
+);
+
+curriculumRouter.patch(
+  '/curriculum-concepts/:conceptId',
+  requirePermission('curriculum.edit'),
+  validateParams(conceptIdParamSchema),
+  validateBody(updateConceptSchema),
+  asyncHandler(updateConcept),
+);
+
+curriculumRouter.delete(
+  '/curriculum-concepts/:conceptId',
+  requirePermission('curriculum.edit'),
+  validateParams(conceptIdParamSchema),
+  asyncHandler(deleteConcept),
+);
+
+curriculumRouter.post(
+  '/curriculum-topics/:topicId/concepts/reorder',
+  requirePermission('curriculum.reorder'),
+  validateParams(topicIdParamSchema),
+  validateBody(reorderTopicConceptsSchema),
+  asyncHandler(reorderTopicConcepts),
+);
+
+curriculumRouter.post(
   '/curriculum-units/:unitId/projects',
   requirePermission('curriculum.edit'),
   validateParams(unitIdParamSchema),
@@ -305,6 +347,14 @@ curriculumRouter.delete(
 );
 
 curriculumRouter.post(
+  '/curriculum-projects/:projectId/implementations/reorder',
+  requirePermission('curriculum.reorder'),
+  validateParams(projectIdParamSchema),
+  validateBody(reorderProjectImplementationsSchema),
+  asyncHandler(reorderProjectImplementations),
+);
+
+curriculumRouter.post(
   '/curricula/:curriculumId/learning-outcomes',
   requirePermission('curriculum.edit'),
   validateParams(curriculumIdParamSchema),
@@ -318,6 +368,13 @@ curriculumRouter.patch(
   validateParams(outcomeIdParamSchema),
   validateBody(updateLearningOutcomeSchema),
   asyncHandler(updateLearningOutcome),
+);
+
+curriculumRouter.delete(
+  '/curriculum-learning-outcomes/:outcomeId',
+  requirePermission('curriculum.edit'),
+  validateParams(outcomeIdParamSchema),
+  asyncHandler(deleteLearningOutcome),
 );
 
 curriculumRouter.post(

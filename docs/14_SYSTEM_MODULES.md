@@ -1,3 +1,15 @@
+## Phase 2J.1 Module Scope Update
+
+- Completed Curriculum Structure Editor module workflows for:
+	- Topic CRUD and topic reorder.
+	- Master concept linking, operational concept CRUD, and topic-concept mapping maintenance.
+	- Project CRUD, project-topic mapping, and implementation variant CRUD plus reorder.
+	- Learning-outcome CRUD with topic/project mapping maintenance.
+	- Curriculum resource CRUD and visibility-setting completion.
+- Completed frontend integration tests covering lifecycle and permission restrictions, mapping duplication controls, and concurrency-conflict UI behavior.
+- Added backend validator tests for newly completed structure-editor endpoint contracts.
+- Deferred boundary retained: no file upload, AI extraction, or AI curriculum generation module additions in this milestone.
+
 ## Phase 2J Module Scope Update
 
 - Extended Curriculum Administration module with backend-driven editor lookup orchestration.

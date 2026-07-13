@@ -1,3 +1,14 @@
+## Phase 2J.1 Workflow Completion
+
+- Topic workflow: create, update, reorder, and delete topic entries within editable lifecycle states; week-number overlap is allowed and no fixed week cap is enforced.
+- Concept workflow: search approved master concepts, link to topics, create and maintain adapted operational concepts, manage mapping metadata, and reorder mappings.
+- Project workflow: create, update, delete draft projects, link or unlink multiple topics, and preserve unit-level ownership with explicit mapping tables.
+- Project implementation workflow: create, update, delete, and reorder implementation variants with instructional and safety metadata.
+- Learning outcome workflow: create operational outcomes, optional master linkage, topic/project mapping management, and duplicate-mapping prevention.
+- Resource workflow: create, update, delete, and maintain metadata links for internal references and external URLs without file upload or launch behavior.
+- Visibility workflow: full toggle coverage with optimistic concurrency token validation.
+- Conflict workflow: version conflicts display explicit user-facing conflict state and require reload before retry.
+
 ## Phase 2J Workflow Additions
 
 - Editor lookup workflow: on entry, load curriculum-scoped sessions, terms, classes, components, teachers, published versions, and approved master-library references.

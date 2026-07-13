@@ -1,3 +1,12 @@
+## Phase 2J.1 Status Update
+
+- Completed: curriculum structure editor workflow completion using existing lifecycle and assignment-capable schema.
+- Added minimal API corrections only for existing structure domains: operational concept CRUD, concept-mapping reorder, project-implementation reorder, learning-outcome delete, and visibility concurrency token validation.
+- No new database domains were introduced; implementation remained within approved curriculum structure entities.
+- Optimistic concurrency enforcement now covers structure mutations and visibility updates consistently.
+- Next milestone recommendation remains: Phase 2K Curriculum Source and Master-Content Administration Foundation.
+- Deferred boundary retained: AI extraction and AI-assisted curriculum generation stay out of scope.
+
 ## Phase 2J Status Update
 
 - Completed: Curriculum Portal UX hardening and backend data integration completion for assignment and version-management pathways.

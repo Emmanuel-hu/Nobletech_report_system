@@ -157,6 +157,49 @@ export const curriculumClient = {
     },
   ) =>
     apiRequest<CurriculumDetail>(`/curriculum/curriculum-topics/${topicId}/concepts`, { method: 'POST', body: payload }, session),
+  updateTopicConcept: (
+    session: AuthSession,
+    mappingId: string,
+    payload: {
+      sequenceOrder?: number;
+      importanceLevel?: string;
+      expectedDepth?: string;
+      instructionalEmphasis?: string;
+      isCore?: boolean;
+      assessmentRelevance?: string;
+      teacherNote?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-topic-concepts/${mappingId}`, { method: 'PATCH', body: payload }, session),
+  deleteTopicConcept: (session: AuthSession, mappingId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-topic-concepts/${mappingId}`, { method: 'DELETE' }, session),
+  createConcept: (
+    session: AuthSession,
+    curriculumId: string,
+    payload: {
+      name: string;
+      code?: string;
+      definition: string;
+      explanation?: string;
+      masterConceptId?: string;
+    },
+  ) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curricula/${curriculumId}/concepts`, { method: 'POST', body: payload }, session),
+  updateConcept: (
+    session: AuthSession,
+    conceptId: string,
+    payload: {
+      name?: string;
+      code?: string;
+      definition?: string;
+      explanation?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-concepts/${conceptId}`, { method: 'PATCH', body: payload }, session),
+  deleteConcept: (session: AuthSession, conceptId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-concepts/${conceptId}`, { method: 'DELETE' }, session),
   createProject: (
     session: AuthSession,
     unitId: string,
@@ -188,16 +231,75 @@ export const curriculumClient = {
     },
   ) =>
     apiRequest<CurriculumDetail>(`/curriculum/curriculum-projects/${projectId}`, { method: 'PATCH', body: payload }, session),
+  deleteProject: (session: AuthSession, projectId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-projects/${projectId}`, { method: 'DELETE' }, session),
   linkProjectTopic: (session: AuthSession, projectId: string, topicId: string, sequenceOrder?: number) =>
     apiRequest<CurriculumDetail>(
       `/curriculum/curriculum-projects/${projectId}/topics`,
       { method: 'POST', body: { topicId, sequenceOrder } },
       session,
     ),
+  deleteProjectTopicLink: (session: AuthSession, linkId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-topic-project-links/${linkId}`, { method: 'DELETE' }, session),
+  createProjectImplementation: (
+    session: AuthSession,
+    projectId: string,
+    payload: {
+      title: string;
+      implementationType: string;
+      description?: string;
+      sequenceOrder: number;
+      teacherInstructions?: string;
+      learnerInstructions?: string;
+      safetyInstructions?: string;
+      requiredInternet?: boolean;
+      requiredDeviceCount?: number;
+      estimatedDurationMinutes?: number;
+    },
+  ) =>
+    apiRequest<CurriculumDetail>(
+      `/curriculum/curriculum-projects/${projectId}/implementations`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  updateProjectImplementation: (
+    session: AuthSession,
+    implementationId: string,
+    payload: {
+      title?: string;
+      implementationType?: string;
+      description?: string;
+      sequenceOrder?: number;
+      teacherInstructions?: string;
+      learnerInstructions?: string;
+      safetyInstructions?: string;
+      requiredInternet?: boolean;
+      requiredDeviceCount?: number;
+      estimatedDurationMinutes?: number;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumDetail>(
+      `/curriculum/curriculum-project-implementations/${implementationId}`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  deleteProjectImplementation: (session: AuthSession, implementationId: string) =>
+    apiRequest<CurriculumDetail>(
+      `/curriculum/curriculum-project-implementations/${implementationId}`,
+      { method: 'DELETE' },
+      session,
+    ),
   createLearningOutcome: (
     session: AuthSession,
     curriculumId: string,
-    payload: { statement: string; code?: string; bloomLevel?: string; measurableVerb?: string },
+    payload: {
+      statement: string;
+      code?: string;
+      bloomLevel?: string;
+      measurableVerb?: string;
+      masterLearningOutcomeId?: string;
+    },
   ) =>
     apiRequest<CurriculumDetail>(`/curriculum/curricula/${curriculumId}/learning-outcomes`, { method: 'POST', body: payload }, session),
   updateLearningOutcome: (
@@ -216,18 +318,24 @@ export const curriculumClient = {
       { method: 'PATCH', body: payload },
       session,
     ),
+  deleteLearningOutcome: (session: AuthSession, outcomeId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-learning-outcomes/${outcomeId}`, { method: 'DELETE' }, session),
   linkTopicOutcome: (session: AuthSession, topicId: string, outcomeId: string, sequenceOrder?: number) =>
     apiRequest<CurriculumDetail>(
       `/curriculum/curriculum-topics/${topicId}/learning-outcomes`,
       { method: 'POST', body: { outcomeId, sequenceOrder } },
       session,
     ),
+  deleteTopicOutcomeLink: (session: AuthSession, linkId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-topic-learning-outcome-links/${linkId}`, { method: 'DELETE' }, session),
   linkProjectOutcome: (session: AuthSession, projectId: string, outcomeId: string, sequenceOrder?: number) =>
     apiRequest<CurriculumDetail>(
       `/curriculum/curriculum-projects/${projectId}/learning-outcomes`,
       { method: 'POST', body: { outcomeId, sequenceOrder } },
       session,
     ),
+  deleteProjectOutcomeLink: (session: AuthSession, linkId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-project-learning-outcome-links/${linkId}`, { method: 'DELETE' }, session),
   createResource: (
     session: AuthSession,
     curriculumId: string,
@@ -240,6 +348,9 @@ export const curriculumClient = {
       requiresInternet?: boolean;
       requiresLogin?: boolean;
       safetyNote?: string;
+      externalUrl?: string;
+      internalFileReference?: string;
+      masterResourceId?: string;
     },
   ) =>
     apiRequest<CurriculumDetail>(`/curriculum/curricula/${curriculumId}/resources`, { method: 'POST', body: payload }, session),
@@ -253,10 +364,36 @@ export const curriculumClient = {
       requiresInternet?: boolean;
       requiresLogin?: boolean;
       safetyNote?: string;
+      externalUrl?: string;
+      internalFileReference?: string;
       lastKnownUpdatedAt: string;
     },
   ) =>
     apiRequest<CurriculumDetail>(`/curriculum/curriculum-resources/${resourceId}`, { method: 'PATCH', body: payload }, session),
+  deleteResource: (session: AuthSession, resourceId: string) =>
+    apiRequest<CurriculumDetail>(`/curriculum/curriculum-resources/${resourceId}`, { method: 'DELETE' }, session),
+  reorderTopicConcepts: (
+    session: AuthSession,
+    topicId: string,
+    orderedMappingIds: string[],
+    lastKnownTopicUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumDetail>(
+      `/curriculum/curriculum-topics/${topicId}/concepts/reorder`,
+      { method: 'POST', body: { orderedMappingIds, lastKnownTopicUpdatedAt } },
+      session,
+    ),
+  reorderProjectImplementations: (
+    session: AuthSession,
+    projectId: string,
+    orderedImplementationIds: string[],
+    lastKnownProjectUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumDetail>(
+      `/curriculum/curriculum-projects/${projectId}/implementations/reorder`,
+      { method: 'POST', body: { orderedImplementationIds, lastKnownProjectUpdatedAt } },
+      session,
+    ),
   updateVisibility: (session: AuthSession, curriculumId: string, payload: CurriculumVisibility) =>
     apiRequest<CurriculumDetail>(`/curriculum/curricula/${curriculumId}/visibility`, { method: 'PUT', body: payload }, session),
   getVersions: (session: AuthSession, curriculumId: string) =>

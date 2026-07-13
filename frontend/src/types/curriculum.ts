@@ -55,6 +55,8 @@ export type CurriculumVisibility = {
   visibleToTeachers: boolean;
   visibleToLearners: boolean;
   visibleToGuardians: boolean;
+  updatedAt?: string;
+  lastKnownUpdatedAt?: string;
 };
 
 export type CurriculumVersion = {
@@ -86,6 +88,7 @@ export type CurriculumUnit = {
   description: string | null;
   sequenceOrder: number;
   estimatedWeeks: number | null;
+  updatedAt: string;
   topics: CurriculumTopic[];
   projects: CurriculumProject[];
 };
@@ -100,6 +103,8 @@ export type CurriculumTopic = {
   recommendedDurationMinutes: number | null;
   difficultyLevel: string | null;
   teacherNote: string | null;
+  updatedAt: string;
+  masterTopicId?: string | null;
   conceptLinks: CurriculumTopicConcept[];
   topicProjects?: CurriculumTopicProjectLink[];
   topicLearningOutcomes?: CurriculumTopicLearningOutcomeLink[];
@@ -116,6 +121,7 @@ export type CurriculumTopicConcept = {
   instructionalEmphasis: string | null;
   isCore: boolean;
   assessmentRelevance: string | null;
+  updatedAt: string;
 };
 
 export type CurriculumTopicProjectLink = {
@@ -143,6 +149,8 @@ export type CurriculumProjectImplementation = {
   learnerInstructions?: string | null;
   teacherInstructions?: string | null;
   safetyInstructions?: string | null;
+  description?: string | null;
+  updatedAt: string;
 };
 
 export type CurriculumProjectOutcomeLink = {
@@ -162,6 +170,7 @@ export type CurriculumProject = {
   estimatedDurationMinutes: number | null;
   difficultyLevel: string | null;
   safetyNote: string | null;
+  updatedAt: string;
   implementations: CurriculumProjectImplementation[];
   topicLinks?: CurriculumTopicProjectLink[];
   projectLearningOutcomes?: CurriculumProjectOutcomeLink[];
@@ -174,6 +183,7 @@ export type CurriculumLearningOutcome = {
   bloomLevel: string | null;
   measurableVerb: string | null;
   masterLearningOutcomeId?: string | null;
+  updatedAt: string;
 };
 
 export type CurriculumResource = {
@@ -189,6 +199,7 @@ export type CurriculumResource = {
   masterResourceId?: string | null;
   externalUrl?: string | null;
   internalFileReference?: string | null;
+  updatedAt: string;
 };
 
 export type CurriculumConcept = {
@@ -198,6 +209,7 @@ export type CurriculumConcept = {
   definition: string;
   explanation: string | null;
   masterConceptId: string | null;
+  updatedAt: string;
 };
 
 export type AcademicSessionLookup = {

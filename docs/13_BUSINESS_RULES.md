@@ -1,3 +1,12 @@
+## Phase 2J.1 Rules
+
+- Structure mutations are allowed only when curriculum status is `DRAFT` or `REVISION_REQUIRED`.
+- `UNDER_REVIEW`, `APPROVED`, `PUBLISHED`, and `ARCHIVED` statuses are structurally read-only, including delete operations.
+- Published curriculum remains immutable and publication stays separated from approval lifecycle actions.
+- Permission checks remain code-based; at minimum, `curriculum.view`, `curriculum.edit`, and `curriculum.reorder` are required for corresponding actions.
+- Optimistic concurrency tokens are required for mutable structure updates and visibility changes; stale updates are rejected with conflict responses.
+- Duplicate mappings for topic/project learning outcomes and topic-concept relationships are blocked by API constraints and surfaced as safe conflict responses.
+
 ## Phase 2G Rules
 
 - Curriculum root records are reusable within a school and are not permanently bound to session or class context.

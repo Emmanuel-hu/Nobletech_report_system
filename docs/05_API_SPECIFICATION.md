@@ -1,3 +1,18 @@
+## Phase 2J.1 API Completion Update
+
+- Added operational concept endpoints:
+	- `POST /api/v1/curriculum/curricula/:curriculumId/concepts`
+	- `PATCH /api/v1/curriculum/curriculum-concepts/:conceptId`
+	- `DELETE /api/v1/curriculum/curriculum-concepts/:conceptId`
+- Added concept-mapping reorder endpoint:
+	- `POST /api/v1/curriculum/curriculum-topics/:topicId/concepts/reorder`
+- Added project-implementation reorder endpoint:
+	- `POST /api/v1/curriculum/curriculum-projects/:projectId/implementations/reorder`
+- Added learning-outcome delete endpoint:
+	- `DELETE /api/v1/curriculum/curriculum-learning-outcomes/:outcomeId`
+- Updated visibility update contract to include `lastKnownUpdatedAt` optimistic concurrency token.
+- Conflict mapping remains safe and normalized through application error envelopes; raw Prisma errors are not exposed.
+
 Every API endpoint we'll need
 
 ## Phase 2J API Integration Update

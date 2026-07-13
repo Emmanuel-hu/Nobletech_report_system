@@ -1,3 +1,11 @@
+## Phase 2J.1 Delivery Update
+
+- Milestone completed: Curriculum Structure Editor Completion.
+- Delivered workflows: topic CRUD and reorder, concept search/linking plus operational concept CRUD, topic-concept mapping management and reorder, project CRUD plus topic mappings, project implementation CRUD and reorder, learning-outcome CRUD plus topic/project mappings, resource CRUD, and visibility-settings completion.
+- Enforcement retained: structure mutability is restricted to `DRAFT` and `REVISION_REQUIRED`; review, approval, publication, and archive states are read-only.
+- Concurrency behavior: optimistic concurrency conflict responses are surfaced as explicit conflict states with reload-latest action and no silent overwrite.
+- Deferred boundary remains active: curriculum source uploads, AI extraction, AI curriculum generation, lesson notes, assessments, CBT, reports, attendance, and student portal remain out of scope.
+
 ## Phase 2J Delivery Update
 
 - Milestone completed: Curriculum Portal UX Hardening and Backend Data Integration Completion.

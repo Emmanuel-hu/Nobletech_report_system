@@ -1,14 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  conceptIdParamSchema,
   conceptMappingIdParamSchema,
+  createConceptSchema,
   createProjectImplementationSchema,
   implementationIdParamSchema,
   projectOutcomeLinkIdParamSchema,
+  reorderProjectImplementationsSchema,
+  reorderTopicConceptsSchema,
   topicOutcomeLinkIdParamSchema,
   topicProjectLinkIdParamSchema,
+  updateConceptSchema,
   updateProjectImplementationSchema,
   updateTopicConceptSchema,
+  updateVisibilitySchema,
 } from '../src/validators/curriculum.validator';
 
 describe('curriculum phase 2J validators', () => {
@@ -51,5 +57,55 @@ describe('curriculum phase 2J validators', () => {
     expect(topicProjectLinkIdParamSchema.parse({ linkId: uuid }).linkId).toBe(uuid);
     expect(topicOutcomeLinkIdParamSchema.parse({ linkId: uuid }).linkId).toBe(uuid);
     expect(projectOutcomeLinkIdParamSchema.parse({ linkId: uuid }).linkId).toBe(uuid);
+    expect(conceptIdParamSchema.parse({ conceptId: uuid }).conceptId).toBe(uuid);
+  });
+
+  it('validates concept CRUD and reorder schema payloads', () => {
+    const concept = createConceptSchema.parse({
+      name: 'Operational concept',
+      definition: 'Explain friction in local context.',
+      code: 'OP-C1',
+    });
+
+    expect(concept.name).toBe('Operational concept');
+
+    const updated = updateConceptSchema.parse({
+      definition: 'Updated definition',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(updated.definition).toBe('Updated definition');
+
+    const reordered = reorderTopicConceptsSchema.parse({
+      orderedMappingIds: ['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'],
+      lastKnownTopicUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(reordered.orderedMappingIds).toHaveLength(1);
+  });
+
+  it('validates project implementation reorder and visibility concurrency payloads', () => {
+    const reordered = reorderProjectImplementationsSchema.parse({
+      orderedImplementationIds: ['bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'],
+      lastKnownProjectUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(reordered.orderedImplementationIds).toHaveLength(1);
+
+    const visibility = updateVisibilitySchema.parse({
+      showProgrammeComponents: true,
+      showTools: true,
+      showResources: true,
+      showProjects: true,
+      showLearningOutcomes: true,
+      showTeacherNotes: true,
+      showStudentNotes: true,
+      visibleToTeachers: true,
+      visibleToLearners: false,
+      visibleToGuardians: false,
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(visibility.showResources).toBe(true);
   });
 });

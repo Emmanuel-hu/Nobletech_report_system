@@ -747,6 +747,181 @@ export class CurriculumService {
     return this.reloadCurriculum(curriculum.id);
   }
 
+  async createConcept(
+    auth: AuthContext,
+    curriculumId: string,
+    payload: {
+      name: string;
+      code?: string;
+      definition: string;
+      explanation?: string;
+      masterConceptId?: string;
+    },
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const curriculum = await this.requireEditableCurriculum(curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      const concept = await tx.curriculumConcept.create({
+        data: {
+          curriculumId,
+          schoolId: curriculum.schoolId,
+          masterConceptId: payload.masterConceptId,
+          name: payload.name,
+          code: payload.code,
+          definition: payload.definition,
+          explanation: payload.explanation,
+          createdById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.concept.create',
+        entityType: 'curriculum_concept',
+        entityId: concept.id,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          curriculumId,
+          name: concept.name,
+          masterConceptId: concept.masterConceptId,
+        },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async updateConcept(
+    auth: AuthContext,
+    conceptId: string,
+    payload: {
+      name?: string;
+      code?: string;
+      definition?: string;
+      explanation?: string;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const concept = await prisma.curriculumConcept.findUnique({ where: { id: conceptId } });
+    if (!concept || concept.archivedAt) {
+      throw notFound('Curriculum concept not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(concept.curriculumId, auth);
+    this.assertNoConcurrentModification(concept.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.curriculumConcept.update({
+        where: { id: conceptId },
+        data: {
+          name: payload.name,
+          code: payload.code,
+          definition: payload.definition,
+          explanation: payload.explanation,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.concept.edit',
+        entityType: 'curriculum_concept',
+        entityId: conceptId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        oldValues: { name: concept.name, code: concept.code },
+        newValues: { name: updated.name, code: updated.code },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async deleteConcept(auth: AuthContext, conceptId: string, requestId?: string): Promise<CurriculumAggregate> {
+    const concept = await prisma.curriculumConcept.findUnique({ where: { id: conceptId } });
+    if (!concept || concept.archivedAt) {
+      throw notFound('Curriculum concept not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(concept.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumConcept.update({
+        where: { id: conceptId },
+        data: {
+          archivedAt: new Date(),
+          isActive: false,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.concept.delete',
+        entityType: 'curriculum_concept',
+        entityId: conceptId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only soft delete',
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
+  async reorderTopicConcepts(
+    auth: AuthContext,
+    topicId: string,
+    orderedMappingIds: string[],
+    lastKnownTopicUpdatedAt: string,
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const topic = await prisma.curriculumTopic.findUnique({
+      where: { id: topicId },
+      include: { curriculumUnit: true },
+    });
+
+    if (!topic || topic.archivedAt) {
+      throw notFound('Curriculum topic not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(topic.curriculumUnit.curriculumId, auth);
+    this.assertNoConcurrentModification(topic.updatedAt, lastKnownTopicUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const mappings = await tx.curriculumTopicConcept.findMany({
+        where: { curriculumTopicId: topicId },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      this.assertFullReorderSet(
+        mappings.map((mapping) => mapping.id),
+        orderedMappingIds,
+        'topic concept mapping',
+      );
+
+      for (let index = 0; index < orderedMappingIds.length; index += 1) {
+        await tx.curriculumTopicConcept.update({
+          where: { id: orderedMappingIds[index] },
+          data: { sequenceOrder: index + 1 },
+        });
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.reorder.topic_concepts',
+        entityType: 'curriculum_topic',
+        entityId: topicId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        newValues: { orderedMappingIds },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
   async updateTopicConcept(
     auth: AuthContext,
     mappingId: string,
@@ -1270,6 +1445,58 @@ export class CurriculumService {
     return this.reloadCurriculum(curriculum.id);
   }
 
+  async reorderProjectImplementations(
+    auth: AuthContext,
+    projectId: string,
+    orderedImplementationIds: string[],
+    lastKnownProjectUpdatedAt: string,
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const project = await prisma.curriculumProject.findUnique({
+      where: { id: projectId },
+      include: { curriculumUnit: true },
+    });
+
+    if (!project || project.archivedAt) {
+      throw notFound('Curriculum project not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(project.curriculumUnit.curriculumId, auth);
+    this.assertNoConcurrentModification(project.updatedAt, lastKnownProjectUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const implementations = await tx.curriculumProjectImplementation.findMany({
+        where: { curriculumProjectId: projectId, isActive: true },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      this.assertFullReorderSet(
+        implementations.map((implementation) => implementation.id),
+        orderedImplementationIds,
+        'project implementation',
+      );
+
+      for (let index = 0; index < orderedImplementationIds.length; index += 1) {
+        await tx.curriculumProjectImplementation.update({
+          where: { id: orderedImplementationIds[index] },
+          data: { sequenceOrder: index + 1, updatedById: auth.userId },
+        });
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.reorder.project_implementations',
+        entityType: 'curriculum_project',
+        entityId: projectId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        newValues: { orderedImplementationIds },
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
   async createLearningOutcome(
     auth: AuthContext,
     curriculumId: string,
@@ -1524,6 +1751,42 @@ export class CurriculumService {
     return this.reloadCurriculum(curriculum.id);
   }
 
+  async deleteLearningOutcome(
+    auth: AuthContext,
+    outcomeId: string,
+    requestId?: string,
+  ): Promise<CurriculumAggregate> {
+    const outcome = await prisma.curriculumLearningOutcome.findUnique({ where: { id: outcomeId } });
+    if (!outcome || outcome.archivedAt) {
+      throw notFound('Curriculum learning outcome not found.');
+    }
+
+    const curriculum = await this.requireEditableCurriculum(outcome.curriculumId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumLearningOutcome.update({
+        where: { id: outcomeId },
+        data: {
+          archivedAt: new Date(),
+          isActive: false,
+          updatedById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.learning_outcome.delete',
+        entityType: 'curriculum_learning_outcome',
+        entityId: outcomeId,
+        schoolId: curriculum.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only soft delete',
+        requestId,
+      });
+    });
+
+    return this.reloadCurriculum(curriculum.id);
+  }
+
   async createResource(
     auth: AuthContext,
     curriculumId: string,
@@ -1689,7 +1952,7 @@ export class CurriculumService {
   async updateVisibility(
     auth: AuthContext,
     curriculumId: string,
-    payload: Prisma.CurriculumVisibilitySettingUncheckedUpdateInput,
+    payload: Prisma.CurriculumVisibilitySettingUncheckedUpdateInput & { lastKnownUpdatedAt: string },
     requestId?: string,
   ): Promise<CurriculumAggregate> {
     const curriculum = await this.requireEditableCurriculum(curriculumId, auth);
@@ -1700,9 +1963,22 @@ export class CurriculumService {
         throw notFound('Visibility settings not found for curriculum.');
       }
 
+      this.assertNoConcurrentModification(current.updatedAt, payload.lastKnownUpdatedAt);
+
       const updated = await tx.curriculumVisibilitySetting.update({
         where: { curriculumId },
-        data: payload,
+        data: {
+          showProgrammeComponents: payload.showProgrammeComponents,
+          showTools: payload.showTools,
+          showResources: payload.showResources,
+          showProjects: payload.showProjects,
+          showLearningOutcomes: payload.showLearningOutcomes,
+          showTeacherNotes: payload.showTeacherNotes,
+          showStudentNotes: payload.showStudentNotes,
+          visibleToTeachers: payload.visibleToTeachers,
+          visibleToLearners: payload.visibleToLearners,
+          visibleToGuardians: payload.visibleToGuardians,
+        },
       });
 
       await this.createAuditLogTx(tx, {
