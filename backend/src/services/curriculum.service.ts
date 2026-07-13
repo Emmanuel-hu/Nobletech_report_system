@@ -1120,7 +1120,7 @@ export class CurriculumService {
           curriculumProjectId: projectId,
           title: payload.title,
           implementationType: payload.implementationType as never,
-          description: payload.description,
+          description: payload.description ?? '',
           sequenceOrder: payload.sequenceOrder,
           requiredInternet: payload.requiredInternet,
           requiredDeviceCount: payload.requiredDeviceCount,
@@ -1179,7 +1179,7 @@ export class CurriculumService {
       },
     });
 
-    if (!implementation || implementation.archivedAt) {
+    if (!implementation || !implementation.isActive) {
       throw notFound('Curriculum project implementation not found.');
     }
 
@@ -1241,7 +1241,7 @@ export class CurriculumService {
       },
     });
 
-    if (!implementation || implementation.archivedAt) {
+    if (!implementation || !implementation.isActive) {
       throw notFound('Curriculum project implementation not found.');
     }
 
@@ -1251,7 +1251,6 @@ export class CurriculumService {
       await tx.curriculumProjectImplementation.update({
         where: { id: implementationId },
         data: {
-          archivedAt: new Date(),
           isActive: false,
           updatedById: auth.userId,
         },
