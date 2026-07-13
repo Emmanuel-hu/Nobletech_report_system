@@ -1,3 +1,10 @@
+## Phase 2G Operational Curriculum Lifecycle Foundation
+
+- New migration folder: `backend/prisma/migrations/20260713055000_operational_curriculum_lifecycle_foundation`.
+- Added lifecycle enums: `CurriculumStatus`, `CurriculumCreationMethod`, `CurriculumReviewDecision`, `CurriculumAssignmentStatus`.
+- Added operational models: `Curriculum`, `CurriculumUnit`, `CurriculumTopic`, `CurriculumConcept`, `CurriculumTopicConcept`, `CurriculumProject`, `CurriculumTopicProject`, `CurriculumProjectImplementation`, `CurriculumLearningOutcome`, `CurriculumTopicLearningOutcome`, `CurriculumProjectLearningOutcome`, `CurriculumResource`, `CurriculumVisibilitySetting`, `CurriculumVersion`, `CurriculumReviewAction`, `CurriculumStatusHistory`, `CurriculumAssignment`.
+- Deferred or removed from this phase: `CurriculumComponent` (redundant for current one-component ownership model).
+- Snapshot/versioning: immutable `snapshot_data` JSONB stored on each version; publication metadata and checksum checks enforced at DB constraint level.
 # Database Schema
 
 ## Purpose

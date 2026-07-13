@@ -1,3 +1,11 @@
+## Phase 2G Delivery Update
+
+- Milestone completed: operational curriculum lifecycle foundation.
+- Migration: `20260713055000_operational_curriculum_lifecycle_foundation`.
+- Curriculum ownership model: school-owned reusable curriculum root; final academic scope resolved at assignment level.
+- Assignment rule: every assignment references both `curriculum_id` and immutable `curriculum_version_id` with composite FK validation.
+- Snapshot strategy: immutable `snapshot_data` JSONB on `curriculum_versions` for published history preservation.
+- AI boundary: AI-assisted generation remains deferred; Phase 2G contains lifecycle and persistence foundations only.
 # Nobletech Education Management Platform (NEMP)
 
 # Software Requirements Specification (SRS)

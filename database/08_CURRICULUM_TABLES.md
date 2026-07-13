@@ -1,3 +1,12 @@
+## Phase 2G Finalization Notes
+
+- Implemented migration: `20260713055000_operational_curriculum_lifecycle_foundation`.
+- `curriculum_components` removed from active design for this milestone due redundant ownership with `school_programme_component_id` on curriculum.
+- Projects are owned by `curriculum_units` and linked to one or more topics via `curriculum_topic_projects`.
+- Learning outcomes are reusable at curriculum level and linked through typed joins:
+    - `curriculum_topic_learning_outcomes`
+    - `curriculum_project_learning_outcomes`
+- Version snapshots are immutable JSONB payloads on `curriculum_versions`.
 # Nobletech Education Management Platform (NEMP)
 
 # 08_CURRICULUM_TABLES

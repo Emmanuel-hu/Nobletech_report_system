@@ -1,3 +1,14 @@
+## Phase 2G Rules
+
+- Curriculum root records are reusable within a school and are not permanently bound to session or class context.
+- Projects are unit-owned and linked to topics through explicit `curriculum_topic_projects`.
+- Operational concept handling supports direct `master_concept_id` links and optional school-specific `curriculum_concepts` linked through `curriculum_topic_concepts`.
+- Learning outcomes are reusable per curriculum and linked by typed joins to topics and projects.
+- Duplicate active assignment scope is blocked via partial unique index; completed or archived history remains allowed.
+- Service-level enforcement still required:
+	- only published versions may be activated in assignments,
+	- strict immutability write controls for review-action history,
+	- cross-table policy checks that cannot be safely encoded as single-row constraints.
 # Nobletech Report System (NRS)
 
 # Business Rules

@@ -10,6 +10,7 @@
     "prisma:validate": "tsx src/scripts/prisma-validate.ts",
     "prisma:generate": "tsx src/scripts/prisma-generate.ts",
     "db:health": "tsx src/scripts/db-health.ts",
+    "phase2g:constraints": "tsx src/scripts/phase2g-curriculum-constraints-check.ts",
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",

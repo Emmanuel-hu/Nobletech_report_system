@@ -1,3 +1,10 @@
+## Phase 2G Relationship Additions
+
+- `curricula` -> `curriculum_versions` (one-to-many) with `current_version_id` pointer.
+- `curriculum_assignments` references immutable version pair (`curriculum_version_id`, `curriculum_id`).
+- `curriculum_projects` belong to units; topic linkage is many-to-many through `curriculum_topic_projects`.
+- `curriculum_learning_outcomes` link to topics and projects through typed join tables.
+- `curriculum_topic_concepts` supports either direct master concept links or optional operational concept links.
 # Nobletech Education Management Platform (NEMP)
 
 # 35_DATABASE_ENTITY_RELATIONSHIP_GUIDE

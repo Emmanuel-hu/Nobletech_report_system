@@ -1,3 +1,9 @@
+## Phase 2G Workflow Additions
+
+- Lifecycle flow: `GENERATED_DRAFT`/`DRAFT` -> `UNDER_REVIEW` -> `APPROVED` -> `PUBLISHED` -> `ARCHIVED`.
+- Review and status transitions are persisted in `curriculum_review_actions` and `curriculum_status_history`.
+- Publication requires approved metadata and immutable version snapshot metadata.
+- Assignment flow uses immutable version references: each assignment stores `curriculum_id` + `curriculum_version_id` and academic scope fields (`session`, `term`, `class`, `school_programme_component`).
 # Nobletech Report System (NRS)
 
 # Workflows

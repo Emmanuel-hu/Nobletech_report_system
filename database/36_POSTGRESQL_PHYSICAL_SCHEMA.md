@@ -1,3 +1,16 @@
+## Phase 2G Physical Migration Notes
+
+- Applied migration folder: `20260713055000_operational_curriculum_lifecycle_foundation`.
+- Migration is non-destructive and introduces new lifecycle tables, joins, indexes, enums, and custom checks.
+- Custom checks added for:
+    - lifecycle metadata consistency,
+    - publication chronology,
+    - semantic version non-negative values,
+    - positive ordering and duration values,
+    - assignment date validity.
+- Partial unique indexes added for:
+    - single active/current scope guarantees on versions,
+    - duplicate active assignment-scope prevention.
 # Nobletech Education Management Platform (NEMP)
 
 # 36_POSTGRESQL_PHYSICAL_SCHEMA

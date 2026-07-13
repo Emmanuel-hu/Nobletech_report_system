@@ -275,7 +275,6 @@ model User {
   approvedCurricula        Curriculum[]                          @relation("CurriculumApprovedBy")
   publishedCurricula       Curriculum[]                          @relation("CurriculumPublishedBy")
   archivedCurricula        Curriculum[]                          @relation("CurriculumArchivedBy")
-  createdCurriculumComponents CurriculumComponent[]              @relation("CurriculumComponentCreatedBy")
   createdCurriculumUnits   CurriculumUnit[]                      @relation("CurriculumUnitCreatedBy")
   updatedCurriculumUnits   CurriculumUnit[]                      @relation("CurriculumUnitUpdatedBy")
   createdCurriculumTopics  CurriculumTopic[]                     @relation("CurriculumTopicCreatedBy")
@@ -505,7 +504,6 @@ model AcademicSession {
   studentEnrolments StudentEnrolment[]               @relation("AcademicSessionEnrolments")
   classAssignments  AcademicClassTeacherAssignment[] @relation("AcademicSessionClassAssignments")
   classComponents   ClassProgrammeComponent[]        @relation("AcademicSessionClassComponents")
-  curricula         Curriculum[]
   curriculumAssignments CurriculumAssignment[]
 
   @@unique([schoolId, name])
@@ -537,7 +535,6 @@ model Term {
   classAssignments  AcademicClassTeacherAssignment[] @relation("TermClassAssignments")
   termComponents    TermProgrammeComponent[]         @relation("TermProgrammeComponents")
   classComponents   ClassProgrammeComponent[]        @relation("TermClassProgrammeComponents")
-  curricula         Curriculum[]
   curriculumAssignments CurriculumAssignment[]
 
   @@unique([academicSessionId, name])
@@ -569,7 +566,6 @@ model AcademicClass {
   studentEnrolments StudentEnrolment[]               @relation("AcademicClassEnrolments")
   classAssignments  AcademicClassTeacherAssignment[] @relation("AcademicClassTeacherAssignments")
   classComponents   ClassProgrammeComponent[]        @relation("AcademicClassProgrammeComponents")
-  curricula         Curriculum[]
   curriculumAssignments CurriculumAssignment[]
 
   @@unique([schoolId, name])
@@ -841,7 +837,6 @@ model SchoolProgrammeComponent {
   classComponents    ClassProgrammeComponent[]   @relation("SchoolProgrammeComponentClassLinks")
   settings           ProgrammeComponentSetting[] @relation("SchoolProgrammeComponentSettings")
   curricula          Curriculum[]                @relation("SchoolProgrammeComponentCurricula")
-  curriculumComponents CurriculumComponent[]     @relation("SchoolProgrammeComponentCurriculumComponents")
   curriculumAssignments CurriculumAssignment[]   @relation("SchoolProgrammeComponentCurriculumAssignments")
 
   @@unique([id, schoolId])
@@ -1730,9 +1725,6 @@ model Curriculum {
   id                        String                   @id @default(uuid()) @map("curriculum_id") @db.Uuid
   schoolId                  String                   @map("school_id") @db.Uuid
   schoolProgrammeComponentId String                  @map("school_programme_component_id") @db.Uuid
-  academicSessionId         String?                  @map("academic_session_id") @db.Uuid
-  termId                    String?                  @map("term_id") @db.Uuid
-  academicClassId           String?                  @map("academic_class_id") @db.Uuid
   title                     String                   @map("title") @db.VarChar(200)
   code                      String                   @map("code") @db.Citext
   description               String?                  @map("description") @db.Text
@@ -1758,9 +1750,6 @@ model Curriculum {
 
   school                 School                 @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   schoolProgrammeComponent SchoolProgrammeComponent @relation("SchoolProgrammeComponentCurricula", fields: [schoolProgrammeComponentId, schoolId], references: [id, schoolId], onDelete: Restrict)
-  academicSession        AcademicSession?       @relation(fields: [academicSessionId, schoolId], references: [id, schoolId], onDelete: Restrict)
-  term                   Term?                  @relation(fields: [termId, schoolId], references: [id, schoolId], onDelete: Restrict)
-  academicClass          AcademicClass?         @relation(fields: [academicClassId, schoolId], references: [id, schoolId], onDelete: Restrict)
   sourceCurriculum       Curriculum?            @relation("CurriculumDerivation", fields: [sourceCurriculumId], references: [id], onDelete: SetNull)
   derivedCurricula       Curriculum[]           @relation("CurriculumDerivation")
   createdByUser          User                   @relation("CurriculumCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
@@ -1769,9 +1758,9 @@ model Curriculum {
   publishedByUser        User?                  @relation("CurriculumPublishedBy", fields: [publishedById], references: [id], onDelete: SetNull)
   archivedByUser         User?                  @relation("CurriculumArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
   currentVersion         CurriculumVersion?     @relation("CurriculumCurrentVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
-  components             CurriculumComponent[]
   units                  CurriculumUnit[]
   concepts               CurriculumConcept[]
+  learningOutcomes       CurriculumLearningOutcome[]
   resources              CurriculumResource[]
   versions               CurriculumVersion[]    @relation("CurriculumVersions")
   reviewActions          CurriculumReviewAction[]
@@ -1785,28 +1774,6 @@ model Curriculum {
   @@index([schoolId, submittedAt, status])
   @@index([status, isActive, archivedAt])
   @@map("curricula")
-}
-
-model CurriculumComponent {
-  id                         String   @id @default(uuid()) @map("curriculum_component_id") @db.Uuid
-  curriculumId               String   @map("curriculum_id") @db.Uuid
-  schoolProgrammeComponentId String   @map("school_programme_component_id") @db.Uuid
-  title                      String?  @map("title") @db.VarChar(200)
-  description                String?  @map("description") @db.Text
-  sequenceOrder              Int      @map("sequence_order")
-  isEnabled                  Boolean  @default(true) @map("is_enabled")
-  createdById                String   @map("created_by_id") @db.Uuid
-  createdAt                  DateTime @default(now()) @map("created_at")
-  updatedAt                  DateTime @updatedAt @map("updated_at")
-
-  curriculum             Curriculum             @relation(fields: [curriculumId], references: [id], onDelete: Restrict)
-  schoolProgrammeComponent SchoolProgrammeComponent @relation("SchoolProgrammeComponentCurriculumComponents", fields: [schoolProgrammeComponentId], references: [id], onDelete: Restrict)
-  createdByUser          User                   @relation("CurriculumComponentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
-
-  @@unique([curriculumId, sequenceOrder])
-  @@unique([curriculumId, schoolProgrammeComponentId])
-  @@index([curriculumId, isEnabled])
-  @@map("curriculum_components")
 }
 
 model CurriculumUnit {
@@ -1830,6 +1797,7 @@ model CurriculumUnit {
   createdByUser       User                @relation("CurriculumUnitCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedByUser       User?               @relation("CurriculumUnitUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   topics              CurriculumTopic[]
+  projects            CurriculumProject[]
 
   @@unique([curriculumId, sequenceOrder])
   @@index([curriculumId, isActive])
@@ -1860,8 +1828,8 @@ model CurriculumTopic {
   createdByUser     User                   @relation("CurriculumTopicCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedByUser     User?                  @relation("CurriculumTopicUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   conceptLinks      CurriculumTopicConcept[]
-  projects          CurriculumProject[]
-  learningOutcomes  CurriculumLearningOutcome[]
+  topicProjects     CurriculumTopicProject[]
+  topicLearningOutcomes CurriculumTopicLearningOutcome[]
   resources         CurriculumResource[]
 
   @@unique([curriculumUnitId, sequenceOrder])
@@ -1927,7 +1895,7 @@ model CurriculumTopicConcept {
 
 model CurriculumProject {
   id                       String    @id @default(uuid()) @map("curriculum_project_id") @db.Uuid
-  curriculumTopicId        String    @map("curriculum_topic_id") @db.Uuid
+  curriculumUnitId         String    @map("curriculum_unit_id") @db.Uuid
   masterProjectId          String?   @map("master_project_id") @db.Uuid
   title                    String    @map("title") @db.VarChar(200)
   description              String    @map("description") @db.Text
@@ -1944,15 +1912,34 @@ model CurriculumProject {
   updatedAt                DateTime  @updatedAt @map("updated_at")
   archivedAt               DateTime? @map("archived_at")
 
-  curriculumTopic  CurriculumTopic                 @relation(fields: [curriculumTopicId], references: [id], onDelete: Restrict)
+  curriculumUnit   CurriculumUnit                  @relation(fields: [curriculumUnitId], references: [id], onDelete: Restrict)
   masterProject    MasterProject?                  @relation(fields: [masterProjectId], references: [id], onDelete: SetNull)
   createdByUser    User                            @relation("CurriculumProjectCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedByUser    User?                           @relation("CurriculumProjectUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   implementations  CurriculumProjectImplementation[]
+  topicLinks       CurriculumTopicProject[]
+  projectLearningOutcomes CurriculumProjectLearningOutcome[]
 
-  @@unique([curriculumTopicId, sequenceOrder])
-  @@index([curriculumTopicId, isActive])
+  @@unique([curriculumUnitId, sequenceOrder])
+  @@index([curriculumUnitId, isActive])
   @@map("curriculum_projects")
+}
+
+model CurriculumTopicProject {
+  id                  String   @id @default(uuid()) @map("curriculum_topic_project_id") @db.Uuid
+  curriculumTopicId   String   @map("curriculum_topic_id") @db.Uuid
+  curriculumProjectId String   @map("curriculum_project_id") @db.Uuid
+  sequenceOrder       Int?     @map("sequence_order")
+  isActive            Boolean  @default(true) @map("is_active")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  curriculumTopic   CurriculumTopic   @relation(fields: [curriculumTopicId], references: [id], onDelete: Restrict)
+  curriculumProject CurriculumProject @relation(fields: [curriculumProjectId], references: [id], onDelete: Restrict)
+
+  @@unique([curriculumTopicId, curriculumProjectId])
+  @@index([curriculumProjectId, isActive])
+  @@map("curriculum_topic_projects")
 }
 
 model CurriculumProjectImplementation {
@@ -1987,7 +1974,7 @@ model CurriculumProjectImplementation {
 
 model CurriculumLearningOutcome {
   id                    String    @id @default(uuid()) @map("curriculum_learning_outcome_id") @db.Uuid
-  curriculumTopicId     String    @map("curriculum_topic_id") @db.Uuid
+  curriculumId          String    @map("curriculum_id") @db.Uuid
   masterLearningOutcomeId String? @map("master_learning_outcome_id") @db.Uuid
   statement             String    @map("statement") @db.Text
   code                  String?   @map("code") @db.Citext
@@ -2000,14 +1987,50 @@ model CurriculumLearningOutcome {
   updatedAt             DateTime  @updatedAt @map("updated_at")
   archivedAt            DateTime? @map("archived_at")
 
-  curriculumTopic      CurriculumTopic       @relation(fields: [curriculumTopicId], references: [id], onDelete: Restrict)
+  curriculum          Curriculum          @relation(fields: [curriculumId], references: [id], onDelete: Restrict)
   masterLearningOutcome MasterLearningOutcome? @relation(fields: [masterLearningOutcomeId], references: [id], onDelete: SetNull)
   createdByUser        User                  @relation("CurriculumLearningOutcomeCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedByUser        User?                 @relation("CurriculumLearningOutcomeUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  topicLinks           CurriculumTopicLearningOutcome[]
+  projectLinks         CurriculumProjectLearningOutcome[]
 
-  @@index([curriculumTopicId, isActive])
+  @@index([curriculumId, isActive])
   @@index([masterLearningOutcomeId])
   @@map("curriculum_learning_outcomes")
+}
+
+model CurriculumTopicLearningOutcome {
+  id                          String   @id @default(uuid()) @map("curriculum_topic_learning_outcome_id") @db.Uuid
+  curriculumTopicId           String   @map("curriculum_topic_id") @db.Uuid
+  curriculumLearningOutcomeId String   @map("curriculum_learning_outcome_id") @db.Uuid
+  sequenceOrder               Int?     @map("sequence_order")
+  isActive                    Boolean  @default(true) @map("is_active")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  curriculumTopic           CurriculumTopic           @relation(fields: [curriculumTopicId], references: [id], onDelete: Restrict)
+  curriculumLearningOutcome CurriculumLearningOutcome @relation(fields: [curriculumLearningOutcomeId], references: [id], onDelete: Restrict)
+
+  @@unique([curriculumTopicId, curriculumLearningOutcomeId])
+  @@index([curriculumLearningOutcomeId, isActive])
+  @@map("curriculum_topic_learning_outcomes")
+}
+
+model CurriculumProjectLearningOutcome {
+  id                          String   @id @default(uuid()) @map("curriculum_project_learning_outcome_id") @db.Uuid
+  curriculumProjectId         String   @map("curriculum_project_id") @db.Uuid
+  curriculumLearningOutcomeId String   @map("curriculum_learning_outcome_id") @db.Uuid
+  sequenceOrder               Int?     @map("sequence_order")
+  isActive                    Boolean  @default(true) @map("is_active")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  curriculumProject         CurriculumProject         @relation(fields: [curriculumProjectId], references: [id], onDelete: Restrict)
+  curriculumLearningOutcome CurriculumLearningOutcome @relation(fields: [curriculumLearningOutcomeId], references: [id], onDelete: Restrict)
+
+  @@unique([curriculumProjectId, curriculumLearningOutcomeId])
+  @@index([curriculumLearningOutcomeId, isActive])
+  @@map("curriculum_project_learning_outcomes")
 }
 
 model CurriculumResource {
@@ -2100,6 +2123,7 @@ model CurriculumVersion {
   currentForCurriculum Curriculum[]      @relation("CurriculumCurrentVersion")
 
   @@unique([curriculumId, versionNumber])
+  @@unique([id, curriculumId])
   @@index([curriculumId, isCurrent])
   @@index([curriculumId, isPublished, status])
   @@index([status, submittedAt])
@@ -2174,7 +2198,7 @@ model CurriculumAssignment {
 
   school                 School                 @relation(fields: [schoolId], references: [id], onDelete: Restrict)
   curriculum             Curriculum             @relation(fields: [curriculumId], references: [id], onDelete: Restrict)
-  curriculumVersion      CurriculumVersion      @relation(fields: [curriculumVersionId], references: [id], onDelete: Restrict)
+  curriculumVersion      CurriculumVersion      @relation(fields: [curriculumVersionId, curriculumId], references: [id, curriculumId], onDelete: Restrict)
   academicSession        AcademicSession        @relation(fields: [academicSessionId, schoolId], references: [id, schoolId], onDelete: Restrict)
   term                   Term                   @relation(fields: [termId, schoolId], references: [id, schoolId], onDelete: Restrict)
   academicClass          AcademicClass          @relation(fields: [academicClassId, schoolId], references: [id, schoolId], onDelete: Restrict)

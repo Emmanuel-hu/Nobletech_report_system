@@ -1,3 +1,11 @@
+## Phase 2G Status Update
+
+- Completed: operational curriculum draft, review, approval, versioning, publication, and assignment persistence foundation.
+- Verification completed using:
+        - `backend/src/scripts/phase2g-curriculum-constraints-check.ts`
+        - regression suites for Phase 2C, 2D, 2E, and 2F.
+- Next milestone recommendation: Phase 2H Curriculum Authoring, Review and Publication Backend Service Foundation.
+- Phase 2H boundary: manual curriculum application services and APIs only; AI generation remains deferred.
 # Nobletech Education Management Platform (NEMP)
 
 # 37_DATABASE_IMPLEMENTATION_ROADMAP

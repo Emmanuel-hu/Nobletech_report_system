@@ -1,3 +1,8 @@
+## Phase 2G Security and Audit Notes
+
+- Curriculum lifecycle transitions are auditable through `curriculum_review_actions` and `curriculum_status_history`.
+- Assignment activation boundaries and publication eligibility require RBAC and service-layer authorization checks.
+- Database constraints enforce metadata validity, ordering, uniqueness, and composite-tenant isolation, while privileged transition policy remains a service responsibility.
 # Nobletech Education Management Platform (NEMP)
 
 # 17_SECURITY_AND_AUDIT_TABLES

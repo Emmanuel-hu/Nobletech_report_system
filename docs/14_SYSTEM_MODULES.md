@@ -1,3 +1,8 @@
+## Phase 2G Module Scope
+
+- Added database module foundation for operational curriculum lifecycle, versioning, review trail, visibility, and assignment.
+- Added verification script: `backend/src/scripts/phase2g-curriculum-constraints-check.ts`.
+- Deferred boundary: AI-assisted curriculum generation and AI-authoring automation remain out of scope for Phase 2G.
 # Nobletech Education Management Platform (NEMP)
 
 ## System Modules
