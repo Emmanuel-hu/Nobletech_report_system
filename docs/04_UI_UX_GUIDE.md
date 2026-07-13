@@ -1,3 +1,12 @@
+## Phase 2I UI Foundation Update
+
+- Added administrative curriculum portal layout with responsive sidebar navigation and content workspace.
+- Added explicit status badges that combine text and symbol markers so lifecycle states are not color-only.
+- Added standardized loading, empty, and retryable error states for API-driven views.
+- Added transient notification tray for action feedback on save, review, publish, assignment, and archive operations.
+- Added unsaved-change guard for curriculum metadata authoring forms.
+- Preserved manual authoring workflow focus; no AI generation controls are exposed in this phase.
+
 # Nobletech Education Management Platform (NEMP)
 
 # UI / UX Design Guide
@@ -540,3 +549,62 @@ The UI is considered complete when:
 - Tables are interactive.
 - Accessibility standards are met.
 - Users can complete tasks efficiently.
+
+---
+
+# Learner Dashboard UX Rules
+
+The learner dashboard should present:
+
+- Assigned Curriculum
+- Current Week or Lesson
+- Topic
+- Concepts Being Learned
+- Learning Objectives
+- Teacher Instructions
+- Internal Learning Material
+- External Activity Action
+- Assignment and Project
+- Submission Status
+- Assessment Status
+- Feedback
+- Progress Summary
+
+Visibility must be policy-driven:
+
+- Show only content assigned to the learner's school, class, term, session, and programme context.
+- Show only approved and published curriculum content.
+- Never show generated drafts, review-stage records, or unpublished resources.
+
+---
+
+# External Resource Launch UX Rules
+
+The launch control should support:
+
+- EMBEDDED
+- NEW_TAB
+- SAME_WINDOW
+- INTERNAL_RESOURCE
+
+UX behavior rules:
+
+- Start all activity launches from the NEMP learner dashboard.
+- Attempt embedded rendering only when target platform permits embedding.
+- If embedding is blocked, provide secure NEW_TAB fallback with clear learner messaging.
+- Display platform name, resource title, and safety note before launch when configured.
+
+---
+
+# One-Page Report UX Rules
+
+End-of-term one-page report UI should support:
+
+- A4 Portrait default template
+- A4 Landscape only for approved school template variants
+- Real-time preview before approval and PDF generation
+- Overflow warning if content threatens one-page layout
+- Configurable truncation and summarization rules for long comments and long topic lists
+- Grouping of repeated topics where configured
+
+The UI must not silently spill content beyond one page in the one-page report mode.

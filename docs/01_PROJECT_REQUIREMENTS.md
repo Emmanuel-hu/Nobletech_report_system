@@ -1,3 +1,11 @@
+## Phase 2I Delivery Update
+
+- Milestone completed: Curriculum Authoring and Review Administrative Portal Foundation.
+- Scope delivered: manual curriculum authoring, review, approval, publication, version comparison, assignment, and archive portal flows.
+- Security posture: frontend foundation aligns with backend tenant context headers and permission-gated route actions.
+- Audit posture: lifecycle and assignment actions surface status and history context from backend auditable endpoints.
+- Deferred boundary remains active: AI-assisted curriculum generation and regeneration are intentionally not implemented in Phase 2I.
+
 ## Phase 2G Delivery Update
 
 - Milestone completed: operational curriculum lifecycle foundation.

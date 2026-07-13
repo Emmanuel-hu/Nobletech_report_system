@@ -6,6 +6,17 @@
         - regression suites for Phase 2C, 2D, 2E, and 2F.
 - Next milestone recommendation: Phase 2H Curriculum Authoring, Review and Publication Backend Service Foundation.
 - Phase 2H boundary: manual curriculum application services and APIs only; AI generation remains deferred.
+
+## Phase 2I Status Update
+
+- Completed: Curriculum Authoring and Review Administrative Portal Foundation on frontend using approved backend APIs.
+- Implemented administrative route and page foundation for manual authoring, review, publication, version comparison, assignment management, and archive workflows.
+- Implemented typed frontend API client integration with tenant context headers and normalized error mapping.
+- Added frontend permission-gated action controls aligned to backend RBAC expectations.
+- Added frontend validation evidence: TypeScript typecheck and Vitest route or permission tests passed.
+- Next milestone recommendation: Phase 2J Curriculum Authoring UX Hardening and Data Integration Completion.
+- Phase 2J boundary recommendation: complete dependent lookup data integration, optimistic concurrency UX safeguards, assignment deduplication UX, and extended integration tests while keeping AI generation deferred.
+
 # Nobletech Education Management Platform (NEMP)
 
 # 37_DATABASE_IMPLEMENTATION_ROADMAP

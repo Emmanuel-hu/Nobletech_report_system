@@ -1,3 +1,14 @@
+## Phase 2I Workflow Additions
+
+- Administrative navigation flow: `Admin Dashboard -> Curriculum List -> Detail/Edit/Review/Versions/Assignments/Archive`.
+- Metadata authoring flow: create curriculum -> edit metadata -> save draft with unsaved-change protection.
+- Structure flow: unit creation and unit reorder foundation with topic and project visibility context.
+- Review flow: submit for review -> request revision or approve -> publish approved version.
+- Version flow: list stored versions -> choose left and right snapshots -> compare payloads.
+- Assignment flow: create assignment scoped by version, session, term, class, and programme component -> activate/suspend/complete/archive.
+- Archive flow: permission-gated archive action requiring explicit rationale.
+- Deferred boundary: no AI generation/regeneration workflow is present in this phase.
+
 ## Phase 2G Workflow Additions
 
 - Lifecycle flow: `GENERATED_DRAFT`/`DRAFT` -> `UNDER_REVIEW` -> `APPROVED` -> `PUBLISHED` -> `ARCHIVED`.

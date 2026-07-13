@@ -255,6 +255,15 @@ Update Assessment Template
 - Cross-tenant access is rejected when school scope does not match authenticated context.
 - Permission checks are mandatory for create, edit, review, publish, archive, and assignment operations.
 
+## Phase 2I Update: Curriculum Administrative Portal Rules
+
+- Administrative curriculum actions must be permission-gated at route and action level in the frontend.
+- Frontend requests must always include tenant-aware identity headers required by backend enforcement.
+- Manual curriculum workflows are enabled; AI-assisted curriculum generation and regeneration remain disabled and unimplemented.
+- Review and publication remain separate operations with distinct UI actions and permissions.
+- Archive action requires explicit rationale input and must only be available to authorized users.
+- Unsaved metadata edits must trigger browser-exit warning protection.
+
 ---
 
 # Future Rules

@@ -3,6 +3,15 @@
 - Added database module foundation for operational curriculum lifecycle, versioning, review trail, visibility, and assignment.
 - Added verification script: `backend/src/scripts/phase2g-curriculum-constraints-check.ts`.
 - Deferred boundary: AI-assisted curriculum generation and AI-authoring automation remain out of scope for Phase 2G.
+
+## Phase 2I Module Scope Update
+
+- Added frontend module foundation for Curriculum Authoring and Review Administrative Portal.
+- Delivered route-level pages for curriculum dashboard, list, create, detail, edit, structure, review, versions, assignments, and archive flows.
+- Added shared frontend module primitives: auth session context, permission gate, typed curriculum API client, notification tray, lifecycle status badge, and workflow data states.
+- Added initial frontend test coverage for administrative route rendering and permission denial scenarios.
+- Deferred boundary retained: AI-assisted authoring or regeneration interfaces are not included.
+
 # Nobletech Education Management Platform (NEMP)
 
 ## System Modules
