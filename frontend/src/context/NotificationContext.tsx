@@ -29,7 +29,12 @@ export const NotificationProvider = ({ children }: PropsWithChildren) => {
     const id = crypto.randomUUID();
     setNotifications((previous) => [...previous, { id, ...notification }]);
 
-    window.setTimeout(() => {
+    const scheduleTimeout =
+      typeof window !== 'undefined' && typeof window.setTimeout === 'function'
+        ? window.setTimeout.bind(window)
+        : setTimeout;
+
+    scheduleTimeout(() => {
       dismissNotification(id);
     }, 5000);
   };

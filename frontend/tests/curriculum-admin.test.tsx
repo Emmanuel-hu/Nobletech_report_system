@@ -54,4 +54,10 @@ describe('Curriculum administrative routes', () => {
     expect(screen.getByText('Curriculum source and master-content administration')).toBeInTheDocument();
     expect(screen.getByText('Source register')).toBeInTheDocument();
   });
+
+  it('renders master-content dashboard route', () => {
+    renderApp('/admin/master-content');
+
+    expect(screen.getByText('Master-content administration dashboard')).toBeInTheDocument();
+  });
 });

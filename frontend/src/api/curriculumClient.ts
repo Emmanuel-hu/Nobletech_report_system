@@ -17,6 +17,7 @@ import type {
 import type { AuthSession } from '../types/auth';
 
 import { apiRequest } from './httpClient';
+import { masterContentClient } from './masterContentClient';
 
 const queryString = (filters: Record<string, string | undefined>): string => {
   const query = new URLSearchParams();
@@ -646,4 +647,5 @@ export const curriculumClient = {
   ) => apiRequest<CurriculumSource>(`/curriculum/source-master-links/${linkId}`, { method: 'PATCH', body: payload }, session),
   deleteSourceMasterLink: (session: AuthSession, linkId: string) =>
     apiRequest<CurriculumSource>(`/curriculum/source-master-links/${linkId}`, { method: 'DELETE' }, session),
+  masterContent: masterContentClient,
 };

@@ -7,6 +7,8 @@ const navLinks = [
   { to: '/admin/curricula', label: 'Curricula', permission: 'curriculum.view' },
   { to: '/admin/curricula/sources', label: 'Sources', permission: 'curriculum.view' },
   { to: '/admin/curricula/create', label: 'Create', permission: 'curriculum.create' },
+  { to: '/admin/master-content', label: 'Master Content', permission: 'master_content.view' },
+  { to: '/admin/master-content/review-queue', label: 'Review Queue', permission: 'master_content.view' },
   { to: '/health', label: 'Health', permission: 'curriculum.view' },
 ];
 

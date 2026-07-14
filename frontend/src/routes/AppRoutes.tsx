@@ -12,6 +12,9 @@ import { CurriculumReviewPage } from '../pages/admin/curricula/CurriculumReviewP
 import { CurriculumStructurePage } from '../pages/admin/curricula/CurriculumStructurePage';
 import { CurriculumSourceAdminPage } from '../pages/admin/curricula/CurriculumSourceAdminPage';
 import { CurriculumVersionsPage } from '../pages/admin/curricula/CurriculumVersionsPage';
+import { MasterContentDashboardPage } from '../pages/admin/master-content/MasterContentDashboardPage';
+import { MasterContentEntityPage } from '../pages/admin/master-content/MasterContentEntityPage';
+import { MasterContentReviewQueuePage } from '../pages/admin/master-content/MasterContentReviewQueuePage';
 import HealthPage from '../pages/HealthPage';
 import HomePage from '../pages/HomePage';
 
@@ -32,6 +35,9 @@ const AppRoutes = (): JSX.Element => {
         <Route path="curricula/:curriculumId/versions" element={<CurriculumVersionsPage />} />
         <Route path="curricula/:curriculumId/assignments" element={<CurriculumAssignmentsPage />} />
         <Route path="curricula/:curriculumId/archive" element={<CurriculumArchivePage />} />
+        <Route path="master-content" element={<MasterContentDashboardPage />} />
+        <Route path="master-content/review-queue" element={<MasterContentReviewQueuePage />} />
+        <Route path="master-content/:entityType" element={<MasterContentEntityPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
