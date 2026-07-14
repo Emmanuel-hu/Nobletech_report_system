@@ -1,0 +1,16 @@
+
+> frontend@1.0.0 test
+> vitest run --config vitest.config.ts --reporter=basic
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/frontend[39m
+
+ [32m✓[39m tests/version-comparison.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/health.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 164[2mms[22m[39m
+ [32m✓[39m tests/curriculum-admin.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 332[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 09:47:45
+[2m   Duration [22m 16.59s[2m (transform 2.98s, setup 6.55s, collect 9.15s, tests 507ms, environment 21.65s, prepare 2.58s)[22m
+

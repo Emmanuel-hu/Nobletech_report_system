@@ -1,0 +1,29 @@
+
+> frontend@1.0.0 test
+> vitest run --config vitest.config.ts
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/frontend[39m
+
+ [32m✓[39m tests/master-content-admin.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 703[2mms[22m[39m
+   [33m[2m✓[22m[39m Master-content administration routes[2m > [22mrenders master-content dashboard route [33m618[2mms[22m[39m
+ [32m✓[39m tests/curriculum-admin.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 862[2mms[22m[39m
+   [33m[2m✓[22m[39m Curriculum administrative routes[2m > [22mrenders dashboard capabilities for authorized users [33m346[2mms[22m[39m
+   [33m[2m✓[22m[39m Curriculum administrative routes[2m > [22mrenders source administration foundation route [33m450[2mms[22m[39m
+ [32m✓[39m tests/curriculum-structure-editor.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 10908[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates topics with full payload fields [33m2010[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mblocks structural actions in immutable lifecycle states [33m472[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mblocks edit actions when curriculum.edit permission is absent [33m417[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mlinks master concept and updates mappings [33m1685[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates project implementations and supports reordering [33m2463[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates outcomes and prevents duplicate topic mapping requests [33m1466[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates resources and updates visibility with concurrency token [33m1793[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mshows dedicated concurrency conflict state for stale updates [33m598[2mms[22m[39m
+ [32m✓[39m tests/version-comparison.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+ [32m✓[39m tests/health.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 204[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 08:02:46
+[2m   Duration [22m 36.90s[2m (transform 5.63s, setup 9.06s, collect 16.65s, tests 12.69s, environment 42.00s, prepare 5.04s)[22m
+

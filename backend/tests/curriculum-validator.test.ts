@@ -17,11 +17,21 @@ import {
   reorderProjectImplementationsSchema,
   reorderTopicConceptsSchema,
   sourceContentIdParamSchema,
+  sourceFileIdParamSchema,
+  sourceFileLifecycleSchema,
+  sourceFilePurgeSchema,
+  sourceFileReorderSchema,
+  sourceFileRouteParamSchema,
+  sourceFileUnlinkSchema,
   sourceIdParamSchema,
   sourceRejectActionSchema,
   sourceRevisionActionSchema,
   sourceMasterLinkIdParamSchema,
   updateSourceSchema,
+  updateSourceFileMetadataSchema,
+  updateSourceFileScanSchema,
+  uploadSourceFileBodySchema,
+  replaceSourceFileBodySchema,
   updateSourceContentSchema,
   updateSourceMasterLinkSchema,
   topicOutcomeLinkIdParamSchema,
@@ -214,5 +224,70 @@ describe('curriculum phase 2J validators', () => {
     });
 
     expect(reorder.orderedContentIds).toHaveLength(1);
+  });
+
+  it('validates source file schemas for upload, lifecycle, and reorder', () => {
+    const upload = uploadSourceFileBodySchema.parse({
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(upload.lastKnownUpdatedAt).toBe('2026-01-01T00:00:00.000Z');
+
+    const replace = replaceSourceFileBodySchema.parse({
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(replace.lastKnownUpdatedAt).toBe('2026-01-01T00:00:00.000Z');
+
+    const lifecycle = sourceFileLifecycleSchema.parse({
+      reason: 'Duplicate upload replaced',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(lifecycle.reason).toContain('Duplicate');
+
+    const reorderFiles = sourceFileReorderSchema.parse({
+      orderedFileIds: ['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'],
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(reorderFiles.orderedFileIds).toHaveLength(1);
+
+    const fileId = sourceFileIdParamSchema.parse({
+      fileId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    });
+    expect(fileId.fileId).toBe('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
+
+    const route = sourceFileRouteParamSchema.parse({
+      sourceId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      fileId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+    });
+    expect(route.sourceId).toBe('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
+
+    const metadata = updateSourceFileMetadataSchema.parse({
+      fileCategory: 'SOURCE_DOCUMENT',
+      documentVersion: 'v2.0',
+      effectiveDate: '2026-01-20',
+      metadata: { sourceLanguage: 'en', tags: ['robotics'] },
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(metadata.fileCategory).toBe('SOURCE_DOCUMENT');
+
+    const scan = updateSourceFileScanSchema.parse({
+      uploadStatus: 'READY',
+      scanStatus: 'CLEAN',
+      scanDetails: 'AV clean',
+      verifiedAt: '2026-01-02T12:00:00.000Z',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(scan.scanStatus).toBe('CLEAN');
+
+    const unlink = sourceFileUnlinkSchema.parse({
+      reason: 'Content superseded',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(unlink.reason).toContain('superseded');
+
+    const purge = sourceFilePurgeSchema.parse({
+      reason: 'Retention expired',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(purge.reason).toContain('Retention');
   });
 });

@@ -39,6 +39,7 @@ const expectedTables = [
   'master_project_skills',
   'master_project_learning_outcomes',
   'master_assessment_template_learning_outcomes',
+  'master_assessment_template_rubrics',
   'curriculum_source_master_content_links',
 ];
 

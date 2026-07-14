@@ -1,0 +1,22 @@
+
+> backend@1.0.0 prisma:migrate:deploy
+> tsx src/scripts/prisma-migrate-deploy.ts
+
+[prisma:migrate:deploy] Running: C:\Program Files\nodejs\node.exe C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\prisma\build\index.js migrate deploy --schema prisma/schema.prisma
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "nemp_db", schema "public" at "localhost:5432"
+
+8 migrations found in prisma/migrations
+
+Applying migration `20260715102000_phase2l_curriculum_source_file_storage_foundation`
+Applying migration `20260715132000_phase2l_source_file_scan_metadata`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20260715102000_phase2l_curriculum_source_file_storage_foundation/
+    └─ migration.sql
+  └─ 20260715132000_phase2l_source_file_scan_metadata/
+    └─ migration.sql
+      
+All migrations have been successfully applied.

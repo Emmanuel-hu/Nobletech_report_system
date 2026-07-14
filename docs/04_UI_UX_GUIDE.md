@@ -6,6 +6,17 @@
 - Added lineage labeling in mapping views to distinguish approved master references from adapted operational content.
 - Accessibility posture retained: form labels, actionable button text, ARIA-compatible expandable sections, and status feedback not relying on color alone.
 
+## Phase 2K.2 UI/UX Completion Update
+
+- Added master-content administration routes and screens for dashboard, entity administration, and review queue.
+- Added per-entity administrative surfaces with list/search/filter/pagination and create-draft workflows.
+- Added explicit lifecycle action controls for submit-review, request-revision, approve, and archive, gated by permission checks.
+- Added UI ownership visibility markers for global versus school-scoped records.
+- Added UI data states for loading, empty, retryable error, and mutation feedback notifications.
+- Added navigation integration inside the existing admin layout without changing established information architecture.
+- Retained separation of frontend UX gating from backend authorization; backend remains the final authority.
+- Deferred boundary retained: no AI extraction, OCR, source-file upload, or AI generation UI controls were introduced.
+
 ## Phase 2J UI/UX Hardening Update
 
 - Assignment forms now use API-provided lookup selections for sessions, terms, classes, programme components, and teachers.

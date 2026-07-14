@@ -1,5 +1,20 @@
 ## Phase 2J.1 Module Scope Update
 
+## Phase 2K.2 Module Scope Update
+
+- Added Master-Content Administration module completion for master entities, lifecycle transitions, revision creation, and audit retrieval.
+- Added typed Mapping Administration module completion for approved unit, topic, activity, project, assessment, and rubric relationships.
+- Added Source Lineage Administration module completion for source-to-master attribution metadata lifecycle.
+- Added assessment-template to rubric explicit mapping model support through schema and service-level controls.
+- Deferred boundary retained: AI extraction, OCR, source-file upload ingestion, and AI-assisted generation modules remain out of scope.
+
+## Phase 2L Module Scope Update
+
+- Added Curriculum Source File-Storage module foundation for school-scoped file metadata, lifecycle status, scan tracking, and supersession handling.
+- Added curriculum source upload and file management module actions for replace, reorder, make-primary, archive, delete, download, preview, unlink, and purge flows.
+- Added storage-provider abstraction and upload-validation module support for local development and production provider expansion.
+- Deferred boundary retained: OCR, AI extraction, and AI-assisted generation remain out of scope for this milestone.
+
 ## Phase 2K.1 Module Scope Update
 
 - Added Curriculum Source Administration module foundation for school-scoped source intake, metadata maintenance, and review lifecycle transitions.

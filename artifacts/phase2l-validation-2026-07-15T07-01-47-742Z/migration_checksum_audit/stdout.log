@@ -1,0 +1,55 @@
+{
+  "totalAppliedMigrations": 8,
+  "matched": 7,
+  "mismatched": 1,
+  "rows": [
+    {
+      "migrationName": "20260712181640_foundation_identity_rbac",
+      "dbChecksum": "b2ee93e52467da75a50567a36fb04f0ecf327559295783c16dff08ab2c3b8bcf",
+      "fileChecksum": "b2ee93e52467da75a50567a36fb04f0ecf327559295783c16dff08ab2c3b8bcf",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260712221000_academic_structure_foundation",
+      "dbChecksum": "70abf0723f6803f69a6c184444556816d84821a609e2d24ceb4dc41a446860a3",
+      "fileChecksum": "70abf0723f6803f69a6c184444556816d84821a609e2d24ceb4dc41a446860a3",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260712233500_programme_component_subject_foundation",
+      "dbChecksum": "24b8eaaa302b65faabb15e1eeba74ead9c71d223568132558829a4052816fedc",
+      "fileChecksum": "24b8eaaa302b65faabb15e1eeba74ead9c71d223568132558829a4052816fedc",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260713001000_master_content_source_foundation",
+      "dbChecksum": "edac3064fb4253c0d478e3ac364f12f3bebbf319700c7c415eaf7f206390981a",
+      "fileChecksum": "edac3064fb4253c0d478e3ac364f12f3bebbf319700c7c415eaf7f206390981a",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260713055000_operational_curriculum_lifecycle_foundation",
+      "dbChecksum": "d2e956484f6c8d2d41c6b286e19803463998010c1f99d6511d6e9a2e36da6e1e",
+      "fileChecksum": "d2e956484f6c8d2d41c6b286e19803463998010c1f99d6511d6e9a2e36da6e1e",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260714224016_phase2k2_assessment_rubric_mapping",
+      "dbChecksum": "07672d6bbf9048a312574b671399909ff2ace0765b5f268a01aede24302acd0b",
+      "fileChecksum": "95c99132b8c066ecfe9858d97cd212aff12127b02449b7c1f2440420aa70473a",
+      "status": "CHECKSUM_MISMATCH"
+    },
+    {
+      "migrationName": "20260715102000_phase2l_curriculum_source_file_storage_foundation",
+      "dbChecksum": "58ae8afae5de9bc3bef9c6dd8f0daef87d04c969588d457158cf39337ced7920",
+      "fileChecksum": "58ae8afae5de9bc3bef9c6dd8f0daef87d04c969588d457158cf39337ced7920",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260715132000_phase2l_source_file_scan_metadata",
+      "dbChecksum": "547221675530cab1a3e0fe9d677197be17df10c908643dd405623ecd41f4bd2f",
+      "fileChecksum": "547221675530cab1a3e0fe9d677197be17df10c908643dd405623ecd41f4bd2f",
+      "status": "MATCH"
+    }
+  ]
+}

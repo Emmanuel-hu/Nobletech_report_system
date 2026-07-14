@@ -237,6 +237,33 @@ const createMasterProject = async (tx: Prisma.TransactionClient, createdById: st
   });
 };
 
+const createMasterAssessmentTemplate = async (tx: Prisma.TransactionClient, createdById: string) => {
+  return tx.masterAssessmentTemplate.create({
+    data: {
+      title: `Assessment-${nextTag('at')}`,
+      description: 'Assessment template for verification.',
+      assessmentType: 'PROJECT',
+      status: 'DRAFT',
+      versionNumber: 1,
+      isActive: true,
+      createdById,
+    },
+  });
+};
+
+const createMasterRubric = async (tx: Prisma.TransactionClient, createdById: string) => {
+  return tx.masterRubric.create({
+    data: {
+      title: `Rubric-${nextTag('rb')}`,
+      description: 'Rubric for verification.',
+      status: 'DRAFT',
+      versionNumber: 1,
+      isActive: true,
+      createdById,
+    },
+  });
+};
+
 const main = async (): Promise<void> => {
   await runRejects(
     '1) Duplicate source code differing only by case is rejected',
@@ -672,6 +699,42 @@ const main = async (): Promise<void> => {
     },
     isConstraintViolation,
     'single-target check-constraint',
+  );
+
+  await runRejects(
+    '17) Duplicate assessment-template-rubric mapping is rejected',
+    async (tx) => {
+      const school = await createSchool(tx, `SCH-${nextTag('o')}`);
+      const user = await createUser(tx, school.id, 'assessment_rubric_user');
+      const assessment = await createMasterAssessmentTemplate(tx, user.id);
+      const rubric = await createMasterRubric(tx, user.id);
+
+      await tx.masterAssessmentTemplateRubric.create({
+        data: {
+          masterAssessmentTemplateId: assessment.id,
+          masterRubricId: rubric.id,
+          sequenceOrder: 1,
+          isPrimary: true,
+          purpose: 'Primary grading rubric',
+          isActive: true,
+          createdById: user.id,
+        },
+      });
+
+      await tx.masterAssessmentTemplateRubric.create({
+        data: {
+          masterAssessmentTemplateId: assessment.id,
+          masterRubricId: rubric.id,
+          sequenceOrder: 2,
+          isPrimary: false,
+          purpose: 'Secondary rubric',
+          isActive: true,
+          createdById: user.id,
+        },
+      });
+    },
+    isUniqueViolation,
+    'unique-constraint',
   );
 
   const failed = results.filter((r) => !r.passed);

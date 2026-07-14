@@ -48,6 +48,7 @@ Stores the primary profile of every student registered on the platform.
 |------|------|-------------|
 | student_id | UUID | Primary key |
 | school_id | UUID | Foreign key to schools |
+| student_number | VARCHAR(100) NULL | School or academic reference number |
 | admission_number | VARCHAR(100) | Unique admission number within school |
 | first_name | VARCHAR(100) | First name |
 | middle_name | VARCHAR(100) NULL | Middle name |
@@ -74,6 +75,12 @@ Stores the primary profile of every student registered on the platform.
 - A student must have an enrollment record before assessment or report generation.
 - Student records should be soft deleted, not permanently deleted.
 - Historical reports must remain linked to the student even if the student becomes inactive, transferred, or graduated.
+- student_id is immutable and remains the permanent internal learner identity.
+- student_number or admission_number are academic references and do not replace student_id.
+- Learner login username is a separate authentication identifier and must not replace student_id.
+- Student email is optional and may be added later without changing learner identity.
+- `users.email` is authoritative for account-login email usage where email login is enabled.
+- `students.email` is retained as optional learner profile contact email and is not treated as the canonical authentication email.
 
 ---
 
@@ -142,6 +149,9 @@ This table allows the system to preserve student academic history over time.
 - Reports must be generated using the enrollment record for the selected session and term.
 - Assessment records must reference the correct enrollment context.
 - Enrollment history must be preserved.
+- Phase 2D implementation uses session-anchored enrolment with optional term linkage.
+- Active or pending duplicate enrolment for the same student, school, and session is prohibited.
+- Historical completed, withdrawn, transferred, promoted, graduated, archived, and re-enrolment flows are preserved through status lifecycle and linked history references.
 
 ---
 
@@ -253,6 +263,19 @@ Examples:
 ---
 
 # Relationships
+
+---
+
+# Phase 2D Implementation Notes
+
+Prisma implementation in Phase 2D introduces `student_enrolments` as the authoritative historical placement anchor for class progression.
+
+Applied implementation policy:
+
+- One primary enrolment per learner, school, and session for active/pending state.
+- Optional term linkage remains available for term-specific operational references.
+- Student class progression across sessions is represented by new enrolment records, not destructive overwrite of prior records.
+- Cross-school enrolment references are blocked by school-scoped composite foreign key constraints.
 
 schools
 

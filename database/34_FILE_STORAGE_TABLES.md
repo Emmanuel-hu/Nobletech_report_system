@@ -524,6 +524,34 @@ Files may be shared internally or externally using secure access rules.
 
 ---
 
+## Business Rules
+
+- Shared files associated with external learning activities should use expiring secure tokens.
+- `shared_email` is optional and must not be the only recovery or access control mechanism for learner-linked resources.
+- Third-party credentials, class codes, and join codes must never be stored as plain text in file metadata or sharing payloads.
+- External sharing actions must be tenant-aware and fully auditable.
+
+Phase 2F compatibility note:
+
+- Curriculum source and master-resource foundation stores only file references and file metadata fields (`file_reference`, `original_file_name`, `mime_type`, `file_size`, `checksum`) and does not store raw binary payloads in database columns.
+- File upload orchestration, provider APIs, and object-storage synchronization remain deferred to file-storage implementation milestones.
+
+Phase 2L curriculum source foundation (implemented):
+
+- Added a dedicated `curriculum_source_files` operational metadata table linked to `curriculum_sources` for version-safe source file lifecycle.
+- Added `CurriculumStorageProvider` (`LOCAL`, `AZURE_BLOB`, `AWS_S3`, `GCP_STORAGE`) and `CurriculumSourceFileStatus` (`ACTIVE`, `ARCHIVED`, `DELETED`) enums.
+- Implemented provider abstraction in backend services with Local provider support enabled for development.
+- Implemented secured curriculum source file upload, replace, reorder, make-primary, archive, delete, download, and preview APIs.
+- Enforced tenancy scope, lifecycle editability, RBAC, optimistic concurrency checks, MIME allow-list validation, and upload size limits.
+- Added audit logging for privileged and state-changing source-file operations.
+- OCR, AI extraction, parsing, and generation remain deferred and out of scope for this milestone.
+
+Phase 2L validation note:
+
+- Phase 2L validation scopes the migration checksum audit to the Phase 2L migration set so inherited historical checksum drift does not block this milestone's file-storage verification.
+
+---
+
 # Table: storage_quotas
 
 ## Purpose

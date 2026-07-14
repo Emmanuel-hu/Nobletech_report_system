@@ -150,6 +150,7 @@ Defines which Programme Components are active for a school in a specific academi
 - Components may be enabled or disabled per term.
 - A component disabled for a term must not appear in reports for that term.
 - Term settings support changes in scheme of work across First, Second, and Third Term.
+- Programme Component activation must be resolved before curriculum status transitions to APPROVED or PUBLISHED.
 
 ---
 
@@ -185,6 +186,7 @@ Defines which Programme Components are active for a particular class within a sc
 - A class may offer Coding and Robotics only, while another class may offer Coding, Robotics, AI, and Python.
 - Only enabled class components shall appear in report generation.
 - Disabled components must not leave blank spaces on the report.
+- Assignment scope is always school + session + term + class + programme component.
 
 ---
 
@@ -280,7 +282,7 @@ programme_components
 
 ↓
 
-curriculum
+curricula
 
 ↓
 
@@ -293,6 +295,41 @@ report
 ↓
 
 analytics
+
+Curriculum Unit and Topic structures are resolved under each enabled Programme Component during curriculum planning.
+
+---
+
+# Phase 2E Implemented Foundation Alignment
+
+The Prisma and PostgreSQL implementation for Phase 2E is now applied through migration `20260712233500_programme_component_subject_foundation`.
+
+Implemented foundation tables:
+
+1. subjects
+2. school_subjects
+3. integration_domains
+4. subject_integration_domains
+5. programme_components
+6. programme_component_subjects
+7. programme_component_integration_domains
+8. school_programme_components
+9. term_programme_components
+10. class_programme_components
+11. programme_component_settings
+12. programme_component_status_history
+
+Implemented integrity controls include:
+
+- Case-insensitive unique codes for `subjects`, `integration_domains`, and `programme_components` using `citext`.
+- School-scoped composite foreign keys for `term_programme_components` and `class_programme_components` to block cross-tenant linkage.
+- Partial unique indexes for active school, term, and class component enablement while preserving archival history.
+- Date-range and positive-frequency or duration check constraints for school, term, and class programme-component scheduling.
+
+Implementation boundary:
+
+- This phase delivers foundation and enablement only.
+- Operational curriculum construction, publishing, and report-generation workflow tables remain governed by later milestones.
 
 ---
 

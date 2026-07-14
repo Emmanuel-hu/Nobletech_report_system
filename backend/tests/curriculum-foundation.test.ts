@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createAssignmentSchema } from '../src/validators/curriculum.validator';
 import { canTransitionCurriculumStatus, isEditableCurriculumStatus } from '../src/utils/lifecycle.util';
 import { checksumSnapshot, serializeStableSnapshot } from '../src/utils/snapshot.util';
+import { curriculumService } from '../src/services/curriculum.service';
 
 describe('Curriculum lifecycle rules', () => {
   it('accepts only allowed workflow transitions', () => {
@@ -68,5 +69,17 @@ describe('Curriculum assignment validation', () => {
     });
 
     expect(parsed.success).toBe(true);
+  });
+});
+
+describe('Curriculum source file workflow surface', () => {
+  it('exposes source file workflow methods for Phase 2L', () => {
+    expect(typeof curriculumService.uploadSourceFile).toBe('function');
+    expect(typeof curriculumService.replaceSourceFile).toBe('function');
+    expect(typeof curriculumService.reorderSourceFiles).toBe('function');
+    expect(typeof curriculumService.setSourcePrimaryFile).toBe('function');
+    expect(typeof curriculumService.archiveSourceFile).toBe('function');
+    expect(typeof curriculumService.deleteSourceFile).toBe('function');
+    expect(typeof curriculumService.downloadSourceFile).toBe('function');
   });
 });

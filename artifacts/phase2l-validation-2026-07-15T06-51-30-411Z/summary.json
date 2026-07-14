@@ -1,0 +1,221 @@
+{
+  "startedAt": "2026-07-15T06:51:30.411Z",
+  "endedAt": "2026-07-15T06:56:44.038Z",
+  "durationMs": 313627,
+  "passed": false,
+  "totalSteps": 20,
+  "passedSteps": 10,
+  "failedSteps": 1,
+  "runDirectory": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z",
+  "results": [
+    {
+      "id": "frontend_typecheck",
+      "label": "Frontend typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run typecheck",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\frontend",
+      "startedAt": "2026-07-15T06:51:30.650Z",
+      "endedAt": "2026-07-15T06:51:58.805Z",
+      "durationMs": 28155,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_typecheck\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_typecheck\\stderr.log"
+    },
+    {
+      "id": "frontend_lint",
+      "label": "Frontend lint",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run lint",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\frontend",
+      "startedAt": "2026-07-15T06:51:58.825Z",
+      "endedAt": "2026-07-15T06:52:05.866Z",
+      "durationMs": 7041,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_lint\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_lint\\stderr.log"
+    },
+    {
+      "id": "frontend_test",
+      "label": "Frontend tests",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run test",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\frontend",
+      "startedAt": "2026-07-15T06:52:08.601Z",
+      "endedAt": "2026-07-15T06:53:18.945Z",
+      "durationMs": 70344,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_test\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_test\\stderr.log"
+    },
+    {
+      "id": "frontend_build",
+      "label": "Frontend build",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run build",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\frontend",
+      "startedAt": "2026-07-15T06:53:18.977Z",
+      "endedAt": "2026-07-15T06:54:10.247Z",
+      "durationMs": 51270,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 1,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_build\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\frontend_build\\stderr.log"
+    },
+    {
+      "id": "backend_typecheck",
+      "label": "Backend typecheck",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run typecheck",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:54:10.695Z",
+      "endedAt": "2026-07-15T06:54:55.950Z",
+      "durationMs": 45255,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_typecheck\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_typecheck\\stderr.log"
+    },
+    {
+      "id": "backend_lint",
+      "label": "Backend lint",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run lint",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:54:55.966Z",
+      "endedAt": "2026-07-15T06:55:04.659Z",
+      "durationMs": 8693,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_lint\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_lint\\stderr.log"
+    },
+    {
+      "id": "backend_test",
+      "label": "Backend tests",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run test",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:55:04.706Z",
+      "endedAt": "2026-07-15T06:55:21.208Z",
+      "durationMs": 16502,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_test\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_test\\stderr.log"
+    },
+    {
+      "id": "backend_build",
+      "label": "Backend build",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run build",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:55:21.239Z",
+      "endedAt": "2026-07-15T06:55:48.464Z",
+      "durationMs": 27225,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_build\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\backend_build\\stderr.log"
+    },
+    {
+      "id": "prisma_validate",
+      "label": "Prisma validate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run prisma:validate",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:55:48.496Z",
+      "endedAt": "2026-07-15T06:56:03.667Z",
+      "durationMs": 15171,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\prisma_validate\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\prisma_validate\\stderr.log"
+    },
+    {
+      "id": "prisma_generate",
+      "label": "Prisma generate",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run prisma:generate",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:56:04.277Z",
+      "endedAt": "2026-07-15T06:56:27.243Z",
+      "durationMs": 22966,
+      "exitCode": 0,
+      "passed": true,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\prisma_generate\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\prisma_generate\\stderr.log"
+    },
+    {
+      "id": "prisma_migrate_status",
+      "label": "Prisma migrate status",
+      "command": "C:\\Program Files\\nodejs\\node.exe C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js run prisma:migrate:status",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\backend",
+      "startedAt": "2026-07-15T06:56:27.428Z",
+      "endedAt": "2026-07-15T06:56:43.989Z",
+      "durationMs": 16561,
+      "exitCode": 1,
+      "passed": false,
+      "warningCount": 0,
+      "testSummary": {
+        "tests": null,
+        "passed": null,
+        "failed": null
+      },
+      "stdoutLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\prisma_migrate_status\\stdout.log",
+      "stderrLog": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2l-validation-2026-07-15T06-51-30-411Z\\prisma_migrate_status\\stderr.log"
+    }
+  ]
+}

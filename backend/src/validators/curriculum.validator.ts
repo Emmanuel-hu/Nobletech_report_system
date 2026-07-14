@@ -33,6 +33,8 @@ export const conceptMappingIdParamSchema = z.object({ mappingId: uuid });
 export const sourceIdParamSchema = z.object({ sourceId: uuid });
 export const sourceContentIdParamSchema = z.object({ contentId: uuid });
 export const sourceMasterLinkIdParamSchema = z.object({ linkId: uuid });
+export const sourceFileIdParamSchema = z.object({ fileId: uuid });
+export const sourceFileRouteParamSchema = z.object({ sourceId: uuid, fileId: uuid });
 export const topicProjectLinkIdParamSchema = z.object({ linkId: uuid });
 export const topicOutcomeLinkIdParamSchema = z.object({ linkId: uuid });
 export const projectOutcomeLinkIdParamSchema = z.object({ linkId: uuid });
@@ -547,6 +549,67 @@ export const sourceRejectActionSchema = z.object({
 });
 
 export const deleteSourceContentSchema = z.object({
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const uploadSourceFileBodySchema = z.object({
+  lastKnownUpdatedAt: z.string().datetime().optional(),
+});
+
+export const replaceSourceFileBodySchema = z.object({
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const sourceFileLifecycleSchema = z.object({
+  reason: nonEmpty(2000),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const sourceFileReorderSchema = z.object({
+  orderedFileIds: z.array(uuid).min(1),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+const sourceFileCategorySchema = z.enum([
+  'SOURCE_DOCUMENT',
+  'SUPPLEMENTARY_IMAGE',
+  'SUPPLEMENTARY_DATA',
+  'OTHER',
+]);
+
+const sourceFileUploadStatusSchema = z.enum(['UPLOADED', 'PROCESSING', 'READY', 'FAILED']);
+
+const sourceFileScanStatusSchema = z.enum([
+  'PENDING',
+  'NOT_CONFIGURED',
+  'CLEAN',
+  'REJECTED',
+  'FAILED',
+]);
+
+export const updateSourceFileMetadataSchema = z.object({
+  fileCategory: sourceFileCategorySchema.optional(),
+  documentVersion: nonEmpty(50).optional(),
+  effectiveDate: z.string().date().optional(),
+  metadata: z.record(z.unknown()).optional(),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const updateSourceFileScanSchema = z.object({
+  uploadStatus: sourceFileUploadStatusSchema.optional(),
+  scanStatus: sourceFileScanStatusSchema.optional(),
+  scanDetails: optionalText(4000),
+  verifiedAt: z.string().datetime().optional(),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const sourceFileUnlinkSchema = z.object({
+  reason: nonEmpty(2000),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const sourceFilePurgeSchema = z.object({
+  reason: nonEmpty(2000),
   lastKnownUpdatedAt: z.string().datetime(),
 });
 

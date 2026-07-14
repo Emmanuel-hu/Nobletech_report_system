@@ -145,6 +145,45 @@ enum CurriculumSourceContentType {
   OTHER
 }
 
+enum CurriculumSourceFileStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+enum CurriculumSourceFileUploadStatus {
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum CurriculumSourceFileScanStatus {
+  PENDING
+  NOT_CONFIGURED
+  CLEAN
+  REJECTED
+  FAILED
+}
+
+enum CurriculumChecksumAlgorithm {
+  SHA256
+}
+
+enum CurriculumSourceFileCategory {
+  SOURCE_DOCUMENT
+  SUPPLEMENTARY_IMAGE
+  SUPPLEMENTARY_DATA
+  OTHER
+}
+
+enum CurriculumStorageProvider {
+  LOCAL
+  AZURE_BLOB
+  AWS_S3
+  GCP_STORAGE
+}
+
 enum MasterActivityType {
   DISCUSSION
   EXPERIMENT
@@ -982,6 +1021,7 @@ model CurriculumSource {
   updatedAt            DateTime               @updatedAt @map("updated_at")
 
   sourceContents     CurriculumSourceContent[]           @relation("CurriculumSourceContents")
+  sourceFiles        CurriculumSourceFile[]              @relation("CurriculumSourceFiles")
   masterContentLinks CurriculumSourceMasterContentLink[] @relation("CurriculumSourceMasterContentLinks")
 
   @@index([schoolId, status])
@@ -990,6 +1030,57 @@ model CurriculumSource {
   @@index([schoolId, programmeComponentId])
   @@index([reviewStatus, isActive])
   @@map("curriculum_sources")
+}
+
+model CurriculumSourceFile {
+  id                 String                     @id @default(uuid()) @map("curriculum_source_file_id") @db.Uuid
+  curriculumSourceId String                     @map("curriculum_source_id") @db.Uuid
+  schoolId           String                     @map("school_id") @db.Uuid
+  storageProvider    CurriculumStorageProvider  @default(LOCAL) @map("storage_provider")
+  storageKey         String                     @map("storage_key") @db.VarChar(500)
+  originalFileName   String                     @map("original_file_name") @db.VarChar(255)
+  safeFileName       String                     @map("safe_file_name") @db.VarChar(255)
+  fileExtension      String                     @map("file_extension") @db.VarChar(20)
+  mimeType           String                     @map("mime_type") @db.VarChar(150)
+  fileSize           BigInt                     @map("file_size")
+  checksum           String                     @map("checksum") @db.VarChar(128)
+  checksumAlgorithm  CurriculumChecksumAlgorithm @default(SHA256) @map("checksum_algorithm")
+  fileCategory       CurriculumSourceFileCategory @default(SOURCE_DOCUMENT) @map("file_category")
+  uploadStatus       CurriculumSourceFileUploadStatus @default(READY) @map("upload_status")
+  scanStatus         CurriculumSourceFileScanStatus @default(NOT_CONFIGURED) @map("scan_status")
+  scanDetails        String?                    @map("scan_details") @db.Text
+  metadata           Json?                      @map("metadata")
+  documentVersion    String?                    @map("document_version") @db.VarChar(50)
+  effectiveDate      DateTime?                  @map("effective_date") @db.Date
+  supersededFileId   String?                    @map("superseded_file_id") @db.Uuid
+  sequenceOrder      Int                        @map("sequence_order")
+  isPrimary          Boolean                    @default(false) @map("is_primary")
+  isActive           Boolean                    @default(true) @map("is_active")
+  status             CurriculumSourceFileStatus @default(ACTIVE) @map("status")
+  uploadedById       String                     @map("uploaded_by_id") @db.Uuid
+  uploadedAt         DateTime                   @default(now()) @map("uploaded_at")
+  verifiedAt         DateTime?                  @map("verified_at")
+  archivedAt         DateTime?                  @map("archived_at")
+  archivedById       String?                    @map("archived_by_id") @db.Uuid
+  unlinkedAt         DateTime?                  @map("unlinked_at")
+  unlinkedById       String?                    @map("unlinked_by_id") @db.Uuid
+  deletedAt          DateTime?                  @map("deleted_at")
+  deletedById        String?                    @map("deleted_by_id") @db.Uuid
+  createdAt          DateTime                   @default(now()) @map("created_at")
+  updatedAt          DateTime                   @updatedAt @map("updated_at")
+
+  curriculumSource CurriculumSource @relation("CurriculumSourceFiles", fields: [curriculumSourceId], references: [id], onDelete: Restrict)
+  supersededFile   CurriculumSourceFile? @relation("CurriculumSourceFileSupersession", fields: [supersededFileId], references: [id], onDelete: SetNull)
+  replacementFiles CurriculumSourceFile[] @relation("CurriculumSourceFileSupersession")
+
+  @@unique([curriculumSourceId, sequenceOrder])
+  @@index([curriculumSourceId, status, sequenceOrder])
+  @@index([schoolId, status])
+  @@index([storageKey])
+  @@index([scanStatus, status])
+  @@index([uploadStatus, status])
+  @@index([supersededFileId])
+  @@map("curriculum_source_files")
 }
 
 model CurriculumSourceContent {
@@ -1311,6 +1402,7 @@ model MasterAssessmentTemplate {
   archivedAt      DateTime?            @map("archived_at")
 
   learningOutcomeLinks MasterAssessmentTemplateLearningOutcome[] @relation("MasterAssessmentTemplateLearningOutcomeLinks")
+  rubricLinks         MasterAssessmentTemplateRubric[]          @relation("MasterAssessmentTemplateRubricLinks")
   sourceLinks          CurriculumSourceMasterContentLink[]       @relation("MasterAssessmentTemplateSourceLinks")
 
   @@index([assessmentType, status])
@@ -1334,6 +1426,7 @@ model MasterRubric {
   archivedAt    DateTime?           @map("archived_at")
 
   criteria    MasterRubricCriterion[]             @relation("MasterRubricCriteria")
+  templateLinks MasterAssessmentTemplateRubric[]  @relation("MasterRubricTemplateLinks")
   sourceLinks CurriculumSourceMasterContentLink[] @relation("MasterRubricSourceLinks")
 
   @@index([status, isActive])
@@ -1641,6 +1734,27 @@ model MasterAssessmentTemplateLearningOutcome {
   @@unique([masterAssessmentTemplateId, masterLearningOutcomeId])
   @@index([masterLearningOutcomeId])
   @@map("master_assessment_template_learning_outcomes")
+}
+
+model MasterAssessmentTemplateRubric {
+  id                         String   @id @default(uuid()) @map("master_assessment_template_rubric_id") @db.Uuid
+  masterAssessmentTemplateId String   @map("master_assessment_template_id") @db.Uuid
+  masterRubricId             String   @map("master_rubric_id") @db.Uuid
+  sequenceOrder              Int?     @map("sequence_order")
+  isPrimary                  Boolean  @default(false) @map("is_primary")
+  purpose                    String?  @map("purpose") @db.VarChar(150)
+  isActive                   Boolean  @default(true) @map("is_active")
+  createdById                String   @map("created_by_id") @db.Uuid
+  createdAt                  DateTime @default(now()) @map("created_at")
+  updatedAt                  DateTime @updatedAt @map("updated_at")
+
+  masterAssessmentTemplate MasterAssessmentTemplate @relation("MasterAssessmentTemplateRubricLinks", fields: [masterAssessmentTemplateId], references: [id], onDelete: Restrict)
+  masterRubric             MasterRubric             @relation("MasterRubricTemplateLinks", fields: [masterRubricId], references: [id], onDelete: Restrict)
+
+  @@unique([masterAssessmentTemplateId, masterRubricId])
+  @@index([masterRubricId])
+  @@index([masterAssessmentTemplateId, isActive])
+  @@map("master_assessment_template_rubrics")
 }
 
 model CurriculumSourceMasterContentLink {

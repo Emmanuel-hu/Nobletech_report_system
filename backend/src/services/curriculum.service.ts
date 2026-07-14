@@ -1,5 +1,8 @@
 import { Prisma } from '@prisma/client';
+import path from 'node:path';
 import type {
+  CurriculumSourceFileScanStatus,
+  CurriculumSourceFileStatus,
   Curriculum,
   CurriculumAssignment,
   CurriculumAssignmentStatus,
@@ -10,6 +13,7 @@ import type {
 import { prisma } from '../config/prisma';
 import { requireSchoolScope } from '../middleware/auth.middleware';
 import { curriculumRepository, type CurriculumAggregate } from '../repositories/curriculum.repository';
+import { getStorageProvider } from '../storage';
 import type { AuthContext } from '../types/auth.types';
 import {
   AppError,
@@ -116,6 +120,18 @@ const parseVersionNumber = (value: string): VersionNumbers => {
     patchVersion: patchVersion as number,
   };
 };
+
+const previewableFileExtensions = new Set(['.pdf', '.png', '.jpg', '.jpeg', '.txt', '.csv']);
+
+const previewableMimeTypes = new Set([
+  'application/pdf',
+  'image/png',
+  'image/jpeg',
+  'text/plain',
+  'text/csv',
+]);
+
+const readableScanStatuses = new Set<CurriculumSourceFileScanStatus>(['CLEAN', 'NOT_CONFIGURED']);
 
 export class CurriculumService {
   async createCurriculum(
@@ -3506,6 +3522,679 @@ export class CurriculumService {
     });
 
     return this.getSource(auth, source.id);
+  }
+
+  async uploadSourceFile(
+    auth: AuthContext,
+    sourceId: string,
+    payload: { lastKnownUpdatedAt?: string },
+    file: { originalname: string; mimetype: string; buffer: Buffer; size: number },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    if (payload.lastKnownUpdatedAt) {
+      this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+    }
+
+    const storage = getStorageProvider();
+    const stored = await storage.storeFile({
+      schoolId: source.schoolId as string,
+      sourceId: source.id,
+      originalFileName: file.originalname,
+      mimeType: file.mimetype,
+      buffer: file.buffer,
+    });
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        const currentMax = await tx.curriculumSourceFile.aggregate({
+          where: {
+            curriculumSourceId: source.id,
+            status: { in: ['ACTIVE', 'ARCHIVED'] },
+          },
+          _max: { sequenceOrder: true },
+        });
+
+        const nextSequence = (currentMax._max.sequenceOrder ?? 0) + 1;
+
+        await tx.curriculumSourceFile.create({
+          data: {
+            curriculumSourceId: source.id,
+            schoolId: source.schoolId as string,
+            storageProvider: stored.storageProvider,
+            storageKey: stored.storageKey,
+            originalFileName: stored.originalFileName,
+            safeFileName: stored.safeFileName,
+            fileExtension: stored.extension,
+            mimeType: stored.mimeType,
+            fileSize: stored.fileSize,
+            checksum: stored.checksum,
+            uploadStatus: 'READY',
+            scanStatus: 'NOT_CONFIGURED',
+            sequenceOrder: nextSequence,
+            isPrimary: nextSequence === 1,
+            status: 'ACTIVE',
+            uploadedById: auth.userId,
+          },
+        });
+
+        await tx.curriculumSource.update({
+          where: { id: source.id },
+          data: {
+            fileReference: stored.storageKey,
+            originalFileName: stored.originalFileName,
+            mimeType: stored.mimeType,
+            fileSize: stored.fileSize,
+            checksum: stored.checksum,
+            uploadedById: auth.userId,
+            uploadedAt: new Date(),
+          },
+        });
+
+        await this.createAuditLogTx(tx, {
+          action: 'curriculum.source_file.upload',
+          entityType: 'curriculum_source',
+          entityId: source.id,
+          schoolId: source.schoolId,
+          actorUserId: auth.userId,
+          newValues: {
+            mimeType: stored.mimeType,
+            fileSize: stored.fileSize.toString(),
+            storageProvider: stored.storageProvider,
+          },
+          requestId,
+        });
+      });
+    } catch (error) {
+      await getStorageProvider().deleteFile({ storageKey: stored.storageKey });
+      throw error;
+    }
+
+    return this.getSource(auth, source.id);
+  }
+
+  async replaceSourceFile(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { lastKnownUpdatedAt: string },
+    file: { originalname: string; mimetype: string; buffer: Buffer; size: number },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id || target.status === 'DELETED') {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    const storage = getStorageProvider();
+    const stored = await storage.storeFile({
+      schoolId: source.schoolId as string,
+      sourceId: source.id,
+      originalFileName: file.originalname,
+      mimeType: file.mimetype,
+      buffer: file.buffer,
+    });
+
+    try {
+      await prisma.$transaction(async (tx) => {
+        await tx.curriculumSourceFile.updateMany({
+          where: { curriculumSourceId: source.id, status: 'ACTIVE' },
+          data: { isPrimary: false },
+        });
+
+      await tx.curriculumSourceFile.update({
+        where: { id: fileId },
+        data: {
+          status: 'ARCHIVED',
+          isPrimary: false,
+          archivedAt: new Date(),
+          archivedById: auth.userId,
+        },
+      });
+
+      const currentMax = await tx.curriculumSourceFile.aggregate({
+        where: {
+          curriculumSourceId: source.id,
+          status: { in: ['ACTIVE', 'ARCHIVED'] },
+        },
+        _max: { sequenceOrder: true },
+      });
+
+      const nextSequence = (currentMax._max.sequenceOrder ?? 0) + 1;
+
+      await tx.curriculumSourceFile.create({
+        data: {
+          curriculumSourceId: source.id,
+          schoolId: source.schoolId as string,
+          storageProvider: stored.storageProvider,
+          storageKey: stored.storageKey,
+          originalFileName: stored.originalFileName,
+          safeFileName: stored.safeFileName,
+          fileExtension: stored.extension,
+          mimeType: stored.mimeType,
+          fileSize: stored.fileSize,
+          checksum: stored.checksum,
+          uploadStatus: 'READY',
+          scanStatus: 'NOT_CONFIGURED',
+          supersededFileId: fileId,
+          sequenceOrder: nextSequence,
+          isPrimary: true,
+          status: 'ACTIVE',
+          uploadedById: auth.userId,
+        },
+      });
+
+      await tx.curriculumSource.update({
+        where: { id: source.id },
+        data: {
+          fileReference: stored.storageKey,
+          originalFileName: stored.originalFileName,
+          mimeType: stored.mimeType,
+          fileSize: stored.fileSize,
+          checksum: stored.checksum,
+          uploadedById: auth.userId,
+          uploadedAt: new Date(),
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.replace',
+        entityType: 'curriculum_source_file',
+        entityId: fileId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Source file replaced',
+        requestId,
+      });
+      });
+    } catch (error) {
+      await getStorageProvider().deleteFile({ storageKey: stored.storageKey });
+      throw error;
+    }
+
+    return this.getSource(auth, source.id);
+  }
+
+  async reorderSourceFiles(
+    auth: AuthContext,
+    sourceId: string,
+    orderedFileIds: string[],
+    lastKnownUpdatedAt: string,
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const files = await tx.curriculumSourceFile.findMany({
+        where: {
+          curriculumSourceId: source.id,
+          status: { in: ['ACTIVE', 'ARCHIVED'] },
+        },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      this.assertFullReorderSet(
+        files.map((item) => item.id),
+        orderedFileIds,
+        'source files',
+      );
+
+      for (let index = 0; index < orderedFileIds.length; index += 1) {
+        await tx.curriculumSourceFile.update({
+          where: { id: orderedFileIds[index] },
+          data: { sequenceOrder: index + 1 },
+        });
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.reorder',
+        entityType: 'curriculum_source',
+        entityId: source.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        newValues: { orderedFileIds },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async setSourcePrimaryFile(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { lastKnownUpdatedAt: string },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id || target.status !== 'ACTIVE') {
+      throw notFound('Active source file not found.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceFile.updateMany({
+        where: { curriculumSourceId: source.id, status: 'ACTIVE' },
+        data: { isPrimary: false },
+      });
+
+      await tx.curriculumSourceFile.update({
+        where: { id: target.id },
+        data: { isPrimary: true },
+      });
+
+      await tx.curriculumSource.update({
+        where: { id: source.id },
+        data: {
+          fileReference: target.storageKey,
+          originalFileName: target.originalFileName,
+          mimeType: target.mimeType,
+          fileSize: target.fileSize,
+          checksum: target.checksum,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.make_primary',
+        entityType: 'curriculum_source_file',
+        entityId: target.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async archiveSourceFile(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+    requestId?: string,
+  ) {
+    return this.updateSourceFileLifecycle(auth, sourceId, fileId, payload, 'ARCHIVED', requestId);
+  }
+
+  async deleteSourceFile(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+    requestId?: string,
+  ) {
+    return this.updateSourceFileLifecycle(auth, sourceId, fileId, payload, 'DELETED', requestId);
+  }
+
+  async updateSourceFileMetadata(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: {
+      fileCategory?: 'SOURCE_DOCUMENT' | 'SUPPLEMENTARY_IMAGE' | 'SUPPLEMENTARY_DATA' | 'OTHER';
+      documentVersion?: string;
+      effectiveDate?: string;
+      metadata?: Record<string, unknown>;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id || target.status === 'DELETED') {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceFile.update({
+        where: { id: target.id },
+        data: {
+          ...(payload.fileCategory ? { fileCategory: payload.fileCategory } : {}),
+          ...(payload.documentVersion !== undefined ? { documentVersion: payload.documentVersion } : {}),
+          ...(payload.effectiveDate ? { effectiveDate: toDate(payload.effectiveDate) } : {}),
+          ...(payload.metadata !== undefined ? { metadata: payload.metadata as Prisma.InputJsonValue } : {}),
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.metadata.update',
+        entityType: 'curriculum_source_file',
+        entityId: target.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          fileCategory: payload.fileCategory,
+          documentVersion: payload.documentVersion,
+          effectiveDate: payload.effectiveDate,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async updateSourceFileScan(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: {
+      uploadStatus?: 'UPLOADED' | 'PROCESSING' | 'READY' | 'FAILED';
+      scanStatus?: 'PENDING' | 'NOT_CONFIGURED' | 'CLEAN' | 'REJECTED' | 'FAILED';
+      scanDetails?: string;
+      verifiedAt?: string;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id || target.status === 'DELETED') {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceFile.update({
+        where: { id: target.id },
+        data: {
+          ...(payload.uploadStatus ? { uploadStatus: payload.uploadStatus } : {}),
+          ...(payload.scanStatus ? { scanStatus: payload.scanStatus } : {}),
+          ...(payload.scanDetails !== undefined ? { scanDetails: payload.scanDetails } : {}),
+          ...(payload.verifiedAt !== undefined
+            ? { verifiedAt: payload.verifiedAt ? toDate(payload.verifiedAt) : null }
+            : {}),
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.scan.update',
+        entityType: 'curriculum_source_file',
+        entityId: target.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          uploadStatus: payload.uploadStatus,
+          scanStatus: payload.scanStatus,
+          verifiedAt: payload.verifiedAt,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async unlinkSourceFile(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id || target.status === 'DELETED') {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceFile.update({
+        where: { id: target.id },
+        data: {
+          status: 'ARCHIVED',
+          isPrimary: false,
+          isActive: false,
+          unlinkedAt: new Date(),
+          unlinkedById: auth.userId,
+          archivedAt: target.archivedAt ?? new Date(),
+          archivedById: target.archivedById ?? auth.userId,
+        },
+      });
+
+      const activeFiles = await tx.curriculumSourceFile.findMany({
+        where: { curriculumSourceId: source.id, status: 'ACTIVE' },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      const primary = activeFiles.find((item) => item.isPrimary) ?? activeFiles[0] ?? null;
+      if (!primary) {
+        await tx.curriculumSource.update({
+          where: { id: source.id },
+          data: {
+            fileReference: null,
+            originalFileName: null,
+            mimeType: null,
+            fileSize: null,
+            checksum: null,
+          },
+        });
+      } else {
+        await tx.curriculumSourceFile.updateMany({
+          where: { curriculumSourceId: source.id, status: 'ACTIVE' },
+          data: { isPrimary: false },
+        });
+        await tx.curriculumSourceFile.update({ where: { id: primary.id }, data: { isPrimary: true } });
+        await tx.curriculumSource.update({
+          where: { id: source.id },
+          data: {
+            fileReference: primary.storageKey,
+            originalFileName: primary.originalFileName,
+            mimeType: primary.mimeType,
+            fileSize: primary.fileSize,
+            checksum: primary.checksum,
+          },
+        });
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.unlink',
+        entityType: 'curriculum_source_file',
+        entityId: target.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        reason: payload.reason,
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async purgeSourceFile(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id) {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceFile.update({
+        where: { id: target.id },
+        data: {
+          status: 'DELETED',
+          isPrimary: false,
+          isActive: false,
+          deletedAt: new Date(),
+          deletedById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_file.purge',
+        entityType: 'curriculum_source_file',
+        entityId: target.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        reason: payload.reason,
+        requestId,
+      });
+    });
+
+    const storage = getStorageProvider();
+    if (await storage.exists({ storageKey: target.storageKey })) {
+      await storage.deleteFile({ storageKey: target.storageKey });
+    }
+
+    return this.getSource(auth, source.id);
+  }
+
+  async downloadSourceFile(auth: AuthContext, sourceId: string, fileId: string) {
+    const resolved = await this.resolveSourceFileRead(auth, sourceId, fileId);
+    return {
+      fileName: resolved.file.safeFileName,
+      mimeType: resolved.file.mimeType,
+      content: resolved.content,
+    };
+  }
+
+  async previewSourceFile(auth: AuthContext, sourceId: string, fileId: string) {
+    const resolved = await this.resolveSourceFileRead(auth, sourceId, fileId);
+    const extension = path.extname(resolved.file.safeFileName).toLowerCase();
+    const isPreviewable =
+      previewableFileExtensions.has(extension) ||
+      previewableMimeTypes.has(resolved.file.mimeType.toLowerCase());
+
+    if (!isPreviewable) {
+      throw badRequest('This file type cannot be previewed safely. Download it instead.');
+    }
+
+    return {
+      fileName: resolved.file.safeFileName,
+      mimeType: resolved.file.mimeType,
+      content: resolved.content,
+    };
+  }
+
+  private async updateSourceFileLifecycle(
+    auth: AuthContext,
+    sourceId: string,
+    fileId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+    nextStatus: CurriculumSourceFileStatus,
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    const target = await curriculumRepository.findSourceFileById(fileId);
+    if (!target || target.curriculumSourceId !== source.id || target.status === 'DELETED') {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceFile.update({
+        where: { id: target.id },
+        data: {
+          status: nextStatus,
+          isPrimary: false,
+          archivedAt: nextStatus === 'ARCHIVED' ? new Date() : target.archivedAt,
+          archivedById: nextStatus === 'ARCHIVED' ? auth.userId : target.archivedById,
+          deletedAt: nextStatus === 'DELETED' ? new Date() : target.deletedAt,
+          deletedById: nextStatus === 'DELETED' ? auth.userId : target.deletedById,
+        },
+      });
+
+      const activeFiles = await tx.curriculumSourceFile.findMany({
+        where: { curriculumSourceId: source.id, status: 'ACTIVE' },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      const primary = activeFiles.find((item) => item.isPrimary) ?? activeFiles[0] ?? null;
+      if (!primary) {
+        await tx.curriculumSource.update({
+          where: { id: source.id },
+          data: {
+            fileReference: null,
+            originalFileName: null,
+            mimeType: null,
+            fileSize: null,
+            checksum: null,
+          },
+        });
+      } else {
+        await tx.curriculumSourceFile.updateMany({
+          where: { curriculumSourceId: source.id, status: 'ACTIVE' },
+          data: { isPrimary: false },
+        });
+        await tx.curriculumSourceFile.update({
+          where: { id: primary.id },
+          data: { isPrimary: true },
+        });
+        await tx.curriculumSource.update({
+          where: { id: source.id },
+          data: {
+            fileReference: primary.storageKey,
+            originalFileName: primary.originalFileName,
+            mimeType: primary.mimeType,
+            fileSize: primary.fileSize,
+            checksum: primary.checksum,
+          },
+        });
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: nextStatus === 'DELETED' ? 'curriculum.source_file.delete' : 'curriculum.source_file.archive',
+        entityType: 'curriculum_source_file',
+        entityId: target.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        reason: payload.reason,
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  private async resolveSourceFileRead(auth: AuthContext, sourceId: string, fileId: string) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+    const file = await curriculumRepository.findSourceFileById(fileId);
+    if (!file || file.curriculumSourceId !== source.id || file.status === 'DELETED') {
+      throw notFound('Curriculum source file not found.');
+    }
+
+    if (source.schoolId && source.schoolId !== auth.schoolId) {
+      throw tenantScopeViolation('Curriculum source does not belong to authenticated school scope.');
+    }
+
+    if (file.uploadStatus !== 'READY') {
+      throw lifecycleConflict('File is not ready for read access.');
+    }
+
+    if (!readableScanStatuses.has(file.scanStatus)) {
+      throw lifecycleConflict('File read is blocked pending scan clearance.');
+    }
+
+    const storage = getStorageProvider();
+    const exists = await storage.exists({ storageKey: file.storageKey });
+    if (!exists) {
+      throw notFound('Stored file is unavailable.');
+    }
+
+    const content = await storage.readFile({ storageKey: file.storageKey });
+    return { source, file, content };
   }
 
   private async requireSourceInScope(sourceId: string, auth: AuthContext) {

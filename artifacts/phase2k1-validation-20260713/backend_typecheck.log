@@ -1,0 +1,16 @@
+$ node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js -w backend run typecheck
+
+
+> backend@1.0.0 typecheck
+> tsc --noEmit
+
+src/scripts/prisma-migrate-status.ts(8,39): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+src/scripts/prisma-migrate-status.ts(11,31): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+
+npm error Lifecycle script `typecheck` failed with error:
+npm error code 2
+npm error path C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+npm error workspace backend@1.0.0
+npm error location C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc --noEmit

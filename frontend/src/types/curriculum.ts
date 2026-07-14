@@ -470,6 +470,62 @@ export type CurriculumSourceMasterContentLink = {
   updatedAt: string;
 };
 
+export type CurriculumSourceFileStatus = 'ACTIVE' | 'ARCHIVED' | 'DELETED';
+
+export type CurriculumSourceFileUploadStatus = 'UPLOADED' | 'PROCESSING' | 'READY' | 'FAILED';
+
+export type CurriculumSourceFileScanStatus =
+  | 'PENDING'
+  | 'NOT_CONFIGURED'
+  | 'CLEAN'
+  | 'REJECTED'
+  | 'FAILED';
+
+export type CurriculumSourceFileCategory =
+  | 'SOURCE_DOCUMENT'
+  | 'SUPPLEMENTARY_IMAGE'
+  | 'SUPPLEMENTARY_DATA'
+  | 'OTHER';
+
+export type CurriculumSourceStorageProvider = 'LOCAL' | 'AZURE_BLOB' | 'AWS_S3' | 'GCP_STORAGE';
+
+export type CurriculumSourceFile = {
+  id: string;
+  curriculumSourceId: string;
+  schoolId: string;
+  storageProvider: CurriculumSourceStorageProvider;
+  storageKey: string;
+  originalFileName: string;
+  safeFileName: string;
+  fileExtension: string;
+  mimeType: string;
+  fileSize: string | number;
+  checksum: string;
+  checksumAlgorithm: 'SHA256';
+  fileCategory: CurriculumSourceFileCategory;
+  uploadStatus: CurriculumSourceFileUploadStatus;
+  scanStatus: CurriculumSourceFileScanStatus;
+  scanDetails: string | null;
+  metadata: Record<string, unknown> | null;
+  documentVersion: string | null;
+  effectiveDate: string | null;
+  supersededFileId: string | null;
+  sequenceOrder: number;
+  isPrimary: boolean;
+  isActive: boolean;
+  status: CurriculumSourceFileStatus;
+  uploadedById: string;
+  uploadedAt: string;
+  verifiedAt: string | null;
+  archivedAt: string | null;
+  archivedById: string | null;
+  unlinkedAt: string | null;
+  unlinkedById: string | null;
+  deletedAt: string | null;
+  deletedById: string | null;
+  updatedAt: string;
+};
+
 export type CurriculumSource = {
   id: string;
   schoolId: string | null;
@@ -492,6 +548,7 @@ export type CurriculumSource = {
   approvedAt: string | null;
   archivedAt: string | null;
   updatedAt: string;
+  sourceFiles: CurriculumSourceFile[];
   sourceContents: CurriculumSourceContent[];
   masterContentLinks: CurriculumSourceMasterContentLink[];
 };

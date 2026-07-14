@@ -1,0 +1,5 @@
+
+> backend@1.0.0 db:health
+> tsx src/scripts/db-health.ts
+
+[NEMP] Database connection check passed.

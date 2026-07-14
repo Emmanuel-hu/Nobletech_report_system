@@ -1,0 +1,14 @@
+
+> frontend@1.0.0 build
+> tsc -p tsconfig.json && vite build
+
+[36mvite v6.4.3 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 59 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                 [39m[1m[2m  0.41 kB[22m[1m[22m[2m │ gzip:  0.28 kB[22m
+[2mdist/[22m[35massets/index-BVId7-kJ.css  [39m[1m[2m  5.54 kB[22m[1m[22m[2m │ gzip:  1.85 kB[22m
+[2mdist/[22m[36massets/index-Bqh3SYlL.js   [39m[1m[2m204.03 kB[22m[1m[22m[2m │ gzip: 63.08 kB[22m
+[32m✓ built in 4.12s[39m
+EXITCODE:0

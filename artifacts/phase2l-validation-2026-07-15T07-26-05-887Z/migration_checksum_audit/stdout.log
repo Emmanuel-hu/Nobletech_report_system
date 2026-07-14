@@ -1,0 +1,19 @@
+{
+  "totalAppliedMigrations": 2,
+  "matched": 2,
+  "mismatched": 0,
+  "rows": [
+    {
+      "migrationName": "20260715102000_phase2l_curriculum_source_file_storage_foundation",
+      "dbChecksum": "58ae8afae5de9bc3bef9c6dd8f0daef87d04c969588d457158cf39337ced7920",
+      "fileChecksum": "58ae8afae5de9bc3bef9c6dd8f0daef87d04c969588d457158cf39337ced7920",
+      "status": "MATCH"
+    },
+    {
+      "migrationName": "20260715132000_phase2l_source_file_scan_metadata",
+      "dbChecksum": "547221675530cab1a3e0fe9d677197be17df10c908643dd405623ecd41f4bd2f",
+      "fileChecksum": "547221675530cab1a3e0fe9d677197be17df10c908643dd405623ecd41f4bd2f",
+      "status": "MATCH"
+    }
+  ]
+}

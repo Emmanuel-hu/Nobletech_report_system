@@ -1,0 +1,5 @@
+
+> backend@1.0.0 build
+> tsc -p tsconfig.json
+
+EXITCODE:0

@@ -18,6 +18,7 @@ frontend/coverage/
 *.temp
 tmp/
 temp/
+uploads/
 
 .env
 .env.*

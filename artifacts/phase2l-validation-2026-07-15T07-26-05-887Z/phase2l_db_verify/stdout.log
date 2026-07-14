@@ -1,0 +1,12 @@
+{
+  "missingTables": [],
+  "missingColumns": [],
+  "missingIndexes": [
+    "curriculum_source_files_curriculum_source_id_status_sequence_order_idx"
+  ],
+  "missingConstraints": [],
+  "allExpectedTablesPresent": true,
+  "allExpectedColumnsPresent": true,
+  "allExpectedIndexesPresent": false,
+  "allExpectedConstraintsPresent": true
+}

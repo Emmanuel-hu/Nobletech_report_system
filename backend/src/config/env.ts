@@ -16,6 +16,14 @@ const envSchema = z.object({
     .regex(/^v\d+$/)
     .default('v1'),
   FRONTEND_URL: z.string().url().default('http://localhost:3000'),
+  STORAGE_PROVIDER: z.enum(['LOCAL', 'AZURE_BLOB', 'AWS_S3', 'GCP_STORAGE']).default('LOCAL'),
+  STORAGE_LOCAL_ROOT: z.string().min(1).default(path.join(repoRoot, 'uploads')),
+  STORAGE_MAX_FILE_SIZE_BYTES: z.coerce.number().int().positive().default(15 * 1024 * 1024),
+  STORAGE_ALLOWED_MIME_TYPES: z
+    .string()
+    .default('application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain,image/png,image/jpeg'),
+  STORAGE_ALLOWED_FILE_EXTENSIONS: z.string().default('.pdf,.docx,.csv,.xlsx,.txt,.png,.jpg,.jpeg'),
+  STORAGE_BLOCKED_FILE_EXTENSIONS: z.string().default('.exe,.bat,.cmd,.com,.ps1,.js,.jar,.msi,.vbs,.scr,.dll,.html,.htm,.svg,.zip,.7z,.rar,.gz,.tar,.docm,.xlsm,.pptm,.iso'),
   DATABASE_URL: z
     .string()
     .url()

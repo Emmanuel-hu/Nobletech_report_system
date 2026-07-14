@@ -16,6 +16,20 @@
 - Next milestone recommendation remains: Phase 2K.2 Master-Content Administration Completion.
 - Deferred boundary retained: AI extraction and AI-assisted curriculum generation stay out of scope.
 
+## Phase 2K.2 Status Update
+
+- Completed: master-content administration completion across backend and frontend using explicit lifecycle, mapping, lineage, audit, and concurrency controls.
+- Added focused migration `20260714224016_phase2k2_assessment_rubric_mapping` for explicit reusable assessment-template to rubric mappings.
+- Added verification-surface updates for master-content database verification and constraint checks to include the new mapping table.
+- Deferred boundary retained: AI extraction, OCR parsing, source-file upload ingestion, and AI-assisted curriculum generation remain out of scope.
+
+## Phase 2L Status Update
+
+- Completed: curriculum source file-storage foundation using a dedicated file metadata table, source-file lifecycle controls, and scan-state metadata.
+- Added Phase 2L database verification and constraint checks for the curriculum source file-storage surface.
+- Added scoped migration checksum audit coverage for the Phase 2L migrations.
+- Deferred boundary retained: OCR parsing, AI extraction, and AI-assisted generation remain out of scope.
+
 ## Phase 2J Status Update
 
 - Completed: Curriculum Portal UX hardening and backend data integration completion for assignment and version-management pathways.

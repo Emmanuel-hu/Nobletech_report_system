@@ -1,0 +1,18 @@
+
+> backend@1.0.0 test
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/backend[39m
+
+ [32m✓[39m tests/curriculum-validator.test.ts [2m([22m[2m9 tests[22m[2m)[22m[90m 45[2mms[22m[39m
+ [32m✓[39m tests/master-content-foundation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 17[2mms[22m[39m
+ [32m✓[39m tests/curriculum-foundation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[90m 36[2mms[22m[39m
+[0mGET /api/v1/health [32m200[0m 13.098 ms - 156[0m
+ [32m✓[39m tests/health.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 85[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 08:30:49
+[2m   Duration [22m 16.96s[2m (transform 15.33s, setup 0ms, collect 22.33s, tests 184ms, environment 4ms, prepare 4.91s)[22m
+

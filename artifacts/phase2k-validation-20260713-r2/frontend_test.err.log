@@ -1,0 +1,86 @@
+[90mstderr[2m | tests/curriculum-structure-editor.test.tsx[2m > [22m[2mCurriculumStructurePage workflows[2m > [22m[2mcreates topics with full payload fields
+[22m[39m⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[90mstderr[2m | tests/curriculum-structure-editor.test.tsx[2m > [22m[2mCurriculumStructurePage workflows[2m > [22m[2mlinks master concept and updates mappings
+[22m[39mWarning: An update to CurriculumStructurePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CurriculumStructurePage (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\pages\admin\curricula\CurriculumStructurePage.tsx:60:55)
+    at RenderedRoute (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at NotificationProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\NotificationContext.tsx:6:33)
+    at AuthProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\AuthContext.tsx:28:25)
+    at Router (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at MemoryRouter (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1097:7)
+Warning: An update to CurriculumStructurePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CurriculumStructurePage (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\pages\admin\curricula\CurriculumStructurePage.tsx:60:55)
+    at RenderedRoute (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at NotificationProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\NotificationContext.tsx:6:33)
+    at AuthProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\AuthContext.tsx:28:25)
+    at Router (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at MemoryRouter (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1097:7)
+Warning: An update to NotificationProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at NotificationProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\NotificationContext.tsx:6:33)
+    at AuthProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\AuthContext.tsx:28:25)
+    at Router (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at MemoryRouter (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1097:7)
+Warning: An update to CurriculumStructurePage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at CurriculumStructurePage (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\pages\admin\curricula\CurriculumStructurePage.tsx:60:55)
+    at RenderedRoute (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:535:7)
+    at Routes (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1269:7)
+    at NotificationProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\NotificationContext.tsx:6:33)
+    at AuthProvider (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend\src\context\AuthContext.tsx:28:25)
+    at Router (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1203:17)
+    at MemoryRouter (C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\react-router\dist\umd\react-router.development.js:1097:7)
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/curriculum-structure-editor.test.tsx[2m > [22mCurriculumStructurePage workflows[2m > [22mcreates topics with full payload fields
+[31m[1m[7m FAIL [27m[22m[39m tests/curriculum-structure-editor.test.tsx[2m > [22mCurriculumStructurePage workflows[2m > [22mcreates project implementations and supports reordering
+[31m[1mError[22m: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend
+npm error workspace frontend@1.0.0
+npm error location C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run --config vitest.config.ts

@@ -31,7 +31,8 @@ This document defines the database tables for users, roles, permissions, authent
 | school_id | UUID NULL | School user belongs to |
 | first_name | VARCHAR(100) | First name |
 | last_name | VARCHAR(100) | Last name |
-| email | VARCHAR(150) | Login email |
+| email | VARCHAR(150) NULL | Optional contact or login email |
+| username | VARCHAR(100) | Login username or login ID |
 | phone_number | VARCHAR(50) | Phone number |
 | password_hash | TEXT | Encrypted password |
 | status | VARCHAR(50) | Active, Inactive, Suspended |
@@ -124,7 +125,7 @@ Roles include:
 |------|------|-------------|
 | login_history_id | UUID | Primary key |
 | user_id | UUID NULL | User reference |
-| email_attempted | VARCHAR(150) | Email used |
+| login_identifier_attempted | VARCHAR(150) | Username, login ID, or email used |
 | status | VARCHAR(50) | Success or Failed |
 | ip_address | VARCHAR(100) | IP address |
 | device_info | TEXT | Device details |
@@ -156,6 +157,10 @@ Roles include:
 - Password reset tokens must expire.
 - Deleted users should be soft deleted, not permanently removed.
 - Every permission must belong to a module.
+- Pupil and student email is optional and must not be mandatory for access.
+- Username may serve as permanent learner login identifier where configured.
+- Username changes must be restricted and auditable.
+- Password reset must support administrator-assisted recovery when learner email is unavailable.
 
 ---
 

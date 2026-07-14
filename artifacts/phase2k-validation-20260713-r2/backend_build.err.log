@@ -1,0 +1,7 @@
+npm error Lifecycle script `build` failed with error:
+npm error code 2
+npm error path C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+npm error workspace backend@1.0.0
+npm error location C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsc -p tsconfig.json

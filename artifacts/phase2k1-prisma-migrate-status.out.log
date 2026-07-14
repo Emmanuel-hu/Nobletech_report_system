@@ -1,0 +1,4 @@
+
+> backend@1.0.0 prisma:migrate:status
+> tsx src/scripts/prisma-migrate-status.ts
+

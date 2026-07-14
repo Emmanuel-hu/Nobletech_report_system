@@ -1,0 +1,5 @@
+
+> backend@1.0.0 typecheck
+> tsc --noEmit
+
+src/scripts/run-phase2l-validation.ts(74,25): error TS2532: Object is possibly 'undefined'.

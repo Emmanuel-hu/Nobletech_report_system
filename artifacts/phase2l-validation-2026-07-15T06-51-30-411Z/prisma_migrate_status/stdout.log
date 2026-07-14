@@ -1,0 +1,15 @@
+
+> backend@1.0.0 prisma:migrate:status
+> tsx src/scripts/prisma-migrate-status.ts
+
+[prisma:migrate:status] Running: C:\Program Files\nodejs\node.exe C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\node_modules\prisma\build\index.js migrate status --schema prisma/schema.prisma
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "nemp_db", schema "public" at "localhost:5432"
+
+8 migrations found in prisma/migrations
+Following migrations have not yet been applied:
+20260715102000_phase2l_curriculum_source_file_storage_foundation
+20260715132000_phase2l_source_file_scan_metadata
+
+To apply migrations in development run prisma migrate dev.
+To apply migrations in production run prisma migrate deploy.

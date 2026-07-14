@@ -306,6 +306,32 @@ Login IDs should be:
 - Immutable
 - Human Readable
 
+Recommended learner username pattern for long-term safety:
+
+- SCHCODE-YEAR-SEQUENCE
+
+Example:
+
+- IDEA-2026-000123
+
+This pattern is preferred for privacy, readability, and globally unique generation.
+
+---
+
+## Learner Identity Distinctions
+
+Identity attributes must remain distinct:
+
+- student_id: immutable internal learner identity.
+- student_number: canonical NEMP academic reference value.
+- admission_number: optional external school reference value.
+- username or login_id: authentication identifier.
+- email: optional contact or optional login attribute when policy permits.
+
+Learner email must not be mandatory for authentication.
+
+Learner usernames must be globally unique, case-insensitive, and must not be silently reused.
+
 ---
 
 ## Temporary Password
@@ -803,6 +829,23 @@ Examples include:
 - Approve
 - Publish
 - Archive
+
+Canonical permission mapping for curriculum governance should include:
+
+- curriculum.view
+- curriculum.edit
+- curriculum.reorder
+- curriculum.submit_review
+- curriculum.request_revision
+- curriculum.approve
+- curriculum.publish
+- curriculum.archive
+- curriculum.restore_version
+- curriculum.regenerate_section
+
+Approval and publication permissions must always be separated.
+
+Generated curriculum content must not be published without explicit review and approval workflow transitions.
 
 ---
 
@@ -1692,6 +1735,12 @@ Mandatory Password Change
 
 Normal Access
 ```
+
+Learner reset policy notes:
+
+- Password reset for pupil accounts must not depend only on learner email.
+- Recovery may use school administrator verification, guardian verification, recovery code, or other approved methods.
+- Recovery actions must be tenant-aware and auditable.
 
 Self-service password recovery may be introduced in future releases.
 

@@ -1,0 +1,20 @@
+$ node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js -w backend run test
+
+
+> backend@1.0.0 test
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/backend[39m
+
+ [32m✓[39m tests/curriculum-validator.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 63[2mms[22m[39m
+ [32m✓[39m tests/curriculum-foundation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[90m 63[2mms[22m[39m
+[0mGET /api/v1/health [32m200[0m 8.303 ms - 149[0m
+ [32m✓[39m tests/health.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 82[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 20:30:39
+[2m   Duration [22m 10.70s[2m (transform 4.37s, setup 0ms, collect 9.66s, tests 208ms, environment 1ms, prepare 3.53s)[22m
+
+

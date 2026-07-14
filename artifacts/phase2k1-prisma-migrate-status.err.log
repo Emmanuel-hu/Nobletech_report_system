@@ -1,0 +1,7 @@
+npm error Lifecycle script `prisma:migrate:status` failed with error:
+npm error code 1
+npm error path C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+npm error workspace backend@1.0.0
+npm error location C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c tsx src/scripts/prisma-migrate-status.ts

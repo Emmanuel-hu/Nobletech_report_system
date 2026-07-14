@@ -265,6 +265,38 @@ Reports may represent different reporting categories including:
 - Reports may optionally reference the Student Portfolio.
 - Published Reports become read-only.
 - Every published Report generates an immutable Snapshot.
+- End-of-term one-page report mode must support A4 Portrait by default.
+- A4 Landscape may be used only for approved school-specific template variants.
+- One-page mode should summarize long text rather than overflow to additional pages.
+- Report preview and overflow warning must occur before final approval and PDF generation.
+- Report approval workflow remains independent from curriculum publication workflow.
+
+One-page overflow validation sequence:
+
+1. Validate required fields.
+2. Apply configured field and item limits.
+3. Generate preview layout.
+4. Measure actual rendered page height.
+5. Detect overflow.
+6. Apply approved summarisation or grouping rules.
+7. Regenerate preview.
+8. Require manual correction if overflow remains.
+9. Approve.
+10. Generate immutable final PDF.
+
+Content priority for one-page layout:
+
+1. Learner identity
+2. Class, term and session
+3. Programme components
+4. Assessment scores
+5. Learning outcomes and skills
+6. Projects completed
+7. Teacher comment
+8. Attendance
+9. Approval and verification information
+10. Tools and platforms used
+11. Additional descriptive content
 
 ---
 
@@ -898,6 +930,13 @@ Cached Information includes:
 - Template Cache improves report generation performance.
 - Archived Reports remain permanently available according to retention policies.
 - Report data powers Parent Portal, Student Portal, Analytics, Public Verification, and future mobile applications.
+
+One-page end-of-term reporting rules:
+
+- One-page mode must prioritize learning outcomes, project summaries, scores, and comments.
+- Untaught programme components may be hidden where configured.
+- Repeated topics should be grouped where configured.
+- Published report outputs are immutable and corrections must produce revised versions and snapshots.
 
 ---
 

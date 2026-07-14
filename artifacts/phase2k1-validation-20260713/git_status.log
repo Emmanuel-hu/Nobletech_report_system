@@ -1,0 +1,56 @@
+$ git status --porcelain=v1
+
+ M .github/prompts/01_POSTGRESQL_AND_PRISMA_SETUP.prompt.md
+ M backend/package.json
+ M backend/src/config/env.ts
+ M backend/src/controllers/curriculum.controller.ts
+ M backend/src/middleware/error.middleware.ts
+ M backend/src/repositories/curriculum.repository.ts
+ M backend/src/routes/curriculum.routes.ts
+ M backend/src/services/curriculum.service.ts
+ M backend/src/validators/curriculum.validator.ts
+ M backend/tests/curriculum-validator.test.ts
+ M database/02_USER_SECURITY_TABLES.md
+ M database/04_ACADEMIC_TABLES.md
+ M database/05_STUDENT_TABLES.md
+ M database/07_PROGRAMME_COMPONENT_TABLES.md
+ M database/09_MASTER_CONTENT_LIBRARY_TABLES.md
+ M database/14_REPORT_ENGINE_AND_GENERATION_TABLES.md
+ M database/24_AUTHENTICATION_AND_AUTHORIZATION_ARCHITECTURE.md
+ M database/34_FILE_STORAGE_TABLES.md
+ M database/37_DATABASE_IMPLEMENTATION_ROADMAP.md
+ M docs/03_DATABASE_DESIGN.md
+ M docs/05_API_SPECIFICATION.md
+ M docs/10_DEVELOPMENT_ROADMAP.md
+ M docs/14_SYSTEM_MODULES.md
+ M docs/21_SECURITY_POLICY.md
+ M frontend/src/api/curriculumClient.ts
+ M frontend/src/components/layout/AdminLayout.tsx
+ M frontend/src/routes/AppRoutes.tsx
+ M frontend/src/types/curriculum.ts
+ M frontend/tests/curriculum-admin.test.tsx
+ M frontend/tests/curriculum-structure-editor.test.tsx
+?? artifacts/
+?? backend/prisma/migrations/.gitkeep
+?? backend/src/scripts/prisma-migrate-status.ts
+?? frontend/src/pages/admin/curricula/CurriculumSourceAdminPage.tsx
+?? phase2i_backend_build.log
+?? phase2i_backend_test.log
+?? phase2i_backend_typecheck.log
+?? phase2i_frontend_build.log
+?? phase2i_frontend_build_postfix.log
+?? phase2i_frontend_build_validation.log
+?? phase2i_frontend_lint.log
+?? phase2i_frontend_lint_postfix.log
+?? phase2i_frontend_test.log
+?? phase2i_frontend_typecheck.log
+?? phase2i_frontend_typecheck_postfix.log
+?? phase2i_prisma_generate.log
+?? phase2i_prisma_validate.log
+?? phase2j1_backend_test.log
+?? phase2j1_frontend_build.log
+?? phase2j1_frontend_lint.log
+?? phase2j1_frontend_test.err.log
+?? phase2j1_frontend_test.log
+?? phase2j1_prisma_validate.log
+

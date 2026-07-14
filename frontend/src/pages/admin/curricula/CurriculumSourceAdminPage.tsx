@@ -57,6 +57,8 @@ export const CurriculumSourceAdminPage = () => {
     usageRights: 'Internal educational use',
     isGlobal: false,
   });
+  const [pendingFileBySourceId, setPendingFileBySourceId] = useState<Record<string, File | null>>({});
+  const [replacingFileById, setReplacingFileById] = useState<Record<string, File | null>>({});
 
   const [sourceFilters, setSourceFilters] = useState<{
     q: string;
@@ -300,6 +302,131 @@ export const CurriculumSourceAdminPage = () => {
     }
   };
 
+  const handleUploadFile = async (source: CurriculumSource): Promise<void> => {
+    const selected = pendingFileBySourceId[source.id];
+    if (!selected) {
+      pushNotification({ title: 'Select a file', message: 'Choose a file before uploading.', tone: 'warning' });
+      return;
+    }
+
+    try {
+      await curriculumClient.uploadSourceFile(session, source.id, selected, source.updatedAt);
+      pushNotification({ title: 'File uploaded', message: `${selected.name} uploaded successfully.`, tone: 'success' });
+      setPendingFileBySourceId((previous) => ({ ...previous, [source.id]: null }));
+      await loadSources();
+    } catch (caught) {
+      pushNotification({ title: 'Upload failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
+  const handleReplaceFile = async (source: CurriculumSource, fileId: string): Promise<void> => {
+    const replacement = replacingFileById[fileId];
+    if (!replacement) {
+      pushNotification({ title: 'Select replacement file', message: 'Choose a replacement file first.', tone: 'warning' });
+      return;
+    }
+
+    try {
+      await curriculumClient.replaceSourceFile(session, source.id, fileId, replacement, source.updatedAt);
+      pushNotification({ title: 'File replaced', message: `${replacement.name} replaced the selected file.`, tone: 'success' });
+      setReplacingFileById((previous) => ({ ...previous, [fileId]: null }));
+      await loadSources();
+    } catch (caught) {
+      pushNotification({ title: 'Replace failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
+  const handleSetPrimaryFile = async (source: CurriculumSource, fileId: string): Promise<void> => {
+    try {
+      await curriculumClient.makePrimarySourceFile(session, source.id, fileId, source.updatedAt);
+      pushNotification({ title: 'Primary file updated', message: 'Selected file is now primary.', tone: 'success' });
+      await loadSources();
+    } catch (caught) {
+      pushNotification({ title: 'Action failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
+  const handleArchiveFile = async (source: CurriculumSource, fileId: string): Promise<void> => {
+    const reason = window.prompt('Enter archive reason for this source file:');
+    if (!reason?.trim()) {
+      return;
+    }
+
+    try {
+      await curriculumClient.archiveSourceFile(session, source.id, fileId, reason.trim(), source.updatedAt);
+      pushNotification({ title: 'File archived', message: 'Source file archived.', tone: 'success' });
+      await loadSources();
+    } catch (caught) {
+      pushNotification({ title: 'Action failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
+  const handleDeleteFile = async (source: CurriculumSource, fileId: string): Promise<void> => {
+    const reason = window.prompt('Enter deletion reason for this source file:');
+    if (!reason?.trim()) {
+      return;
+    }
+
+    try {
+      await curriculumClient.deleteSourceFile(session, source.id, fileId, reason.trim(), source.updatedAt);
+      pushNotification({ title: 'File deleted', message: 'Source file was removed.', tone: 'success' });
+      await loadSources();
+    } catch (caught) {
+      pushNotification({ title: 'Action failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
+  const handleDownloadOrPreview = async (
+    source: CurriculumSource,
+    fileId: string,
+    mode: 'download' | 'preview',
+  ): Promise<void> => {
+    try {
+      const result = await curriculumClient.downloadSourceFileBlob(session, source.id, fileId, mode);
+      const url = URL.createObjectURL(result.blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.target = mode === 'preview' ? '_blank' : '_self';
+      anchor.rel = 'noopener noreferrer';
+      anchor.download = result.fileName;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (caught) {
+      pushNotification({ title: 'File access failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
+  const handleMoveFile = async (source: CurriculumSource, index: number, direction: -1 | 1): Promise<void> => {
+    const files = [...source.sourceFiles]
+      .filter((item) => item.status !== 'DELETED')
+      .sort((a, b) => a.sequenceOrder - b.sequenceOrder);
+
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= files.length) {
+      return;
+    }
+
+    const current = files[index];
+    const replacement = files[targetIndex];
+    if (!current || !replacement) {
+      return;
+    }
+    files[index] = replacement;
+    files[targetIndex] = current;
+
+    try {
+      await curriculumClient.reorderSourceFiles(
+        session,
+        source.id,
+        files.map((file) => file.id),
+        source.updatedAt,
+      );
+      await loadSources();
+    } catch (caught) {
+      pushNotification({ title: 'Reorder failed', message: formatApiError(caught), tone: 'danger' });
+    }
+  };
+
   return (
     <section>
       <header className="page-header">
@@ -499,6 +626,7 @@ export const CurriculumSourceAdminPage = () => {
                     <td>
                       {source.masterContentLinks.length}
                       <p className="muted">Contents: {source.sourceContents.length}</p>
+                      <p className="muted">Files: {source.sourceFiles.filter((item) => item.status !== 'DELETED').length}</p>
                     </td>
                     <td>
                       <button
@@ -546,6 +674,97 @@ export const CurriculumSourceAdminPage = () => {
                       >
                         Delete first content
                       </button>
+
+                      <div className="stacked-actions" style={{ marginTop: '0.75rem' }}>
+                        <input
+                          type="file"
+                          onChange={(event) =>
+                            setPendingFileBySourceId((previous) => ({
+                              ...previous,
+                              [source.id]: event.target.files?.[0] ?? null,
+                            }))
+                          }
+                          disabled={!can('curriculum.edit')}
+                        />
+                        <button type="button" onClick={() => void handleUploadFile(source)} disabled={!can('curriculum.edit')}>
+                          Upload file
+                        </button>
+                      </div>
+
+                      <div style={{ marginTop: '0.75rem' }}>
+                        {source.sourceFiles
+                          .filter((item) => item.status !== 'DELETED')
+                          .sort((a, b) => a.sequenceOrder - b.sequenceOrder)
+                          .map((sourceFile, index) => (
+                            <div key={sourceFile.id} className="card" style={{ marginTop: '0.5rem', padding: '0.5rem' }}>
+                              <p className="muted">
+                                #{sourceFile.sequenceOrder} {sourceFile.originalFileName} ({sourceFile.mimeType})
+                              </p>
+                              <p className="muted">{sourceFile.isPrimary ? 'Primary' : 'Secondary'} - {sourceFile.status}</p>
+                              <button type="button" onClick={() => void handleDownloadOrPreview(source, sourceFile.id, 'download')}>
+                                Download
+                              </button>
+                              <button type="button" onClick={() => void handleDownloadOrPreview(source, sourceFile.id, 'preview')}>
+                                Preview
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void handleSetPrimaryFile(source, sourceFile.id)}
+                                disabled={!can('curriculum.edit') || sourceFile.status !== 'ACTIVE'}
+                              >
+                                Make primary
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void handleMoveFile(source, index, -1)}
+                                disabled={!can('curriculum.reorder') || index === 0}
+                              >
+                                Move up
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void handleMoveFile(source, index, 1)}
+                                disabled={!can('curriculum.reorder') || index === source.sourceFiles.filter((item) => item.status !== 'DELETED').length - 1}
+                              >
+                                Move down
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void handleArchiveFile(source, sourceFile.id)}
+                                disabled={!can('curriculum.archive') || sourceFile.status !== 'ACTIVE'}
+                              >
+                                Archive file
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => void handleDeleteFile(source, sourceFile.id)}
+                                disabled={!can('curriculum.archive')}
+                              >
+                                Delete file
+                              </button>
+
+                              <div className="stacked-actions" style={{ marginTop: '0.5rem' }}>
+                                <input
+                                  type="file"
+                                  onChange={(event) =>
+                                    setReplacingFileById((previous) => ({
+                                      ...previous,
+                                      [sourceFile.id]: event.target.files?.[0] ?? null,
+                                    }))
+                                  }
+                                  disabled={!can('curriculum.edit')}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => void handleReplaceFile(source, sourceFile.id)}
+                                  disabled={!can('curriculum.edit')}
+                                >
+                                  Replace file
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
                     </td>
                   </tr>
                 ))}

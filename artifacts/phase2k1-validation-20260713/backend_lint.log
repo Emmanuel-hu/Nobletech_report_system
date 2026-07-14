@@ -1,0 +1,7 @@
+$ node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js -w backend run lint
+
+
+> backend@1.0.0 lint
+> eslint . --max-warnings=0
+
+

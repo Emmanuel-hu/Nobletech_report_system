@@ -1,0 +1,1183 @@
+$ node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js -w frontend run test -- --run tests/curriculum-structure-editor.test.tsx --reporter=basic
+
+
+> frontend@1.0.0 test
+> vitest run --config vitest.config.ts --run tests/curriculum-structure-editor.test.tsx --reporter=basic
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/frontend[39m
+
+ [31m❯[39m tests/curriculum-structure-editor.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 3825[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates topics with full payload fields [33m1277[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mlinks master concept and updates mappings [33m780[2mms[22m[39m
+[31m   [31m×[31m CurriculumStructurePage workflows[2m > [22mcreates project implementations and supports reordering[90m 146[2mms[22m[31m[39m
+[31m     → Found multiple elements with the text of: Title
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<input[31m
+  [33mname[31m=[32m"title"[31m
+  [33mrequired[31m=[32m""[31m
+[36m/>[31m
+
+Ignored nodes: comments, script, style
+[36m<input[31m
+  [33mname[31m=[32m"title"[31m
+  [33mrequired[31m=[32m""[31m
+  [33mvalue[31m=[32m"Group build"[31m
+[36m/>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<details>[31m
+  [36m<summary>[31m
+    [0mProject implementations ([0m
+    [0m1[0m
+    [0m)[0m
+  [36m</summary>[31m
+  [36m<form[31m
+    [33mclass[31m=[32m"form-grid"[31m
+  [36m>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"grid-two"[31m
+    [36m>[31m
+      [36m<label>[31m
+        [0mTitle[0m
+        [36m<input[31m
+          [33mname[31m=[32m"title"[31m
+          [33mrequired[31m=[32m""[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mType[0m
+        [36m<select[31m
+          [33mname[31m=[32m"implementationType"[31m
+        [36m>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"PHYSICAL_ROBOTICS"[31m
+          [36m>[31m
+            [0mPHYSICAL_ROBOTICS[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"SIMULATION_ONLY"[31m
+          [36m>[31m
+            [0mSIMULATION_ONLY[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"LOW_RESOURCE"[31m
+          [36m>[31m
+            [0mLOW_RESOURCE[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"NO_LAPTOP"[31m
+          [36m>[31m
+            [0mNO_LAPTOP[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"INDIVIDUAL"[31m
+          [36m>[31m
+            [0mINDIVIDUAL[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mselected[31m=[32m""[31m
+            [33mvalue[31m=[32m"GROUP"[31m
+          [36m>[31m
+            [0mGROUP[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"OTHER"[31m
+          [36m>[31m
+            [0mOTHER[0m
+          [36m</option>[31m
+        [36m</select>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mDuration minutes[0m
+        [36m<input[31m
+          [33mmin[31m=[32m"1"[31m
+          [33mname[31m=[32m"estimatedDurationMinutes"[31m
+          [33mtype[31m=[32m"number"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mRequired devices[0m
+        [36m<input[31m
+          [33mmin[31m=[32m"0"[31m
+          [33mname[31m=[32m"requiredDeviceCount"[31m
+          [33mtype[31m=[32m"number"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label[31m
+        [33mclass[31m=[32m"checkbox-inline"[31m
+      [36m>[31m
+        [36m<input[31m
+          [33mname[31m=[32m"requiredInternet"[31m
+          [33mtype[31m=[32m"checkbox"[31m
+        [36m/>[31m
+        [0mRequires internet[0m
+      [36m</label>[31m
+    [36m</div>[31m
+    [36m<label>[31m
+      [0mDescription[0m
+      [36m<textarea[31m
+        [33mname[31m=[32m"description"[31m
+      [36m/>[31m
+    [36m</label>[31m
+    [36m<label>[31m
+      [0mTeacher instructions[0m
+      [36m<textarea[31m
+        [33mname[31m=[32m"teacherInstructions"[31m
+      [36m/>[31m
+    [36m</label>[31m
+    [36m<label>[31m
+      [0mLearner instructions[0m
+      [36m<textarea[31m
+        [33mname[31m=[32m"learnerInstructions"[31m
+      [36m/>[31m
+    [36m</label>[31m
+    [36m<label>[31m
+      [0mSafety instructions[0m
+      [36m<textarea[31m
+        [33mname[31m=[32m"safetyInstructions"[31m
+      [36m/>[31m
+    [36m</label>[31m
+    [36m<button[31m
+      [33mtype[31m=[32m"submit"[31m
+    [36m>[31m
+      [0mCreate implementation[0m
+    [36m</button>[31m
+  [36m</form>[31m
+  [36m<article[31m
+    [33mclass[31m=[32m"nested-item"[31m
+  [36m>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"split-header"[31m
+    [36m>[31m
+      [36m<strong>[31m
+        [0m1[0m
+        [0m. [0m
+        [0mGroup build[0m
+      [36m</strong>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"inline-actions"[31m
+      [36m>[31m
+        [36m<button[31m
+          [33maria-label[31m=[32m"Move implementation up"[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [0mMove up[0m
+        [36m</button>[31m
+        [36m<button[31m
+          [33maria-label[31m=[32m"Move implementation down"[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [0mMove down[0m
+        [36m</button>[31m
+        [36m<button[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [0mDelete implementation[0m
+        [36m</button>[31m
+      [36m</div>[31m
+    [36m</div>[31m
+    [36m<form[31m
+      [33mclass[31m=[32m"grid-two"[31m
+    [36m>[31m
+      [36m<label>[31m
+        [0mTitle[0m
+        [36m<input[31m
+          [33mname[31m=[32m"title"[31m
+          [33mrequired[31m=[32m""[31m
+          [33mvalue[31m=[32m"Group build"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mType[0m
+        [36m<select[31m
+          [33mname[31m=[32m"implementationType"[31m
+        [36m>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"PHYSICAL_ROBOTICS"[31m
+          [36m>[31m
+            [0mPHYSICAL_ROBOTICS[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"SIMULATION_ONLY"[31m
+          [36m>[31m
+            [0mSIMULATION_ONLY[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"LOW_RESOURCE"[31m
+          [36m>[31m
+            [0mLOW_RESOURCE[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"NO_LAPTOP"[31m
+          [36m>[31m
+            [0mNO_LAPTOP[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"INDIVIDUAL"[31m
+          [36m>[31m
+            [0mINDIVIDUAL[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mselected[31m=[32m""[31m
+            [33mvalue[31m=[32m"GROUP"[31m
+          [36m>[31m
+            [0mGROUP[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"OTHER"[31m
+          [36m>[31m
+            [0mOTHER[0m
+          [36m</option>[31m
+        [36m</select>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mSequence order[0m
+        [36m<input[31m
+          [33mmin[31m=[32m"1"[31m
+          [33mname[31m=[32m"sequenceOrder"[31m
+          [33mtype[31m=[32m"number"[31m
+          [33mvalue[31m=[32m"1"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mDuration minutes[0m
+        [36m<input[31m
+          [33mmin[31m=[32m"1"[31m
+          [33mname[31m=[32m"estimatedDurationMinutes"[31m
+          [33mtype[31m=[32m"number"[31m
+          [33mvalue[31m=[32m"60"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mRequired devices[0m
+        [36m<input[31m
+          [33mmin[31m=[32m"0"[31m
+          [33mname[31m=[32m"requiredDeviceCount"[31m
+          [33mtype[31m=[32m"number"[31m
+          [33mvalue[31m=[32m"10"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label[31m
+        [33mclass[31m=[32m"checkbox-inline"[31m
+      [36m>[31m
+        [36m<input[31m
+          [33mname[31m=[32m"requiredInternet"[31m
+          [33mtype[31m=[32m"checkbox"[31m
+        [36m/>[31m
+        [0mRequires internet[0m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mDescription[0m
+        [36m<textarea[31m
+          [33mname[31m=[32m"description"[31m
+        [36m>[31m
+          [0mImplementation[0m
+        [36m</textarea>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mTeacher instructions[0m
+        [36m<textarea[31m
+          [33mname[31m=[32m"teacherInstructions"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mLearner instructions[0m
+        [36m<textarea[31m
+          [33mname[31m=[32m"learnerInstructions"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mSafety instructions[0m
+        [36m<textarea[31m
+          [33mname[31m=[32m"safetyInstructions"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<button[31m
+        [33mtype[31m=[32m"submit"[31m
+      [36m>[31m
+        [0mUpdate implementation[0m
+      [36m</button>[31m
+    [36m</form>[31m
+  [36m</article>[31m
+[36m</details>[31m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates outcomes and prevents duplicate topic mapping requests [33m565[2mms[22m[39m
+[31m   [31m×[31m CurriculumStructurePage workflows[2m > [22mcreates resources and updates visibility with concurrency token[90m 214[2mms[22m[31m[39m
+[31m     → Found multiple elements with the text of: Title
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<input[31m
+  [33mrequired[31m=[32m""[31m
+  [33mvalue[31m=[32m""[31m
+[36m/>[31m
+
+Ignored nodes: comments, script, style
+[36m<input[31m
+  [33mname[31m=[32m"title"[31m
+  [33mrequired[31m=[32m""[31m
+  [33mvalue[31m=[32m"Starter kit"[31m
+[36m/>[31m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<article[31m
+  [33mclass[31m=[32m"card"[31m
+[36m>[31m
+  [36m<h3>[31m
+    [0mCurriculum resources[0m
+  [36m</h3>[31m
+  [36m<form[31m
+    [33mclass[31m=[32m"form-grid"[31m
+  [36m>[31m
+    [36m<div[31m
+      [33mclass[31m=[32m"grid-two"[31m
+    [36m>[31m
+      [36m<label>[31m
+        [0mTopic[0m
+        [36m<select[31m
+          [33mrequired[31m=[32m""[31m
+        [36m>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m""[31m
+          [36m>[31m
+            [0mSelect topic[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"topic-1"[31m
+          [36m>[31m
+            [0mTopic One[0m
+          [36m</option>[31m
+        [36m</select>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mMaster resource lineage[0m
+        [36m<select>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m""[31m
+          [36m>[31m
+            [0mNo master lineage[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"master-resource-1"[31m
+          [36m>[31m
+            [0mSimulation app[0m
+          [36m</option>[31m
+        [36m</select>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mTitle[0m
+        [36m<input[31m
+          [33mrequired[31m=[32m""[31m
+          [33mvalue[31m=[32m""[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mType[0m
+        [36m<select>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"SOFTWARE"[31m
+          [36m>[31m
+            [0mSOFTWARE[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"WEBSITE"[31m
+          [36m>[31m
+            [0mWEBSITE[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"HARDWARE"[31m
+          [36m>[31m
+            [0mHARDWARE[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"KIT"[31m
+          [36m>[31m
+            [0mKIT[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"DOCUMENT"[31m
+          [36m>[31m
+            [0mDOCUMENT[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"VIDEO"[31m
+          [36m>[31m
+            [0mVIDEO[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"AUDIO"[31m
+          [36m>[31m
+            [0mAUDIO[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"IMAGE"[31m
+          [36m>[31m
+            [0mIMAGE[0m
+          [36m</option>[31m
+          [36m<option[31m
+            [33mvalue[31m=[32m"OTHER"[31m
+          [36m>[31m
+            [0mOTHER[0m
+          [36m</option>[31m
+        [36m</select>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mQuantity[0m
+        [36m<input[31m
+          [33mvalue[31m=[32m""[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mExternal URL metadata[0m
+        [36m<input[31m
+          [33mtype[31m=[32m"url"[31m
+          [33mvalue[31m=[32m""[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mInternal file reference metadata[0m
+        [36m<input[31m
+          [33mvalue[31m=[32m""[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<label[31m
+        [33mclass[31m=[32m"checkbox-inline"[31m
+      [36m>[31m
+        [36m<input[31m
+          [33mtype[31m=[32m"checkbox"[31m
+        [36m/>[31m
+        [0mRequires internet[0m
+      [36m</label>[31m
+      [36m<label[31m
+        [33mclass[31m=[32m"checkbox-inline"[31m
+      [36m>[31m
+        [36m<input[31m
+          [33mtype[31m=[32m"checkbox"[31m
+        [36m/>[31m
+        [0mRequires login[0m
+      [36m</label>[31m
+    [36m</div>[31m
+    [36m<label>[31m
+      [0mDescription[0m
+      [36m<textarea />[31m
+    [36m</label>[31m
+    [36m<label>[31m
+      [0mSafety note[0m
+      [36m<textarea />[31m
+    [36m</label>[31m
+    [36m<button[31m
+      [33mtype[31m=[32m"submit"[31m
+    [36m>[31m
+      [0mCreate resource[0m
+    [36m</button>[31m
+  [36m</form>[31m
+  [36m<details[31m
+    [33mclass[31m=[32m"nested-item"[31m
+  [36m>[31m
+    [36m<summary>[31m
+      [0mStarter kit[0m
+    [36m</summary>[31m
+    [36m<form[31m
+      [33mclass[31m=[32m"form-grid"[31m
+    [36m>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"grid-two"[31m
+      [36m>[31m
+        [36m<label>[31m
+          [0mTitle[0m
+          [36m<input[31m
+            [33mname[31m=[32m"title"[31m
+            [33mrequired[31m=[32m""[31m
+            [33mvalue[31m=[32m"Starter kit"[31m
+          [36m/>[31m
+        [36m</label>[31m
+        [36m<label>[31m
+          [0mQuantity[0m
+          [36m<input[31m
+            [33mname[31m=[32m"quantityRequired"[31m
+            [33mvalue[31m=[32m"1"[31m
+          [36m/>[31m
+        [36m</label>[31m
+        [36m<label>[31m
+          [0mExternal URL metadata[0m
+          [36m<input[31m
+            [33mname[31m=[32m"externalUrl"[31m
+            [33mtype[31m=[32m"url"[31m
+            [33mvalue[31m=[32m""[31m
+          [36m/>[31m
+        [36m</label>[31m
+        [36m<label>[31m
+          [0mInternal file reference metadata[0m
+          [36m<input[31m
+            [33mname[31m=[32m"internalFileReference"[31m
+            [33mvalue[31m=[32m""[31m
+          [36m/>[31m
+        [36m</label>[31m
+        [36m<label[31m
+          [33mclass[31m=[32m"checkbox-inline"[31m
+        [36m>[31m
+          [36m<input[31m
+            [33mname[31m=[32m"requiresInternet"[31m
+            [33mtype[31m=[32m"checkbox"[31m
+          [36m/>[31m
+          [0mRequires internet[0m
+        [36m</label>[31m
+        [36m<label[31m
+          [33mclass[31m=[32m"checkbox-inline"[31m
+        [36m>[31m
+          [36m<input[31m
+            [33mname[31m=[32m"requiresLogin"[31m
+            [33mtype[31m=[32m"checkbox"[31m
+          [36m/>[31m
+          [0mRequires login[0m
+        [36m</label>[31m
+      [36m</div>[31m
+      [36m<label>[31m
+        [0mDescription[0m
+        [36m<textarea[31m
+          [33mname[31m=[32m"description"[31m
+        [36m>[31m
+          [0mResource[0m
+        [36m</textarea>[31m
+      [36m</label>[31m
+      [36m<label>[31m
+        [0mSafety note[0m
+        [36m<textarea[31m
+          [33mname[31m=[32m"safetyNote"[31m
+        [36m/>[31m
+      [36m</label>[31m
+      [36m<div[31m
+        [33mclass[31m=[32m"form-actions"[31m
+      [36m>[31m
+        [36m<button[31m
+          [33mtype[31m=[32m"submit"[31m
+        [36m>[31m
+          [0mUpdate resource[0m
+        [36m</button>[31m
+        [36m<button[31m
+          [33mtype[31m=[32m"button"[31m
+        [36m>[31m
+          [0mDelete resource[0m
+        [36m</button>[31m
+      [36m</div>[31m
+    [36m</form>[31m
+  [36m</details>[31m
+[36m</article>[31m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 20:28:12
+[2m   Duration [22m 14.16s[2m (transform 1.55s, setup 478ms, collect 2.82s, tests 3.82s, environment 3.85s, prepare 881ms)[22m
+
+
+[90mstderr[2m | tests/curriculum-structure-editor.test.tsx[2m > [22m[2mCurriculumStructurePage workflows[2m > [22m[2mcreates topics with full payload fields
+[22m[39m⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 2 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/curriculum-structure-editor.test.tsx[2m > [22mCurriculumStructurePage workflows[2m > [22mcreates project implementations and supports reordering
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text of: Title
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mname[39m=[32m"title"[39m
+  [33mrequired[39m=[32m""[39m
+[36m/>[39m
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mname[39m=[32m"title"[39m
+  [33mrequired[39m=[32m""[39m
+  [33mvalue[39m=[32m"Group build"[39m
+[36m/>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<details>[39m
+  [36m<summary>[39m
+    [0mProject implementations ([0m
+    [0m1[0m
+    [0m)[0m
+  [36m</summary>[39m
+  [36m<form[39m
+    [33mclass[39m=[32m"form-grid"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"grid-two"[39m
+    [36m>[39m
+      [36m<label>[39m
+        [0mTitle[0m
+        [36m<input[39m
+          [33mname[39m=[32m"title"[39m
+          [33mrequired[39m=[32m""[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mType[0m
+        [36m<select[39m
+          [33mname[39m=[32m"implementationType"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"PHYSICAL_ROBOTICS"[39m
+          [36m>[39m
+            [0mPHYSICAL_ROBOTICS[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"SIMULATION_ONLY"[39m
+          [36m>[39m
+            [0mSIMULATION_ONLY[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"LOW_RESOURCE"[39m
+          [36m>[39m
+            [0mLOW_RESOURCE[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"NO_LAPTOP"[39m
+          [36m>[39m
+            [0mNO_LAPTOP[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"INDIVIDUAL"[39m
+          [36m>[39m
+            [0mINDIVIDUAL[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mselected[39m=[32m""[39m
+            [33mvalue[39m=[32m"GROUP"[39m
+          [36m>[39m
+            [0mGROUP[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"OTHER"[39m
+          [36m>[39m
+            [0mOTHER[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mDuration minutes[0m
+        [36m<input[39m
+          [33mmin[39m=[32m"1"[39m
+          [33mname[39m=[32m"estimatedDurationMinutes"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mRequired devices[0m
+        [36m<input[39m
+          [33mmin[39m=[32m"0"[39m
+          [33mname[39m=[32m"requiredDeviceCount"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-inline"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mname[39m=[32m"requiredInternet"[39m
+          [33mtype[39m=[32m"checkbox"[39m
+        [36m/>[39m
+        [0mRequires internet[0m
+      [36m</label>[39m
+    [36m</div>[39m
+    [36m<label>[39m
+      [0mDescription[0m
+      [36m<textarea[39m
+        [33mname[39m=[32m"description"[39m
+      [36m/>[39m
+    [36m</label>[39m
+    [36m<label>[39m
+      [0mTeacher instructions[0m
+      [36m<textarea[39m
+        [33mname[39m=[32m"teacherInstructions"[39m
+      [36m/>[39m
+    [36m</label>[39m
+    [36m<label>[39m
+      [0mLearner instructions[0m
+      [36m<textarea[39m
+        [33mname[39m=[32m"learnerInstructions"[39m
+      [36m/>[39m
+    [36m</label>[39m
+    [36m<label>[39m
+      [0mSafety instructions[0m
+      [36m<textarea[39m
+        [33mname[39m=[32m"safetyInstructions"[39m
+      [36m/>[39m
+    [36m</label>[39m
+    [36m<button[39m
+      [33mtype[39m=[32m"submit"[39m
+    [36m>[39m
+      [0mCreate implementation[0m
+    [36m</button>[39m
+  [36m</form>[39m
+  [36m<article[39m
+    [33mclass[39m=[32m"nested-item"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"split-header"[39m
+    [36m>[39m
+      [36m<strong>[39m
+        [0m1[0m
+        [0m. [0m
+        [0mGroup build[0m
+      [36m</strong>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"inline-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Move implementation up"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mMove up[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"Move implementation down"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mMove down[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mDelete implementation[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"grid-two"[39m
+    [36m>[39m
+      [36m<label>[39m
+        [0mTitle[0m
+        [36m<input[39m
+          [33mname[39m=[32m"title"[39m
+          [33mrequired[39m=[32m""[39m
+          [33mvalue[39m=[32m"Group build"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mType[0m
+        [36m<select[39m
+          [33mname[39m=[32m"implementationType"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"PHYSICAL_ROBOTICS"[39m
+          [36m>[39m
+            [0mPHYSICAL_ROBOTICS[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"SIMULATION_ONLY"[39m
+          [36m>[39m
+            [0mSIMULATION_ONLY[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"LOW_RESOURCE"[39m
+          [36m>[39m
+            [0mLOW_RESOURCE[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"NO_LAPTOP"[39m
+          [36m>[39m
+            [0mNO_LAPTOP[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"INDIVIDUAL"[39m
+          [36m>[39m
+            [0mINDIVIDUAL[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mselected[39m=[32m""[39m
+            [33mvalue[39m=[32m"GROUP"[39m
+          [36m>[39m
+            [0mGROUP[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"OTHER"[39m
+          [36m>[39m
+            [0mOTHER[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mSequence order[0m
+        [36m<input[39m
+          [33mmin[39m=[32m"1"[39m
+          [33mname[39m=[32m"sequenceOrder"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m"1"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mDuration minutes[0m
+        [36m<input[39m
+          [33mmin[39m=[32m"1"[39m
+          [33mname[39m=[32m"estimatedDurationMinutes"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m"60"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mRequired devices[0m
+        [36m<input[39m
+          [33mmin[39m=[32m"0"[39m
+          [33mname[39m=[32m"requiredDeviceCount"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m"10"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-inline"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mname[39m=[32m"requiredInternet"[39m
+          [33mtype[39m=[32m"checkbox"[39m
+        [36m/>[39m
+        [0mRequires internet[0m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mDescription[0m
+        [36m<textarea[39m
+          [33mname[39m=[32m"description"[39m
+        [36m>[39m
+          [0mImplementation[0m
+        [36m</textarea>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mTeacher instructions[0m
+        [36m<textarea[39m
+          [33mname[39m=[32m"teacherInstructions"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mLearner instructions[0m
+        [36m<textarea[39m
+          [33mname[39m=[32m"learnerInstructions"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mSafety instructions[0m
+        [36m<textarea[39m
+          [33mname[39m=[32m"safetyInstructions"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<button[39m
+        [33mtype[39m=[32m"submit"[39m
+      [36m>[39m
+        [0mUpdate implementation[0m
+      [36m</button>[39m
+    [36m</form>[39m
+  [36m</article>[39m
+[36m</details>[39m
+[90m [2m❯[22m Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m tests/curriculum-structure-editor.test.tsx:[2m392:7[22m[39m
+    [90m390| [39m    [35mconst[39m implementationTitleInput [33m=[39m [34mwithin[39m(
+    [90m391| [39m      implementationDetails [35mas[39m [33mHTMLElement[39m
+    [90m392| [39m    )[33m.[39m[34mgetByLabelText[39m([32m'Title'[39m)[33m;[39m
+    [90m   | [39m      [31m^[39m
+    [90m393| [39m
+    [90m394| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(implementationTitleInput[33m,[39m [32m'Implementation B'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯[22m[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/curriculum-structure-editor.test.tsx[2m > [22mCurriculumStructurePage workflows[2m > [22mcreates resources and updates visibility with concurrency token
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text of: Title
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mrequired[39m=[32m""[39m
+  [33mvalue[39m=[32m""[39m
+[36m/>[39m
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mname[39m=[32m"title"[39m
+  [33mrequired[39m=[32m""[39m
+  [33mvalue[39m=[32m"Starter kit"[39m
+[36m/>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<article[39m
+  [33mclass[39m=[32m"card"[39m
+[36m>[39m
+  [36m<h3>[39m
+    [0mCurriculum resources[0m
+  [36m</h3>[39m
+  [36m<form[39m
+    [33mclass[39m=[32m"form-grid"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"grid-two"[39m
+    [36m>[39m
+      [36m<label>[39m
+        [0mTopic[0m
+        [36m<select[39m
+          [33mrequired[39m=[32m""[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mSelect topic[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"topic-1"[39m
+          [36m>[39m
+            [0mTopic One[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mMaster resource lineage[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mNo master lineage[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"master-resource-1"[39m
+          [36m>[39m
+            [0mSimulation app[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mTitle[0m
+        [36m<input[39m
+          [33mrequired[39m=[32m""[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mType[0m
+        [36m<select>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"SOFTWARE"[39m
+          [36m>[39m
+            [0mSOFTWARE[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"WEBSITE"[39m
+          [36m>[39m
+            [0mWEBSITE[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"HARDWARE"[39m
+          [36m>[39m
+            [0mHARDWARE[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"KIT"[39m
+          [36m>[39m
+            [0mKIT[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"DOCUMENT"[39m
+          [36m>[39m
+            [0mDOCUMENT[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"VIDEO"[39m
+          [36m>[39m
+            [0mVIDEO[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"AUDIO"[39m
+          [36m>[39m
+            [0mAUDIO[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"IMAGE"[39m
+          [36m>[39m
+            [0mIMAGE[0m
+          [36m</option>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m"OTHER"[39m
+          [36m>[39m
+            [0mOTHER[0m
+          [36m</option>[39m
+        [36m</select>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mQuantity[0m
+        [36m<input[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mExternal URL metadata[0m
+        [36m<input[39m
+          [33mtype[39m=[32m"url"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mInternal file reference metadata[0m
+        [36m<input[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-inline"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mtype[39m=[32m"checkbox"[39m
+        [36m/>[39m
+        [0mRequires internet[0m
+      [36m</label>[39m
+      [36m<label[39m
+        [33mclass[39m=[32m"checkbox-inline"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mtype[39m=[32m"checkbox"[39m
+        [36m/>[39m
+        [0mRequires login[0m
+      [36m</label>[39m
+    [36m</div>[39m
+    [36m<label>[39m
+      [0mDescription[0m
+      [36m<textarea />[39m
+    [36m</label>[39m
+    [36m<label>[39m
+      [0mSafety note[0m
+      [36m<textarea />[39m
+    [36m</label>[39m
+    [36m<button[39m
+      [33mtype[39m=[32m"submit"[39m
+    [36m>[39m
+      [0mCreate resource[0m
+    [36m</button>[39m
+  [36m</form>[39m
+  [36m<details[39m
+    [33mclass[39m=[32m"nested-item"[39m
+  [36m>[39m
+    [36m<summary>[39m
+      [0mStarter kit[0m
+    [36m</summary>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"form-grid"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid-two"[39m
+      [36m>[39m
+        [36m<label>[39m
+          [0mTitle[0m
+          [36m<input[39m
+            [33mname[39m=[32m"title"[39m
+            [33mrequired[39m=[32m""[39m
+            [33mvalue[39m=[32m"Starter kit"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mQuantity[0m
+          [36m<input[39m
+            [33mname[39m=[32m"quantityRequired"[39m
+            [33mvalue[39m=[32m"1"[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mExternal URL metadata[0m
+          [36m<input[39m
+            [33mname[39m=[32m"externalUrl"[39m
+            [33mtype[39m=[32m"url"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0mInternal file reference metadata[0m
+          [36m<input[39m
+            [33mname[39m=[32m"internalFileReference"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+        [36m</label>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"checkbox-inline"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mname[39m=[32m"requiresInternet"[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0mRequires internet[0m
+        [36m</label>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"checkbox-inline"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mname[39m=[32m"requiresLogin"[39m
+            [33mtype[39m=[32m"checkbox"[39m
+          [36m/>[39m
+          [0mRequires login[0m
+        [36m</label>[39m
+      [36m</div>[39m
+      [36m<label>[39m
+        [0mDescription[0m
+        [36m<textarea[39m
+          [33mname[39m=[32m"description"[39m
+        [36m>[39m
+          [0mResource[0m
+        [36m</textarea>[39m
+      [36m</label>[39m
+      [36m<label>[39m
+        [0mSafety note[0m
+        [36m<textarea[39m
+          [33mname[39m=[32m"safetyNote"[39m
+        [36m/>[39m
+      [36m</label>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"form-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mUpdate resource[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mDelete resource[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</details>[39m
+[36m</article>[39m
+[90m [2m❯[22m Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m tests/curriculum-structure-editor.test.tsx:[2m433:71[22m[39m
+    [90m431| [39m    [35mconst[39m resourceSection [33m=[39m screen[33m.[39m[34mgetByText[39m([32m'Curriculum resources'[39m)[33m.[39m[34mc[39m…
+    [90m432| [39m    [34mexpect[39m(resourceSection)[33m.[39m[34mtoBeTruthy[39m()[33m;[39m
+    [90m433| [39m    [35mconst[39m resourceTitleInput [33m=[39m [34mwithin[39m(resourceSection [35mas[39m [33mHTMLElement[39m)[33m.[39m…
+    [90m   | [39m                                                                      [31m^[39m
+    [90m434| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(resourceTitleInput[33m,[39m [32m'Laptop'[39m)[33m;[39m
+    [90m435| [39m    [35mawait[39m user[33m.[39m[34mclick[39m(screen[33m.[39m[34mgetByRole[39m([32m'button'[39m[33m,[39m { name[33m:[39m [32m'Create resour[39m…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯[22m[39m
+
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend
+npm error workspace frontend@1.0.0
+npm error location C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run --config vitest.config.ts --run tests/curriculum-structure-editor.test.tsx --reporter=basic

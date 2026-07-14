@@ -1,0 +1,30 @@
+
+> frontend@1.0.0 test
+> vitest run --config vitest.config.ts
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/frontend[39m
+
+ [32m✓[39m tests/version-comparison.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 9[2mms[22m[39m
+ [32m✓[39m tests/curriculum-admin.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 727[2mms[22m[39m
+   [33m[2m✓[22m[39m Curriculum administrative routes[2m > [22mrenders source administration foundation route [33m395[2mms[22m[39m
+ [32m✓[39m tests/health.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 151[2mms[22m[39m
+ [31m❯[39m tests/curriculum-structure-editor.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[33m 17492[2mms[22m[39m
+[31m   [31m×[31m CurriculumStructurePage workflows[2m > [22mcreates topics with full payload fields[33m 5155[2mms[22m[31m[39m
+[31m     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mblocks structural actions in immutable lifecycle states [33m491[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mblocks edit actions when curriculum.edit permission is absent [33m375[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mlinks master concept and updates mappings [33m2299[2mms[22m[39m
+[31m   [31m×[31m CurriculumStructurePage workflows[2m > [22mcreates project implementations and supports reordering[33m 5096[2mms[22m[31m[39m
+[31m     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates outcomes and prevents duplicate topic mapping requests [33m1935[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates resources and updates visibility with concurrency token [33m1563[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mshows dedicated concurrency conflict state for stale updates [33m576[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m13 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 15:46:30
+[2m   Duration [22m 41.23s[2m (transform 17.11s, setup 7.78s, collect 26.08s, tests 18.38s, environment 33.98s, prepare 5.77s)[22m
+

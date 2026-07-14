@@ -7,6 +7,7 @@ import {
   approveCurriculum,
   archiveAssignment,
   archiveSource,
+  archiveSourceFile,
   archiveCurriculum,
   compareVersions,
   createSource,
@@ -17,6 +18,7 @@ import {
   completeAssignment,
   createAssignment,
   createCurriculum,
+  deleteSourceFile,
   deleteSourceContent,
   createLearningOutcome,
   createProject,
@@ -39,6 +41,7 @@ import {
   getEditorLookups,
   getSource,
   getCurriculum,
+  downloadSourceFile,
   getSnapshot,
   getVersion,
   getVisibility,
@@ -50,19 +53,28 @@ import {
   listAssignments,
   listCurricula,
   listVersions,
+  makePrimarySourceFile,
+  previewSourceFile,
+  purgeSourceFile,
   rejectSource,
   publishCurriculum,
   reorderProjectImplementations,
+  reorderSourceFiles,
   reorderSourceContents,
   reorderTopicConcepts,
   reorderTopics,
   reorderUnits,
   requestRevision,
   requestSourceRevision,
+  replaceSourceFile,
   submitSourceReview,
   submitReview,
   suspendAssignment,
+  unlinkSourceFile,
   updateSource,
+  updateSourceFileMetadata,
+  updateSourceFileScan,
+  uploadSourceFile,
   updateSourceContent,
   updateSourceMasterLink,
   updateConcept,
@@ -80,6 +92,7 @@ import {
 } from '../controllers/curriculum.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requirePermission } from '../middleware/rbac.middleware';
+import { sourceFileUpload } from '../middleware/upload.middleware';
 import { validateBody, validateParams, validateQuery } from '../middleware/validate.middleware';
 import { asyncHandler } from '../utils/async-handler';
 import {
@@ -125,6 +138,12 @@ import {
   requestRevisionSchema,
   resourceIdParamSchema,
   sourceContentIdParamSchema,
+  sourceFileIdParamSchema,
+  sourceFileLifecycleSchema,
+  sourceFilePurgeSchema,
+  sourceFileReorderSchema,
+  sourceFileRouteParamSchema,
+  sourceFileUnlinkSchema,
   sourceIdParamSchema,
   sourceRejectActionSchema,
   sourceRevisionActionSchema,
@@ -137,6 +156,10 @@ import {
   updateAssignmentSchema,
   updateCurriculumSchema,
   updateSourceSchema,
+  updateSourceFileMetadataSchema,
+  updateSourceFileScanSchema,
+  uploadSourceFileBodySchema,
+  replaceSourceFileBodySchema,
   updateSourceContentSchema,
   updateSourceMasterLinkSchema,
   updateConceptSchema,
@@ -739,6 +762,102 @@ curriculumRouter.delete(
   requirePermission('curriculum.edit'),
   validateParams(sourceMasterLinkIdParamSchema),
   asyncHandler(deleteSourceMasterLink),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/files',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceIdParamSchema),
+  sourceFileUpload.single('file'),
+  validateBody(uploadSourceFileBodySchema),
+  asyncHandler(uploadSourceFile),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/files/:fileId/replace',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceFileRouteParamSchema),
+  sourceFileUpload.single('file'),
+  validateBody(replaceSourceFileBodySchema),
+  asyncHandler(replaceSourceFile),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/files/reorder',
+  requirePermission('curriculum.reorder'),
+  validateParams(sourceIdParamSchema),
+  validateBody(sourceFileReorderSchema),
+  asyncHandler(reorderSourceFiles),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/files/:fileId/make-primary',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(replaceSourceFileBodySchema),
+  asyncHandler(makePrimarySourceFile),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/files/:fileId/archive',
+  requirePermission('curriculum.archive'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(sourceFileLifecycleSchema),
+  asyncHandler(archiveSourceFile),
+);
+
+curriculumRouter.delete(
+  '/sources/:sourceId/files/:fileId',
+  requirePermission('curriculum.archive'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(sourceFileLifecycleSchema),
+  asyncHandler(deleteSourceFile),
+);
+
+curriculumRouter.patch(
+  '/sources/:sourceId/files/:fileId/metadata',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(updateSourceFileMetadataSchema),
+  asyncHandler(updateSourceFileMetadata),
+);
+
+curriculumRouter.patch(
+  '/sources/:sourceId/files/:fileId/scan',
+  requirePermission('curriculum.approve'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(updateSourceFileScanSchema),
+  asyncHandler(updateSourceFileScan),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/files/:fileId/unlink',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(sourceFileUnlinkSchema),
+  asyncHandler(unlinkSourceFile),
+);
+
+curriculumRouter.delete(
+  '/sources/:sourceId/files/:fileId/purge',
+  requirePermission('curriculum.approve'),
+  validateParams(sourceFileRouteParamSchema),
+  validateBody(sourceFilePurgeSchema),
+  asyncHandler(purgeSourceFile),
+);
+
+curriculumRouter.get(
+  '/sources/:sourceId/files/:fileId/download',
+  requirePermission('curriculum.view'),
+  validateParams(sourceFileRouteParamSchema),
+  asyncHandler(downloadSourceFile),
+);
+
+curriculumRouter.get(
+  '/sources/:sourceId/files/:fileId/preview',
+  requirePermission('curriculum.view'),
+  validateParams(sourceFileRouteParamSchema),
+  asyncHandler(previewSourceFile),
 );
 
 export default curriculumRouter;

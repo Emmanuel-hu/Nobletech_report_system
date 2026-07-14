@@ -401,3 +401,43 @@ They provide a flexible and scalable hierarchy that supports multiple schools, a
 ---
 
 # End of Document
+
+---
+
+# Phase 2D Implementation Notes (Prisma Foundation)
+
+This document remains the approved academic reference. Phase 2D implementation has mapped the approved subset into Prisma using these canonical technical entities:
+
+- `AcademicSession` -> `academic_sessions`
+- `Term` -> `terms`
+- `AcademicClass` -> `academic_classes`
+- `StudentEnrolment` -> `student_enrolments`
+- `AcademicClassTeacherAssignment` -> `academic_class_teacher_assignments`
+
+Scope decisions applied in this milestone:
+
+- `AcademicClass` is the canonical technical class model for implementation.
+- User-facing labeling may remain "Class" or "Grade" by school preference.
+- `class_arms` remains deferred from Phase 2D implementation.
+- Subject and programme-component assignment scopes are deferred from Phase 2D teacher assignment implementation.
+- Teacher assignment in Phase 2D is restricted to class-level academic assignment using existing `users` linkage with role-policy enforcement deferred to service layer.
+
+Session and term current-state constraints implemented:
+
+- One current active academic session per school.
+- One current active term per school.
+
+Date and ordering constraints implemented:
+
+- Session start date must be before end date.
+- Term start date must be before end date.
+- Term sequence order must be positive.
+
+Cross-table temporal constraint still requiring service validation:
+
+- Term dates must remain within parent session date range.
+
+Historical retention decisions:
+
+- Academic records are restricted from destructive cascades.
+- Enrolment and assignment history are preserved through status and archival patterns.

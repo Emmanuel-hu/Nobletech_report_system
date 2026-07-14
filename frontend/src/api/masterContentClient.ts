@@ -122,6 +122,8 @@ export const masterContentClient = {
       instructionalEmphasis?: string;
       assessmentRelevance?: string;
       teacherNote?: string;
+      purpose?: string;
+      isActive?: boolean;
     },
   ) => apiRequest<{ id: string }>(`/master-content/mappings/${mappingType}`, { method: 'POST', body: payload }, session),
 

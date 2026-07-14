@@ -1,0 +1,1697 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model School {
+  id                             String                           @id @default(uuid()) @map("school_id") @db.Uuid
+  code                           String                           @unique @map("school_code") @db.Citext
+  name                           String                           @unique @map("school_name") @db.Citext
+  status                         SchoolStatus                     @default(ACTIVE) @map("status")
+  email                          String?                          @map("email") @db.Citext
+  phone                          String?                          @map("phone_number") @db.VarChar(30)
+  address                        String?                          @map("address")
+  website                        String?                          @map("website") @db.VarChar(200)
+  logoUrl                        String?                          @map("school_logo")
+  archivedAt                     DateTime?                        @map("archived_at")
+  createdAt                      DateTime                         @default(now()) @map("created_at")
+  updatedAt                      DateTime                         @updatedAt @map("updated_at")
+  classAssignments               AcademicClassTeacherAssignment[] @relation("SchoolAcademicClassAssignments")
+  academicClasses                AcademicClass[]                  @relation("SchoolAcademicClasses")
+  academicSessions               AcademicSession[]                @relation("SchoolAcademicSessions")
+  auditLogs                      AuditLog[]                       @relation("SchoolAuditLogs")
+  classComponents                ClassProgrammeComponent[]        @relation("SchoolClassProgrammeComponents")
+  curriculum_sources             CurriculumSource[]
+  guardians                      Guardian[]                       @relation("SchoolGuardians")
+  master_activities              MasterActivity[]
+  master_assessment_templates    MasterAssessmentTemplate[]
+  master_concepts                MasterConcept[]
+  master_curriculum_units        MasterCurriculumUnit[]
+  master_learning_outcomes       MasterLearningOutcome[]
+  master_project_implementations MasterProjectImplementation[]
+  master_projects                MasterProject[]
+  master_resources               MasterResource[]
+  master_rubrics                 MasterRubric[]
+  master_skills                  MasterSkill[]
+  master_topics                  MasterTopic[]
+  componentSettings              ProgrammeComponentSetting[]      @relation("SchoolProgrammeComponentSettingSchool")
+  roles                          Role[]                           @relation("SchoolRoles")
+  schoolComponents               SchoolProgrammeComponent[]       @relation("SchoolProgrammeComponents")
+  schoolSubjects                 SchoolSubject[]                  @relation("SchoolSubjects")
+  studentEnrolments              StudentEnrolment[]               @relation("SchoolStudentEnrolments")
+  studentGuardians               StudentGuardian[]                @relation("SchoolStudentGuardians")
+  students                       Student[]                        @relation("SchoolStudents")
+  termComponents                 TermProgrammeComponent[]         @relation("SchoolTermProgrammeComponents")
+  terms                          Term[]                           @relation("SchoolTerms")
+  userRoles                      UserRole[]                       @relation("SchoolUserRoles")
+  users                          User[]                           @relation("SchoolUsers")
+
+  @@index([status])
+  @@map("schools")
+}
+
+model User {
+  id                                                                    String                                    @id @default(uuid()) @map("user_id") @db.Uuid
+  schoolId                                                              String?                                   @map("school_id") @db.Uuid
+  firstName                                                             String                                    @map("first_name") @db.VarChar(100)
+  lastName                                                              String                                    @map("last_name") @db.VarChar(100)
+  email                                                                 String?                                   @unique @map("email") @db.Citext
+  username                                                              String                                    @unique @map("username") @db.Citext
+  phoneNumber                                                           String?                                   @map("phone_number") @db.VarChar(50)
+  passwordHash                                                          String                                    @map("password_hash")
+  status                                                                UserStatus                                @default(INVITED) @map("status")
+  mustChangePassword                                                    Boolean                                   @default(true) @map("must_change_password")
+  lastLoginAt                                                           DateTime?                                 @map("last_login_at")
+  failedLoginCount                                                      Int                                       @default(0) @map("failed_login_count")
+  createdAt                                                             DateTime                                  @default(now()) @map("created_at")
+  updatedAt                                                             DateTime                                  @updatedAt @map("updated_at")
+  teachingAssignmentsGiven                                              AcademicClassTeacherAssignment[]          @relation("AcademicClassTeacherAssignedBy")
+  teachingAssignments                                                   AcademicClassTeacherAssignment[]          @relation("AcademicClassTeacher")
+  createdAcademicSessions                                               AcademicSession[]                         @relation("AcademicSessionCreatedBy")
+  auditActorLogs                                                        AuditLog[]                                @relation("AuditActor")
+  createdClassComponents                                                ClassProgrammeComponent[]                 @relation("ClassProgrammeComponentCreatedBy")
+  curriculum_source_contents                                            CurriculumSourceContent[]
+  curriculum_source_master_content_links                                CurriculumSourceMasterContentLink[]
+  curriculum_sources_curriculum_sources_approved_by_idTousers           CurriculumSource[]                        @relation("curriculum_sources_approved_by_idTousers")
+  curriculum_sources_curriculum_sources_reviewed_by_idTousers           CurriculumSource[]                        @relation("curriculum_sources_reviewed_by_idTousers")
+  curriculum_sources_curriculum_sources_uploaded_by_idTousers           CurriculumSource[]                        @relation("curriculum_sources_uploaded_by_idTousers")
+  guardianProfile                                                       Guardian?                                 @relation("GuardianUser")
+  createdDomains                                                        IntegrationDomain[]                       @relation("IntegrationDomainCreatedBy")
+  master_activities                                                     MasterActivity[]
+  master_activity_resources                                             MasterActivityResource[]
+  master_assessment_template_learning_outcomes                          MasterAssessmentTemplateLearningOutcome[]
+  master_assessment_templates                                           MasterAssessmentTemplate[]
+  master_concepts                                                       MasterConcept[]
+  master_curriculum_unit_integration_domains                            MasterCurriculumUnitIntegrationDomain[]
+  master_curriculum_unit_programme_components                           MasterCurriculumUnitProgrammeComponent[]
+  master_curriculum_unit_subjects                                       MasterCurriculumUnitSubject[]
+  master_curriculum_units_master_curriculum_units_approved_by_idTousers MasterCurriculumUnit[]                    @relation("master_curriculum_units_approved_by_idTousers")
+  master_curriculum_units_master_curriculum_units_created_by_idTousers  MasterCurriculumUnit[]                    @relation("master_curriculum_units_created_by_idTousers")
+  master_curriculum_units_master_curriculum_units_reviewed_by_idTousers MasterCurriculumUnit[]                    @relation("master_curriculum_units_reviewed_by_idTousers")
+  master_learning_outcomes                                              MasterLearningOutcome[]
+  master_project_implementations                                        MasterProjectImplementation[]
+  master_project_learning_outcomes                                      MasterProjectLearningOutcome[]
+  master_project_resources                                              MasterProjectResource[]
+  master_project_skills                                                 MasterProjectSkill[]
+  master_projects                                                       MasterProject[]
+  master_resources                                                      MasterResource[]
+  master_rubrics                                                        MasterRubric[]
+  master_skills                                                         MasterSkill[]
+  master_topic_activities                                               MasterTopicActivity[]
+  master_topic_concepts                                                 MasterTopicConcept[]
+  master_topic_integration_domains                                      MasterTopicIntegrationDomain[]
+  master_topic_learning_outcomes                                        MasterTopicLearningOutcome[]
+  master_topic_projects                                                 MasterTopicProject[]
+  master_topic_skills                                                   MasterTopicSkill[]
+  master_topic_subjects                                                 MasterTopicSubject[]
+  master_topics                                                         MasterTopic[]
+  createdComponentDomains                                               ProgrammeComponentIntegrationDomain[]     @relation("ProgrammeComponentDomainCreatedBy")
+  createdComponentSettings                                              ProgrammeComponentSetting[]               @relation("ProgrammeComponentSettingCreatedBy")
+  updatedComponentSettings                                              ProgrammeComponentSetting[]               @relation("ProgrammeComponentSettingUpdatedBy")
+  changedComponentStatuses                                              ProgrammeComponentStatusHistory[]         @relation("ProgrammeComponentStatusChangedBy")
+  createdComponentSubjects                                              ProgrammeComponentSubject[]               @relation("ProgrammeComponentSubjectCreatedBy")
+  createdComponents                                                     ProgrammeComponent[]                      @relation("ProgrammeComponentCreatedBy")
+  updatedComponents                                                     ProgrammeComponent[]                      @relation("ProgrammeComponentUpdatedBy")
+  permissionGrants                                                      RolePermission[]                          @relation("RolePermissionGrantedBy")
+  createdSchoolComponents                                               SchoolProgrammeComponent[]                @relation("SchoolProgrammeComponentCreatedBy")
+  updatedSchoolComponents                                               SchoolProgrammeComponent[]                @relation("SchoolProgrammeComponentUpdatedBy")
+  createdSchoolSubjects                                                 SchoolSubject[]                           @relation("SchoolSubjectCreatedBy")
+  createdStudentEnrolments                                              StudentEnrolment[]                        @relation("StudentEnrolmentCreatedBy")
+  updatedStudentEnrolments                                              StudentEnrolment[]                        @relation("StudentEnrolmentUpdatedBy")
+  studentProfile                                                        Student?                                  @relation("StudentUser")
+  createdDomainLinks                                                    SubjectIntegrationDomain[]                @relation("SubjectIntegrationDomainCreatedBy")
+  createdSubjects                                                       Subject[]                                 @relation("SubjectCreatedBy")
+  createdTermComponents                                                 TermProgrammeComponent[]                  @relation("TermProgrammeComponentCreatedBy")
+  roleAssignmentsGiven                                                  UserRole[]                                @relation("UserRoleAssignedBy")
+  roleAssignments                                                       UserRole[]                                @relation("UserRoleUser")
+  school                                                                School?                                   @relation("SchoolUsers", fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@unique([id, schoolId])
+  @@index([schoolId, status])
+  @@map("users")
+}
+
+model Role {
+  id              String           @id @default(uuid()) @map("role_id") @db.Uuid
+  schoolId        String?          @map("school_id") @db.Uuid
+  name            String           @map("role_name") @db.VarChar(100)
+  code            String           @map("role_code") @db.Citext
+  description     String?          @map("description")
+  isSystem        Boolean          @default(false) @map("is_system_role")
+  isActive        Boolean          @default(true) @map("is_active")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  rolePermissions RolePermission[] @relation("RolePermissionRole")
+  school          School?          @relation("SchoolRoles", fields: [schoolId], references: [id], onDelete: Restrict)
+  userRoles       UserRole[]       @relation("UserRoleRole")
+
+  @@unique([schoolId, code])
+  @@index([schoolId])
+  @@index([isActive])
+  @@map("roles")
+}
+
+model Permission {
+  id              String           @id @default(uuid()) @map("permission_id") @db.Uuid
+  code            String           @unique @map("permission_code") @db.Citext
+  name            String           @map("permission_name") @db.VarChar(150)
+  resource        String           @map("resource") @db.VarChar(100)
+  action          String           @map("action") @db.VarChar(100)
+  description     String?          @map("description")
+  isActive        Boolean          @default(true) @map("is_active")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  rolePermissions RolePermission[] @relation("RolePermissionPermission")
+
+  @@index([resource, action])
+  @@index([isActive])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId        String     @map("role_id") @db.Uuid
+  permissionId  String     @map("permission_id") @db.Uuid
+  grantedAt     DateTime   @default(now()) @map("granted_at")
+  grantedById   String?    @map("granted_by_id") @db.Uuid
+  createdAt     DateTime   @default(now()) @map("created_at")
+  grantedByUser User?      @relation("RolePermissionGrantedBy", fields: [grantedById], references: [id])
+  permission    Permission @relation("RolePermissionPermission", fields: [permissionId], references: [id])
+  role          Role       @relation("RolePermissionRole", fields: [roleId], references: [id])
+
+  @@id([roleId, permissionId])
+  @@index([grantedById, createdAt])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  id             String    @id @default(uuid()) @map("user_role_id") @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  roleId         String    @map("role_id") @db.Uuid
+  schoolId       String?   @map("school_id") @db.Uuid
+  assignedAt     DateTime  @default(now()) @map("assigned_at")
+  assignedById   String?   @map("assigned_by_id") @db.Uuid
+  expiresAt      DateTime? @map("expires_at")
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  assignedByUser User?     @relation("UserRoleAssignedBy", fields: [assignedById], references: [id])
+  role           Role      @relation("UserRoleRole", fields: [roleId], references: [id])
+  school         School?   @relation("SchoolUserRoles", fields: [schoolId], references: [id], onDelete: Restrict)
+  user           User      @relation("UserRoleUser", fields: [userId], references: [id])
+
+  @@index([userId, roleId, schoolId, isActive])
+  @@index([schoolId, isActive])
+  @@index([assignedById, createdAt])
+  @@map("user_roles")
+}
+
+model Student {
+  id                 String             @id @default(uuid()) @map("student_id") @db.Uuid
+  schoolId           String             @map("school_id") @db.Uuid
+  userId             String?            @unique @map("user_id") @db.Uuid
+  studentNumber      String             @map("student_number") @db.VarChar(100)
+  admissionNumber    String?            @map("admission_number") @db.VarChar(100)
+  firstName          String             @map("first_name") @db.VarChar(100)
+  middleName         String?            @map("middle_name") @db.VarChar(100)
+  lastName           String             @map("last_name") @db.VarChar(100)
+  gender             Gender?            @map("gender")
+  dateOfBirth        DateTime?          @map("date_of_birth") @db.Date
+  contactEmail       String?            @map("email") @db.Citext
+  phoneNumber        String?            @map("phone_number") @db.VarChar(50)
+  residentialAddress String?            @map("residential_address")
+  status             StudentStatus      @default(ACTIVE) @map("status")
+  enrolmentDate      DateTime?          @map("enrolment_date") @db.Date
+  archivedAt         DateTime?          @map("archived_at")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  enrolments         StudentEnrolment[] @relation("StudentEnrolments")
+  guardians          StudentGuardian[]  @relation("StudentGuardians")
+  school             School             @relation("SchoolStudents", fields: [schoolId], references: [id])
+  user               User?              @relation("StudentUser", fields: [userId], references: [id])
+
+  @@unique([schoolId, admissionNumber])
+  @@unique([schoolId, studentNumber])
+  @@unique([id, schoolId])
+  @@index([schoolId, status])
+  @@index([schoolId, admissionNumber])
+  @@map("students")
+}
+
+model Guardian {
+  id             String            @id @default(uuid()) @map("guardian_id") @db.Uuid
+  schoolId       String            @map("school_id") @db.Uuid
+  userId         String?           @unique @map("user_id") @db.Uuid
+  firstName      String            @map("first_name") @db.VarChar(100)
+  middleName     String?           @map("middle_name") @db.VarChar(100)
+  lastName       String            @map("last_name") @db.VarChar(100)
+  email          String?           @map("email") @db.Citext
+  phone          String?           @map("phone") @db.VarChar(50)
+  alternatePhone String?           @map("alternate_phone") @db.VarChar(50)
+  address        String?           @map("address")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  school         School            @relation("SchoolGuardians", fields: [schoolId], references: [id])
+  user           User?             @relation("GuardianUser", fields: [userId], references: [id])
+  students       StudentGuardian[] @relation("GuardianStudents")
+
+  @@index([schoolId])
+  @@map("guardians")
+}
+
+model StudentGuardian {
+  studentId               String   @map("student_id") @db.Uuid
+  guardianId              String   @map("guardian_id") @db.Uuid
+  schoolId                String   @map("school_id") @db.Uuid
+  relationshipType        String   @map("relationship_type") @db.VarChar(100)
+  isPrimary               Boolean  @default(false) @map("is_primary")
+  canReceiveReports       Boolean  @default(true) @map("can_receive_reports")
+  canReceiveNotifications Boolean  @default(true) @map("can_receive_notifications")
+  canCollectStudent       Boolean  @default(false) @map("can_collect_student")
+  hasPortalAccess         Boolean  @default(false) @map("has_portal_access")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+  guardian                Guardian @relation("GuardianStudents", fields: [guardianId], references: [id])
+  school                  School   @relation("SchoolStudentGuardians", fields: [schoolId], references: [id])
+  student                 Student  @relation("StudentGuardians", fields: [studentId], references: [id])
+
+  @@id([studentId, guardianId])
+  @@index([schoolId])
+  @@map("student_guardians")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @map("audit_log_id") @db.Uuid
+  schoolId    String?  @map("school_id") @db.Uuid
+  actorUserId String?  @map("actor_user_id") @db.Uuid
+  action      String   @map("action") @db.VarChar(100)
+  entityType  String   @map("entity_type") @db.VarChar(100)
+  entityId    String   @map("entity_id") @db.VarChar(100)
+  oldValues   Json?    @map("old_values")
+  newValues   Json?    @map("new_values")
+  reason      String?  @map("reason")
+  ipAddress   String?  @map("ip_address") @db.VarChar(100)
+  userAgent   String?  @map("user_agent")
+  requestId   String?  @map("request_id") @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at")
+  actorUser   User?    @relation("AuditActor", fields: [actorUserId], references: [id])
+  school      School?  @relation("SchoolAuditLogs", fields: [schoolId], references: [id])
+
+  @@index([schoolId, createdAt])
+  @@index([entityType, entityId])
+  @@index([actorUserId, createdAt])
+  @@index([requestId])
+  @@map("audit_logs")
+}
+
+model AcademicSession {
+  id                String                           @id @default(uuid()) @map("academic_session_id") @db.Uuid
+  schoolId          String                           @map("school_id") @db.Uuid
+  name              String                           @map("session_name") @db.VarChar(100)
+  code              String                           @map("session_code") @db.VarChar(50)
+  startDate         DateTime                         @map("start_date") @db.Date
+  endDate           DateTime                         @map("end_date") @db.Date
+  status            AcademicSessionStatus            @default(PLANNED) @map("status")
+  isCurrent         Boolean                          @default(false) @map("is_current")
+  archivedAt        DateTime?                        @map("archived_at")
+  createdById       String?                          @map("created_by_id") @db.Uuid
+  createdAt         DateTime                         @default(now()) @map("created_at")
+  updatedAt         DateTime                         @updatedAt @map("updated_at")
+  classAssignments  AcademicClassTeacherAssignment[] @relation("AcademicSessionClassAssignments")
+  createdByUser     User?                            @relation("AcademicSessionCreatedBy", fields: [createdById], references: [id])
+  school            School                           @relation("SchoolAcademicSessions", fields: [schoolId], references: [id])
+  classComponents   ClassProgrammeComponent[]        @relation("AcademicSessionClassComponents")
+  studentEnrolments StudentEnrolment[]               @relation("AcademicSessionEnrolments")
+  terms             Term[]                           @relation("AcademicSessionTerms")
+
+  @@unique([schoolId, name])
+  @@unique([schoolId, code])
+  @@unique([id, schoolId])
+  @@index([schoolId, status])
+  @@index([schoolId, isCurrent])
+  @@map("academic_sessions")
+}
+
+model Term {
+  id                String                           @id @default(uuid()) @map("term_id") @db.Uuid
+  schoolId          String                           @map("school_id") @db.Uuid
+  academicSessionId String                           @map("academic_session_id") @db.Uuid
+  name              String                           @map("term_name") @db.VarChar(100)
+  code              String                           @map("term_code") @db.VarChar(50)
+  sequenceOrder     Int                              @map("sequence_order")
+  startDate         DateTime                         @map("start_date") @db.Date
+  endDate           DateTime                         @map("end_date") @db.Date
+  status            TermStatus                       @default(PLANNED) @map("status")
+  isCurrent         Boolean                          @default(false) @map("is_current")
+  archivedAt        DateTime?                        @map("archived_at")
+  createdAt         DateTime                         @default(now()) @map("created_at")
+  updatedAt         DateTime                         @updatedAt @map("updated_at")
+  classAssignments  AcademicClassTeacherAssignment[] @relation("TermClassAssignments")
+  classComponents   ClassProgrammeComponent[]        @relation("TermClassProgrammeComponents")
+  studentEnrolments StudentEnrolment[]               @relation("TermEnrolments")
+  termComponents    TermProgrammeComponent[]         @relation("TermProgrammeComponents")
+  academicSession   AcademicSession                  @relation("AcademicSessionTerms", fields: [academicSessionId, schoolId], references: [id, schoolId])
+  school            School                           @relation("SchoolTerms", fields: [schoolId], references: [id])
+
+  @@unique([academicSessionId, name])
+  @@unique([academicSessionId, code])
+  @@unique([academicSessionId, sequenceOrder])
+  @@unique([id, schoolId])
+  @@index([schoolId, status])
+  @@index([academicSessionId, sequenceOrder])
+  @@index([schoolId, isCurrent])
+  @@map("terms")
+}
+
+model AcademicClass {
+  id                String                           @id @default(uuid()) @map("academic_class_id") @db.Uuid
+  schoolId          String                           @map("school_id") @db.Uuid
+  name              String                           @map("class_name") @db.VarChar(100)
+  code              String                           @map("class_code") @db.VarChar(50)
+  displayName       String?                          @map("display_name") @db.VarChar(120)
+  levelOrder        Int                              @map("level_order")
+  educationLevel    String?                          @map("education_level") @db.VarChar(100)
+  minimumAge        Int?                             @map("minimum_age")
+  maximumAge        Int?                             @map("maximum_age")
+  status            AcademicClassStatus              @default(ACTIVE) @map("status")
+  archivedAt        DateTime?                        @map("archived_at")
+  createdAt         DateTime                         @default(now()) @map("created_at")
+  updatedAt         DateTime                         @updatedAt @map("updated_at")
+  classAssignments  AcademicClassTeacherAssignment[] @relation("AcademicClassTeacherAssignments")
+  school            School                           @relation("SchoolAcademicClasses", fields: [schoolId], references: [id])
+  classComponents   ClassProgrammeComponent[]        @relation("AcademicClassProgrammeComponents")
+  studentEnrolments StudentEnrolment[]               @relation("AcademicClassEnrolments")
+
+  @@unique([schoolId, name])
+  @@unique([schoolId, code])
+  @@unique([id, schoolId])
+  @@index([schoolId, status])
+  @@index([schoolId, levelOrder])
+  @@map("academic_classes")
+}
+
+model StudentEnrolment {
+  id                      String             @id @default(uuid()) @map("student_enrolment_id") @db.Uuid
+  schoolId                String             @map("school_id") @db.Uuid
+  studentId               String             @map("student_id") @db.Uuid
+  academicSessionId       String             @map("academic_session_id") @db.Uuid
+  termId                  String?            @map("term_id") @db.Uuid
+  academicClassId         String             @map("academic_class_id") @db.Uuid
+  enrolmentStatus         EnrolmentStatus    @default(PENDING) @map("enrolment_status")
+  enrolmentDate           DateTime           @map("enrolment_date") @db.Date
+  completionDate          DateTime?          @map("completion_date") @db.Date
+  withdrawalDate          DateTime?          @map("withdrawal_date") @db.Date
+  transferDate            DateTime?          @map("transfer_date") @db.Date
+  previousEnrolmentId     String?            @map("previous_enrolment_id") @db.Uuid
+  promotedFromEnrolmentId String?            @map("promoted_from_enrolment_id") @db.Uuid
+  notes                   String?            @map("notes")
+  createdById             String?            @map("created_by_id") @db.Uuid
+  updatedById             String?            @map("updated_by_id") @db.Uuid
+  archivedAt              DateTime?          @map("archived_at")
+  createdAt               DateTime           @default(now()) @map("created_at")
+  updatedAt               DateTime           @updatedAt @map("updated_at")
+  academicClass           AcademicClass      @relation("AcademicClassEnrolments", fields: [academicClassId, schoolId], references: [id, schoolId])
+  academicSession         AcademicSession    @relation("AcademicSessionEnrolments", fields: [academicSessionId, schoolId], references: [id, schoolId])
+  createdByUser           User?              @relation("StudentEnrolmentCreatedBy", fields: [createdById], references: [id])
+  previousEnrolment       StudentEnrolment?  @relation("StudentEnrolmentPrevious", fields: [previousEnrolmentId], references: [id])
+  nextEnrolments          StudentEnrolment[] @relation("StudentEnrolmentPrevious")
+  promotedFromEnrolment   StudentEnrolment?  @relation("StudentEnrolmentPromotedFrom", fields: [promotedFromEnrolmentId], references: [id])
+  promotedToEnrolments    StudentEnrolment[] @relation("StudentEnrolmentPromotedFrom")
+  school                  School             @relation("SchoolStudentEnrolments", fields: [schoolId], references: [id])
+  student                 Student            @relation("StudentEnrolments", fields: [studentId, schoolId], references: [id, schoolId])
+  term                    Term?              @relation("TermEnrolments", fields: [termId, schoolId], references: [id, schoolId])
+  updatedByUser           User?              @relation("StudentEnrolmentUpdatedBy", fields: [updatedById], references: [id])
+
+  @@index([schoolId, enrolmentStatus])
+  @@index([studentId, academicSessionId])
+  @@index([academicClassId, academicSessionId])
+  @@index([schoolId, academicSessionId, academicClassId])
+  @@index([termId])
+  @@map("student_enrolments")
+}
+
+model AcademicClassTeacherAssignment {
+  id                String                             @id @default(uuid()) @map("academic_class_teacher_assignment_id") @db.Uuid
+  schoolId          String                             @map("school_id") @db.Uuid
+  userId            String                             @map("user_id") @db.Uuid
+  academicSessionId String                             @map("academic_session_id") @db.Uuid
+  termId            String?                            @map("term_id") @db.Uuid
+  academicClassId   String                             @map("academic_class_id") @db.Uuid
+  assignmentType    AcademicClassTeacherAssignmentType @map("assignment_type")
+  isPrimary         Boolean                            @default(false) @map("is_primary")
+  isActive          Boolean                            @default(true) @map("is_active")
+  startDate         DateTime                           @map("start_date") @db.Date
+  endDate           DateTime?                          @map("end_date") @db.Date
+  assignedById      String?                            @map("assigned_by_id") @db.Uuid
+  createdAt         DateTime                           @default(now()) @map("created_at")
+  updatedAt         DateTime                           @updatedAt @map("updated_at")
+  academicClass     AcademicClass                      @relation("AcademicClassTeacherAssignments", fields: [academicClassId, schoolId], references: [id, schoolId])
+  academicSession   AcademicSession                    @relation("AcademicSessionClassAssignments", fields: [academicSessionId, schoolId], references: [id, schoolId])
+  assignedByUser    User?                              @relation("AcademicClassTeacherAssignedBy", fields: [assignedById], references: [id])
+  school            School                             @relation("SchoolAcademicClassAssignments", fields: [schoolId], references: [id])
+  term              Term?                              @relation("TermClassAssignments", fields: [termId, schoolId], references: [id, schoolId])
+  user              User                               @relation("AcademicClassTeacher", fields: [userId, schoolId], references: [id, schoolId])
+
+  @@index([schoolId, isActive])
+  @@index([userId, academicSessionId, isActive])
+  @@index([academicClassId, academicSessionId, isActive])
+  @@index([termId])
+  @@map("academic_class_teacher_assignments")
+}
+
+model Subject {
+  id                              String                        @id @default(uuid()) @map("subject_id") @db.Uuid
+  code                            String                        @unique @map("subject_code") @db.Citext
+  name                            String                        @map("subject_name") @db.VarChar(150)
+  description                     String?                       @map("description")
+  status                          SubjectStatus                 @default(ACTIVE) @map("status")
+  isCore                          Boolean                       @default(false) @map("is_core")
+  countryCode                     String?                       @map("country_code") @db.VarChar(10)
+  frameworkCode                   String?                       @map("framework_code") @db.VarChar(50)
+  createdById                     String?                       @map("created_by_id") @db.Uuid
+  createdAt                       DateTime                      @default(now()) @map("created_at")
+  updatedAt                       DateTime                      @updatedAt @map("updated_at")
+  archivedAt                      DateTime?                     @map("archived_at")
+  curriculum_sources              CurriculumSource[]
+  master_curriculum_unit_subjects MasterCurriculumUnitSubject[]
+  master_topic_subjects           MasterTopicSubject[]
+  componentLinks                  ProgrammeComponentSubject[]   @relation("ProgrammeComponentSubjectLinks")
+  schoolSubjects                  SchoolSubject[]               @relation("SubjectSchoolLinks")
+  domainLinks                     SubjectIntegrationDomain[]    @relation("SubjectDomainLinks")
+  createdByUser                   User?                         @relation("SubjectCreatedBy", fields: [createdById], references: [id])
+
+  @@index([status])
+  @@index([name])
+  @@map("subjects")
+}
+
+model SchoolSubject {
+  id            String    @id @default(uuid()) @map("school_subject_id") @db.Uuid
+  schoolId      String    @map("school_id") @db.Uuid
+  subjectId     String    @map("subject_id") @db.Uuid
+  displayName   String?   @map("display_name") @db.VarChar(150)
+  localCode     String?   @map("local_code") @db.Citext
+  isEnabled     Boolean   @default(true) @map("is_enabled")
+  isCore        Boolean   @default(false) @map("is_core")
+  startDate     DateTime? @map("start_date") @db.Date
+  endDate       DateTime? @map("end_date") @db.Date
+  createdById   String?   @map("created_by_id") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  archivedAt    DateTime? @map("archived_at")
+  createdByUser User?     @relation("SchoolSubjectCreatedBy", fields: [createdById], references: [id])
+  school        School    @relation("SchoolSubjects", fields: [schoolId], references: [id])
+  subject       Subject   @relation("SubjectSchoolLinks", fields: [subjectId], references: [id])
+
+  @@index([schoolId, isEnabled])
+  @@index([subjectId])
+  @@map("school_subjects")
+}
+
+model IntegrationDomain {
+  id                                         String                                  @id @default(uuid()) @map("integration_domain_id") @db.Uuid
+  code                                       String                                  @unique @map("domain_code") @db.Citext
+  name                                       String                                  @map("domain_name") @db.VarChar(150)
+  description                                String?                                 @map("description")
+  status                                     IntegrationDomainStatus                 @default(ACTIVE) @map("status")
+  category                                   String?                                 @map("category") @db.VarChar(100)
+  createdById                                String?                                 @map("created_by_id") @db.Uuid
+  createdAt                                  DateTime                                @default(now()) @map("created_at")
+  updatedAt                                  DateTime                                @updatedAt @map("updated_at")
+  archivedAt                                 DateTime?                               @map("archived_at")
+  curriculum_sources                         CurriculumSource[]
+  createdByUser                              User?                                   @relation("IntegrationDomainCreatedBy", fields: [createdById], references: [id])
+  master_curriculum_unit_integration_domains MasterCurriculumUnitIntegrationDomain[]
+  master_topic_integration_domains           MasterTopicIntegrationDomain[]
+  componentLinks                             ProgrammeComponentIntegrationDomain[]   @relation("ProgrammeComponentDomainLinks")
+  subjectLinks                               SubjectIntegrationDomain[]              @relation("IntegrationDomainSubjectLinks")
+
+  @@index([status])
+  @@index([name])
+  @@map("integration_domains")
+}
+
+model SubjectIntegrationDomain {
+  id                  String            @id @default(uuid()) @map("subject_integration_domain_id") @db.Uuid
+  subjectId           String            @map("subject_id") @db.Uuid
+  integrationDomainId String            @map("integration_domain_id") @db.Uuid
+  relationshipType    String?           @map("relationship_type") @db.VarChar(100)
+  relevanceLevel      Int?              @map("relevance_level")
+  isPrimary           Boolean           @default(false) @map("is_primary")
+  isActive            Boolean           @default(true) @map("is_active")
+  createdById         String?           @map("created_by_id") @db.Uuid
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+  createdByUser       User?             @relation("SubjectIntegrationDomainCreatedBy", fields: [createdById], references: [id])
+  integrationDomain   IntegrationDomain @relation("IntegrationDomainSubjectLinks", fields: [integrationDomainId], references: [id])
+  subject             Subject           @relation("SubjectDomainLinks", fields: [subjectId], references: [id])
+
+  @@unique([subjectId, integrationDomainId])
+  @@index([integrationDomainId])
+  @@index([isActive])
+  @@map("subject_integration_domains")
+}
+
+model ProgrammeComponent {
+  id                                          String                                   @id @default(uuid()) @map("programme_component_id") @db.Uuid
+  name                                        String                                   @map("component_name") @db.VarChar(150)
+  code                                        String                                   @unique @map("component_code") @db.Citext
+  description                                 String?                                  @map("description")
+  status                                      ProgrammeComponentStatus                 @default(DRAFT) @map("status")
+  category                                    String?                                  @map("category") @db.VarChar(100)
+  defaultDurationMinutes                      Int?                                     @map("default_duration_minutes")
+  requiresDevice                              Boolean                                  @default(false) @map("requires_device")
+  requiresInternet                            Boolean                                  @default(false) @map("requires_internet")
+  requiresKit                                 Boolean                                  @default(false) @map("requires_kit")
+  createdById                                 String?                                  @map("created_by_id") @db.Uuid
+  updatedById                                 String?                                  @map("updated_by_id") @db.Uuid
+  createdAt                                   DateTime                                 @default(now()) @map("created_at")
+  updatedAt                                   DateTime                                 @updatedAt @map("updated_at")
+  archivedAt                                  DateTime?                                @map("archived_at")
+  curriculum_sources                          CurriculumSource[]
+  master_curriculum_unit_programme_components MasterCurriculumUnitProgrammeComponent[]
+  master_curriculum_units                     MasterCurriculumUnit[]
+  domainLinks                                 ProgrammeComponentIntegrationDomain[]    @relation("ProgrammeComponentDomains")
+  statusHistory                               ProgrammeComponentStatusHistory[]        @relation("ProgrammeComponentStatusHistory")
+  subjectLinks                                ProgrammeComponentSubject[]              @relation("ProgrammeComponentSubjects")
+  createdByUser                               User?                                    @relation("ProgrammeComponentCreatedBy", fields: [createdById], references: [id])
+  updatedByUser                               User?                                    @relation("ProgrammeComponentUpdatedBy", fields: [updatedById], references: [id])
+  schoolComponents                            SchoolProgrammeComponent[]               @relation("ProgrammeComponentSchoolLinks")
+
+  @@index([status])
+  @@index([name])
+  @@map("programme_components")
+}
+
+model ProgrammeComponentSubject {
+  id                   String             @id @default(uuid()) @map("programme_component_subject_id") @db.Uuid
+  programmeComponentId String             @map("programme_component_id") @db.Uuid
+  subjectId            String             @map("subject_id") @db.Uuid
+  isPrimary            Boolean            @default(false) @map("is_primary")
+  sequenceOrder        Int?               @map("sequence_order")
+  integrationPurpose   String?            @map("integration_purpose") @db.VarChar(150)
+  isActive             Boolean            @default(true) @map("is_active")
+  createdById          String?            @map("created_by_id") @db.Uuid
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  createdByUser        User?              @relation("ProgrammeComponentSubjectCreatedBy", fields: [createdById], references: [id])
+  programmeComponent   ProgrammeComponent @relation("ProgrammeComponentSubjects", fields: [programmeComponentId], references: [id])
+  subject              Subject            @relation("ProgrammeComponentSubjectLinks", fields: [subjectId], references: [id])
+
+  @@unique([programmeComponentId, subjectId])
+  @@index([subjectId])
+  @@index([isActive])
+  @@map("programme_component_subjects")
+}
+
+model ProgrammeComponentIntegrationDomain {
+  id                   String             @id @default(uuid()) @map("programme_component_integration_domain_id") @db.Uuid
+  programmeComponentId String             @map("programme_component_id") @db.Uuid
+  integrationDomainId  String             @map("integration_domain_id") @db.Uuid
+  isPrimary            Boolean            @default(false) @map("is_primary")
+  sequenceOrder        Int?               @map("sequence_order")
+  integrationPurpose   String?            @map("integration_purpose") @db.VarChar(150)
+  isActive             Boolean            @default(true) @map("is_active")
+  createdById          String?            @map("created_by_id") @db.Uuid
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  createdByUser        User?              @relation("ProgrammeComponentDomainCreatedBy", fields: [createdById], references: [id])
+  integrationDomain    IntegrationDomain  @relation("ProgrammeComponentDomainLinks", fields: [integrationDomainId], references: [id])
+  programmeComponent   ProgrammeComponent @relation("ProgrammeComponentDomains", fields: [programmeComponentId], references: [id])
+
+  @@unique([programmeComponentId, integrationDomainId])
+  @@index([integrationDomainId])
+  @@index([isActive])
+  @@map("programme_component_integration_domains")
+}
+
+model SchoolProgrammeComponent {
+  id                           String                      @id @default(uuid()) @map("school_programme_component_id") @db.Uuid
+  schoolId                     String                      @map("school_id") @db.Uuid
+  programmeComponentId         String                      @map("programme_component_id") @db.Uuid
+  displayName                  String?                     @map("display_name") @db.VarChar(150)
+  localCode                    String?                     @map("local_code") @db.Citext
+  isEnabled                    Boolean                     @default(true) @map("is_enabled")
+  startDate                    DateTime?                   @map("start_date") @db.Date
+  endDate                      DateTime?                   @map("end_date") @db.Date
+  defaultWeeklyFrequency       Int?                        @map("default_weekly_frequency")
+  defaultLessonDurationMinutes Int?                        @map("default_lesson_duration_minutes")
+  requiresApproval             Boolean                     @default(false) @map("requires_approval")
+  createdById                  String?                     @map("created_by_id") @db.Uuid
+  updatedById                  String?                     @map("updated_by_id") @db.Uuid
+  createdAt                    DateTime                    @default(now()) @map("created_at")
+  updatedAt                    DateTime                    @updatedAt @map("updated_at")
+  archivedAt                   DateTime?                   @map("archived_at")
+  classComponents              ClassProgrammeComponent[]   @relation("SchoolProgrammeComponentClassLinks")
+  settings                     ProgrammeComponentSetting[] @relation("SchoolProgrammeComponentSettings")
+  createdByUser                User?                       @relation("SchoolProgrammeComponentCreatedBy", fields: [createdById], references: [id])
+  programmeComponent           ProgrammeComponent          @relation("ProgrammeComponentSchoolLinks", fields: [programmeComponentId], references: [id])
+  school                       School                      @relation("SchoolProgrammeComponents", fields: [schoolId], references: [id])
+  updatedByUser                User?                       @relation("SchoolProgrammeComponentUpdatedBy", fields: [updatedById], references: [id])
+  termComponents               TermProgrammeComponent[]    @relation("SchoolProgrammeComponentTermLinks")
+
+  @@unique([id, schoolId])
+  @@index([schoolId, isEnabled])
+  @@index([programmeComponentId])
+  @@map("school_programme_components")
+}
+
+model TermProgrammeComponent {
+  id                         String                   @id @default(uuid()) @map("term_programme_component_id") @db.Uuid
+  schoolId                   String                   @map("school_id") @db.Uuid
+  termId                     String                   @map("term_id") @db.Uuid
+  schoolProgrammeComponentId String                   @map("school_programme_component_id") @db.Uuid
+  isEnabled                  Boolean                  @default(true) @map("is_enabled")
+  startDate                  DateTime?                @map("start_date") @db.Date
+  endDate                    DateTime?                @map("end_date") @db.Date
+  weeklyFrequency            Int?                     @map("weekly_frequency")
+  lessonDurationMinutes      Int?                     @map("lesson_duration_minutes")
+  notes                      String?                  @map("notes")
+  createdById                String?                  @map("created_by_id") @db.Uuid
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+  archivedAt                 DateTime?                @map("archived_at")
+  createdByUser              User?                    @relation("TermProgrammeComponentCreatedBy", fields: [createdById], references: [id])
+  school                     School                   @relation("SchoolTermProgrammeComponents", fields: [schoolId], references: [id])
+  schoolProgrammeComponent   SchoolProgrammeComponent @relation("SchoolProgrammeComponentTermLinks", fields: [schoolProgrammeComponentId, schoolId], references: [id, schoolId])
+  term                       Term                     @relation("TermProgrammeComponents", fields: [termId, schoolId], references: [id, schoolId])
+
+  @@index([termId, schoolProgrammeComponentId, isEnabled])
+  @@index([schoolId, isEnabled])
+  @@map("term_programme_components")
+}
+
+model ClassProgrammeComponent {
+  id                         String                   @id @default(uuid()) @map("class_programme_component_id") @db.Uuid
+  schoolId                   String                   @map("school_id") @db.Uuid
+  academicClassId            String                   @map("academic_class_id") @db.Uuid
+  academicSessionId          String                   @map("academic_session_id") @db.Uuid
+  termId                     String?                  @map("term_id") @db.Uuid
+  schoolProgrammeComponentId String                   @map("school_programme_component_id") @db.Uuid
+  isEnabled                  Boolean                  @default(true) @map("is_enabled")
+  sequenceOrder              Int?                     @map("sequence_order")
+  weeklyFrequency            Int?                     @map("weekly_frequency")
+  lessonDurationMinutes      Int?                     @map("lesson_duration_minutes")
+  createdById                String?                  @map("created_by_id") @db.Uuid
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+  archivedAt                 DateTime?                @map("archived_at")
+  academicClass              AcademicClass            @relation("AcademicClassProgrammeComponents", fields: [academicClassId, schoolId], references: [id, schoolId])
+  academicSession            AcademicSession          @relation("AcademicSessionClassComponents", fields: [academicSessionId, schoolId], references: [id, schoolId])
+  createdByUser              User?                    @relation("ClassProgrammeComponentCreatedBy", fields: [createdById], references: [id])
+  school                     School                   @relation("SchoolClassProgrammeComponents", fields: [schoolId], references: [id])
+  schoolProgrammeComponent   SchoolProgrammeComponent @relation("SchoolProgrammeComponentClassLinks", fields: [schoolProgrammeComponentId, schoolId], references: [id, schoolId])
+  term                       Term?                    @relation("TermClassProgrammeComponents", fields: [termId, schoolId], references: [id, schoolId])
+
+  @@index([academicClassId, academicSessionId, termId, schoolProgrammeComponentId])
+  @@index([schoolId, isEnabled])
+  @@map("class_programme_components")
+}
+
+model ProgrammeComponentSetting {
+  id                         String                   @id @default(uuid()) @map("component_setting_id") @db.Uuid
+  schoolId                   String                   @map("school_id") @db.Uuid
+  schoolProgrammeComponentId String                   @map("school_programme_component_id") @db.Uuid
+  settingKey                 String                   @map("setting_key") @db.VarChar(100)
+  settingValue               String                   @map("setting_value")
+  valueType                  String?                  @map("value_type") @db.VarChar(50)
+  isSensitive                Boolean                  @default(false) @map("is_sensitive")
+  createdById                String?                  @map("created_by_id") @db.Uuid
+  updatedById                String?                  @map("updated_by_id") @db.Uuid
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+  createdByUser              User?                    @relation("ProgrammeComponentSettingCreatedBy", fields: [createdById], references: [id])
+  school                     School                   @relation("SchoolProgrammeComponentSettingSchool", fields: [schoolId], references: [id])
+  schoolProgrammeComponent   SchoolProgrammeComponent @relation("SchoolProgrammeComponentSettings", fields: [schoolProgrammeComponentId, schoolId], references: [id, schoolId])
+  updatedByUser              User?                    @relation("ProgrammeComponentSettingUpdatedBy", fields: [updatedById], references: [id])
+
+  @@unique([schoolProgrammeComponentId, settingKey])
+  @@index([schoolId])
+  @@map("programme_component_settings")
+}
+
+model ProgrammeComponentStatusHistory {
+  id                   String                   @id @default(uuid()) @map("status_history_id") @db.Uuid
+  programmeComponentId String                   @map("programme_component_id") @db.Uuid
+  previousStatus       ProgrammeComponentStatus @map("previous_status")
+  newStatus            ProgrammeComponentStatus @map("new_status")
+  reason               String?                  @map("reason")
+  changedById          String?                  @map("changed_by_id") @db.Uuid
+  changedAt            DateTime                 @default(now()) @map("changed_at")
+  metadata             Json?                    @map("metadata")
+  changedByUser        User?                    @relation("ProgrammeComponentStatusChangedBy", fields: [changedById], references: [id])
+  programmeComponent   ProgrammeComponent       @relation("ProgrammeComponentStatusHistory", fields: [programmeComponentId], references: [id])
+
+  @@index([programmeComponentId, changedAt])
+  @@map("programme_component_status_history")
+}
+
+model CurriculumSource {
+  id                                             String                              @id @default(uuid()) @map("curriculum_source_id") @db.Uuid
+  schoolId                                       String?                             @map("school_id") @db.Uuid
+  sourceCode                                     String?                             @map("source_code") @db.Citext
+  title                                          String                              @map("title") @db.VarChar(200)
+  description                                    String?                             @map("description")
+  sourceType                                     CurriculumSourceType                @map("source_type")
+  sourceFormat                                   CurriculumSourceFormat              @map("source_format")
+  subjectId                                      String?                             @map("subject_id") @db.Uuid
+  integrationDomainId                            String?                             @map("integration_domain_id") @db.Uuid
+  programmeComponentId                           String?                             @map("programme_component_id") @db.Uuid
+  classLevel                                     String?                             @map("class_level") @db.VarChar(100)
+  termLabel                                      String?                             @map("term_label") @db.VarChar(100)
+  educationLevel                                 String?                             @map("education_level") @db.VarChar(100)
+  curriculumStandard                             String?                             @map("curriculum_standard") @db.VarChar(150)
+  frameworkName                                  String?                             @map("framework_name") @db.VarChar(150)
+  countryCode                                    String?                             @map("country_code") @db.VarChar(10)
+  academicYear                                   String?                             @map("academic_year") @db.VarChar(20)
+  versionLabel                                   String?                             @map("version_label") @db.VarChar(50)
+  publisher                                      String?                             @map("publisher") @db.VarChar(150)
+  author                                         String?                             @map("author") @db.VarChar(150)
+  sourceUrl                                      String?                             @map("source_url")
+  usageRights                                    String                              @map("usage_rights") @db.VarChar(150)
+  copyrightNote                                  String?                             @map("copyright_note")
+  fileReference                                  String?                             @map("file_reference") @db.VarChar(255)
+  originalFileName                               String?                             @map("original_file_name") @db.VarChar(255)
+  mimeType                                       String?                             @map("mime_type") @db.VarChar(150)
+  fileSize                                       BigInt?                             @map("file_size")
+  checksum                                       String?                             @map("checksum") @db.VarChar(128)
+  status                                         MasterContentStatus                 @default(DRAFT) @map("status")
+  reviewStatus                                   ContentReviewStatus                 @default(DRAFT) @map("review_status")
+  isActive                                       Boolean                             @default(true) @map("is_active")
+  uploadedById                                   String?                             @map("uploaded_by_id") @db.Uuid
+  reviewedById                                   String?                             @map("reviewed_by_id") @db.Uuid
+  approvedById                                   String?                             @map("approved_by_id") @db.Uuid
+  uploadedAt                                     DateTime                            @default(now()) @map("uploaded_at")
+  reviewedAt                                     DateTime?                           @map("reviewed_at")
+  approvedAt                                     DateTime?                           @map("approved_at")
+  archivedAt                                     DateTime?                           @map("archived_at")
+  createdAt                                      DateTime                            @default(now()) @map("created_at")
+  updatedAt                                      DateTime                            @updatedAt @map("updated_at")
+  sourceContents                                 CurriculumSourceContent[]           @relation("CurriculumSourceContents")
+  masterContentLinks                             CurriculumSourceMasterContentLink[] @relation("CurriculumSourceMasterContentLinks")
+  users_curriculum_sources_approved_by_idTousers User?                               @relation("curriculum_sources_approved_by_idTousers", fields: [approvedById], references: [id])
+  integration_domains                            IntegrationDomain?                  @relation(fields: [integrationDomainId], references: [id], onDelete: Restrict)
+  programme_components                           ProgrammeComponent?                 @relation(fields: [programmeComponentId], references: [id], onDelete: Restrict)
+  users_curriculum_sources_reviewed_by_idTousers User?                               @relation("curriculum_sources_reviewed_by_idTousers", fields: [reviewedById], references: [id])
+  schools                                        School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  subjects                                       Subject?                            @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+  users_curriculum_sources_uploaded_by_idTousers User?                               @relation("curriculum_sources_uploaded_by_idTousers", fields: [uploadedById], references: [id])
+
+  @@index([schoolId, status])
+  @@index([schoolId, reviewStatus])
+  @@index([schoolId, subjectId])
+  @@index([schoolId, programmeComponentId])
+  @@index([reviewStatus, isActive])
+  @@index([schoolId, isActive, status, reviewStatus], map: "curriculum_sources_global_vs_school_lookup_idx")
+  @@map("curriculum_sources")
+}
+
+model CurriculumSourceContent {
+  id                 String                      @id @default(uuid()) @map("curriculum_source_content_id") @db.Uuid
+  curriculumSourceId String                      @map("curriculum_source_id") @db.Uuid
+  sequenceOrder      Int                         @map("sequence_order")
+  contentType        CurriculumSourceContentType @map("content_type")
+  heading            String?                     @map("heading") @db.VarChar(200)
+  rawText            String?                     @map("raw_text")
+  structuredData     Json?                       @map("structured_data")
+  sourcePage         String?                     @map("source_page") @db.VarChar(50)
+  sourceSection      String?                     @map("source_section") @db.VarChar(150)
+  confidenceScore    Decimal?                    @map("confidence_score") @db.Decimal(5, 2)
+  extractionMethod   String?                     @map("extraction_method") @db.VarChar(100)
+  reviewed           Boolean                     @default(false) @map("reviewed")
+  reviewedById       String?                     @map("reviewed_by_id") @db.Uuid
+  reviewedAt         DateTime?                   @map("reviewed_at")
+  createdAt          DateTime                    @default(now()) @map("created_at")
+  updatedAt          DateTime                    @updatedAt @map("updated_at")
+  curriculumSource   CurriculumSource            @relation("CurriculumSourceContents", fields: [curriculumSourceId], references: [id])
+  users              User?                       @relation(fields: [reviewedById], references: [id])
+
+  @@unique([curriculumSourceId, sequenceOrder])
+  @@index([curriculumSourceId, contentType])
+  @@index([reviewed, reviewedAt])
+  @@map("curriculum_source_contents")
+}
+
+model MasterCurriculumUnit {
+  id                                                  String                                   @id @default(uuid()) @map("master_curriculum_unit_id") @db.Uuid
+  schoolId                                            String?                                  @map("school_id") @db.Uuid
+  title                                               String                                   @map("title") @db.VarChar(200)
+  code                                                String?                                  @map("code") @db.Citext
+  description                                         String                                   @map("description")
+  programmeComponentId                                String?                                  @map("programme_component_id") @db.Uuid
+  recommendedEducationLevel                           String?                                  @map("recommended_education_level") @db.VarChar(100)
+  minimumClassLevel                                   String?                                  @map("minimum_class_level") @db.VarChar(100)
+  maximumClassLevel                                   String?                                  @map("maximum_class_level") @db.VarChar(100)
+  estimatedWeeks                                      Int?                                     @map("estimated_weeks")
+  status                                              MasterContentStatus                      @default(DRAFT) @map("status")
+  versionNumber                                       Int                                      @default(1) @map("version_number")
+  isActive                                            Boolean                                  @default(true) @map("is_active")
+  createdById                                         String                                   @map("created_by_id") @db.Uuid
+  reviewedById                                        String?                                  @map("reviewed_by_id") @db.Uuid
+  approvedById                                        String?                                  @map("approved_by_id") @db.Uuid
+  createdAt                                           DateTime                                 @default(now()) @map("created_at")
+  updatedAt                                           DateTime                                 @updatedAt @map("updated_at")
+  approvedAt                                          DateTime?                                @map("approved_at")
+  archivedAt                                          DateTime?                                @map("archived_at")
+  sourceLinks                                         CurriculumSourceMasterContentLink[]      @relation("MasterCurriculumUnitSourceLinks")
+  integrationDomainLinks                              MasterCurriculumUnitIntegrationDomain[]  @relation("MasterCurriculumUnitIntegrationDomainLinks")
+  programmeComponentLinks                             MasterCurriculumUnitProgrammeComponent[] @relation("MasterCurriculumUnitProgrammeComponentLinks")
+  subjectLinks                                        MasterCurriculumUnitSubject[]            @relation("MasterCurriculumUnitSubjectLinks")
+  users_master_curriculum_units_approved_by_idTousers User?                                    @relation("master_curriculum_units_approved_by_idTousers", fields: [approvedById], references: [id])
+  users_master_curriculum_units_created_by_idTousers  User                                     @relation("master_curriculum_units_created_by_idTousers", fields: [createdById], references: [id])
+  programme_components                                ProgrammeComponent?                      @relation(fields: [programmeComponentId], references: [id], onDelete: Restrict)
+  users_master_curriculum_units_reviewed_by_idTousers User?                                    @relation("master_curriculum_units_reviewed_by_idTousers", fields: [reviewedById], references: [id])
+  schools                                             School?                                  @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  topics                                              MasterTopic[]                            @relation("MasterCurriculumUnitTopics")
+
+  @@index([schoolId, status])
+  @@index([programmeComponentId, status])
+  @@index([status, isActive])
+  @@index([status, isActive, archivedAt], map: "master_curriculum_units_archive_filter_idx")
+  @@map("master_curriculum_units")
+}
+
+model MasterTopic {
+  id                         String                              @id @default(uuid()) @map("master_topic_id") @db.Uuid
+  schoolId                   String?                             @map("school_id") @db.Uuid
+  masterCurriculumUnitId     String                              @map("master_curriculum_unit_id") @db.Uuid
+  title                      String                              @map("title") @db.VarChar(200)
+  code                       String?                             @map("code") @db.Citext
+  description                String                              @map("description")
+  sequenceOrder              Int                                 @map("sequence_order")
+  recommendedDurationMinutes Int?                                @map("recommended_duration_minutes")
+  difficultyLevel            String?                             @map("difficulty_level") @db.VarChar(50)
+  prerequisiteNote           String?                             @map("prerequisite_note")
+  status                     MasterContentStatus                 @default(DRAFT) @map("status")
+  versionNumber              Int                                 @default(1) @map("version_number")
+  isActive                   Boolean                             @default(true) @map("is_active")
+  createdById                String                              @map("created_by_id") @db.Uuid
+  createdAt                  DateTime                            @default(now()) @map("created_at")
+  updatedAt                  DateTime                            @updatedAt @map("updated_at")
+  archivedAt                 DateTime?                           @map("archived_at")
+  sourceLinks                CurriculumSourceMasterContentLink[] @relation("MasterTopicSourceLinks")
+  activityLinks              MasterTopicActivity[]               @relation("MasterTopicActivityLinks")
+  conceptLinks               MasterTopicConcept[]                @relation("MasterTopicConceptLinks")
+  integrationDomainLinks     MasterTopicIntegrationDomain[]      @relation("MasterTopicIntegrationDomainLinks")
+  learningOutcomeLinks       MasterTopicLearningOutcome[]        @relation("MasterTopicLearningOutcomeLinks")
+  projectLinks               MasterTopicProject[]                @relation("MasterTopicProjectLinks")
+  skillLinks                 MasterTopicSkill[]                  @relation("MasterTopicSkillLinks")
+  subjectLinks               MasterTopicSubject[]                @relation("MasterTopicSubjectLinks")
+  users                      User                                @relation(fields: [createdById], references: [id])
+  masterCurriculumUnit       MasterCurriculumUnit                @relation("MasterCurriculumUnitTopics", fields: [masterCurriculumUnitId], references: [id])
+  schools                    School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@unique([masterCurriculumUnitId, sequenceOrder])
+  @@index([masterCurriculumUnitId, status])
+  @@index([schoolId, status])
+  @@map("master_topics")
+}
+
+model MasterConcept {
+  id            String                              @id @default(uuid()) @map("master_concept_id") @db.Uuid
+  schoolId      String?                             @map("school_id") @db.Uuid
+  name          String                              @map("name") @db.VarChar(200)
+  code          String?                             @map("code") @db.Citext
+  definition    String                              @map("definition")
+  explanation   String?                             @map("explanation")
+  category      String?                             @map("category") @db.VarChar(100)
+  status        MasterContentStatus                 @default(DRAFT) @map("status")
+  versionNumber Int                                 @default(1) @map("version_number")
+  isActive      Boolean                             @default(true) @map("is_active")
+  createdById   String                              @map("created_by_id") @db.Uuid
+  createdAt     DateTime                            @default(now()) @map("created_at")
+  updatedAt     DateTime                            @updatedAt @map("updated_at")
+  archivedAt    DateTime?                           @map("archived_at")
+  sourceLinks   CurriculumSourceMasterContentLink[] @relation("MasterConceptSourceLinks")
+  users         User                                @relation(fields: [createdById], references: [id])
+  schools       School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  topicLinks    MasterTopicConcept[]                @relation("MasterConceptTopicLinks")
+
+  @@index([code])
+  @@index([status, isActive])
+  @@map("master_concepts")
+}
+
+model MasterSkill {
+  id               String                              @id @default(uuid()) @map("master_skill_id") @db.Uuid
+  schoolId         String?                             @map("school_id") @db.Uuid
+  name             String                              @map("name") @db.VarChar(200)
+  code             String?                             @map("code") @db.Citext
+  description      String                              @map("description")
+  category         String                              @map("category") @db.VarChar(100)
+  progressionLevel String?                             @map("progression_level") @db.VarChar(50)
+  status           MasterContentStatus                 @default(DRAFT) @map("status")
+  isActive         Boolean                             @default(true) @map("is_active")
+  createdById      String                              @map("created_by_id") @db.Uuid
+  createdAt        DateTime                            @default(now()) @map("created_at")
+  updatedAt        DateTime                            @updatedAt @map("updated_at")
+  archivedAt       DateTime?                           @map("archived_at")
+  sourceLinks      CurriculumSourceMasterContentLink[] @relation("MasterSkillSourceLinks")
+  projectLinks     MasterProjectSkill[]                @relation("MasterSkillProjectLinks")
+  users            User                                @relation(fields: [createdById], references: [id])
+  schools          School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  topicLinks       MasterTopicSkill[]                  @relation("MasterSkillTopicLinks")
+
+  @@index([category, status])
+  @@index([status, isActive])
+  @@map("master_skills")
+}
+
+model MasterLearningOutcome {
+  id                      String                                    @id @default(uuid()) @map("master_learning_outcome_id") @db.Uuid
+  schoolId                String?                                   @map("school_id") @db.Uuid
+  statement               String                                    @map("statement")
+  code                    String?                                   @map("code") @db.Citext
+  bloomLevel              String?                                   @map("bloom_level") @db.VarChar(50)
+  measurableVerb          String?                                   @map("measurable_verb") @db.VarChar(100)
+  recommendedClassLevel   String?                                   @map("recommended_class_level") @db.VarChar(100)
+  status                  MasterContentStatus                       @default(DRAFT) @map("status")
+  versionNumber           Int                                       @default(1) @map("version_number")
+  isActive                Boolean                                   @default(true) @map("is_active")
+  createdById             String                                    @map("created_by_id") @db.Uuid
+  createdAt               DateTime                                  @default(now()) @map("created_at")
+  updatedAt               DateTime                                  @updatedAt @map("updated_at")
+  archivedAt              DateTime?                                 @map("archived_at")
+  sourceLinks             CurriculumSourceMasterContentLink[]       @relation("MasterLearningOutcomeSourceLinks")
+  assessmentTemplateLinks MasterAssessmentTemplateLearningOutcome[] @relation("MasterLearningOutcomeAssessmentTemplateLinks")
+  users                   User                                      @relation(fields: [createdById], references: [id])
+  schools                 School?                                   @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  projectLinks            MasterProjectLearningOutcome[]            @relation("MasterLearningOutcomeProjectLinks")
+  topicLinks              MasterTopicLearningOutcome[]              @relation("MasterLearningOutcomeTopicLinks")
+
+  @@index([bloomLevel, status])
+  @@index([status, isActive])
+  @@map("master_learning_outcomes")
+}
+
+model MasterActivity {
+  id                       String                              @id @default(uuid()) @map("master_activity_id") @db.Uuid
+  schoolId                 String?                             @map("school_id") @db.Uuid
+  title                    String                              @map("title") @db.VarChar(200)
+  description              String                              @map("description")
+  activityType             MasterActivityType                  @map("activity_type")
+  estimatedDurationMinutes Int?                                @map("estimated_duration_minutes")
+  teacherInstructions      String?                             @map("teacher_instructions")
+  learnerInstructions      String?                             @map("learner_instructions")
+  groupingType             String?                             @map("grouping_type") @db.VarChar(50)
+  safetyNote               String?                             @map("safety_note")
+  difficultyLevel          String?                             @map("difficulty_level") @db.VarChar(50)
+  status                   MasterContentStatus                 @default(DRAFT) @map("status")
+  isActive                 Boolean                             @default(true) @map("is_active")
+  createdById              String                              @map("created_by_id") @db.Uuid
+  createdAt                DateTime                            @default(now()) @map("created_at")
+  updatedAt                DateTime                            @updatedAt @map("updated_at")
+  archivedAt               DateTime?                           @map("archived_at")
+  sourceLinks              CurriculumSourceMasterContentLink[] @relation("MasterActivitySourceLinks")
+  users                    User                                @relation(fields: [createdById], references: [id])
+  schools                  School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  resourceLinks            MasterActivityResource[]            @relation("MasterActivityResourceLinks")
+  topicLinks               MasterTopicActivity[]               @relation("MasterActivityTopicLinks")
+
+  @@index([status, isActive])
+  @@map("master_activities")
+}
+
+model MasterProject {
+  id                       String                              @id @default(uuid()) @map("master_project_id") @db.Uuid
+  schoolId                 String?                             @map("school_id") @db.Uuid
+  title                    String                              @map("title") @db.VarChar(200)
+  description              String                              @map("description")
+  projectType              String?                             @map("project_type") @db.VarChar(100)
+  difficultyLevel          String?                             @map("difficulty_level") @db.VarChar(50)
+  estimatedDurationMinutes Int?                                @map("estimated_duration_minutes")
+  recommendedClassLevel    String?                             @map("recommended_class_level") @db.VarChar(100)
+  objective                String?                             @map("objective")
+  expectedOutput           String?                             @map("expected_output")
+  safetyNote               String?                             @map("safety_note")
+  status                   MasterContentStatus                 @default(DRAFT) @map("status")
+  versionNumber            Int                                 @default(1) @map("version_number")
+  isActive                 Boolean                             @default(true) @map("is_active")
+  createdById              String                              @map("created_by_id") @db.Uuid
+  createdAt                DateTime                            @default(now()) @map("created_at")
+  updatedAt                DateTime                            @updatedAt @map("updated_at")
+  archivedAt               DateTime?                           @map("archived_at")
+  sourceLinks              CurriculumSourceMasterContentLink[] @relation("MasterProjectSourceLinks")
+  implementations          MasterProjectImplementation[]       @relation("MasterProjectImplementations")
+  learningOutcomeLinks     MasterProjectLearningOutcome[]      @relation("MasterProjectLearningOutcomeLinks")
+  resourceLinks            MasterProjectResource[]             @relation("MasterProjectResourceLinks")
+  skillLinks               MasterProjectSkill[]                @relation("MasterProjectSkillLinks")
+  users                    User                                @relation(fields: [createdById], references: [id])
+  schools                  School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+  topicLinks               MasterTopicProject[]                @relation("MasterProjectTopicLinks")
+
+  @@index([difficultyLevel, status])
+  @@index([status, isActive])
+  @@map("master_projects")
+}
+
+model MasterProjectImplementation {
+  id                       String                              @id @default(uuid()) @map("master_project_implementation_id") @db.Uuid
+  schoolId                 String?                             @map("school_id") @db.Uuid
+  masterProjectId          String                              @map("master_project_id") @db.Uuid
+  title                    String                              @map("title") @db.VarChar(200)
+  implementationType       MasterProjectImplementationType     @map("implementation_type")
+  description              String                              @map("description")
+  requiredDeviceCount      Int?                                @map("required_device_count")
+  requiredInternet         Boolean                             @default(false) @map("required_internet")
+  estimatedDurationMinutes Int?                                @map("estimated_duration_minutes")
+  learnerInstructions      String?                             @map("learner_instructions")
+  teacherInstructions      String?                             @map("teacher_instructions")
+  safetyInstructions       String?                             @map("safety_instructions")
+  sequenceOrder            Int                                 @map("sequence_order")
+  isActive                 Boolean                             @default(true) @map("is_active")
+  createdById              String                              @map("created_by_id") @db.Uuid
+  createdAt                DateTime                            @default(now()) @map("created_at")
+  updatedAt                DateTime                            @updatedAt @map("updated_at")
+  sourceLinks              CurriculumSourceMasterContentLink[] @relation("MasterProjectImplementationSourceLinks")
+  users                    User                                @relation(fields: [createdById], references: [id])
+  masterProject            MasterProject                       @relation("MasterProjectImplementations", fields: [masterProjectId], references: [id])
+  schools                  School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@unique([masterProjectId, sequenceOrder])
+  @@index([masterProjectId, isActive])
+  @@map("master_project_implementations")
+}
+
+model MasterResource {
+  id               String                              @id @default(uuid()) @map("master_resource_id") @db.Uuid
+  schoolId         String?                             @map("school_id") @db.Uuid
+  title            String                              @map("title") @db.VarChar(200)
+  description      String                              @map("description")
+  resourceType     MasterResourceType                  @map("resource_type")
+  resourceCategory String?                             @map("resource_category") @db.VarChar(100)
+  url              String?                             @map("url")
+  fileReference    String?                             @map("file_reference") @db.VarChar(255)
+  platformName     String?                             @map("platform_name") @db.VarChar(150)
+  manufacturer     String?                             @map("manufacturer") @db.VarChar(150)
+  modelName        String?                             @map("model_name") @db.VarChar(150)
+  quantityGuidance String?                             @map("quantity_guidance") @db.VarChar(100)
+  safetyNote       String?                             @map("safety_note")
+  requiresInternet Boolean                             @default(false) @map("requires_internet")
+  requiresLogin    Boolean                             @default(false) @map("requires_login")
+  isReusable       Boolean                             @default(true) @map("is_reusable")
+  status           MasterContentStatus                 @default(DRAFT) @map("status")
+  reviewStatus     ContentReviewStatus                 @default(DRAFT) @map("review_status")
+  lastVerifiedAt   DateTime?                           @map("last_verified_at")
+  isActive         Boolean                             @default(true) @map("is_active")
+  createdById      String                              @map("created_by_id") @db.Uuid
+  createdAt        DateTime                            @default(now()) @map("created_at")
+  updatedAt        DateTime                            @updatedAt @map("updated_at")
+  archivedAt       DateTime?                           @map("archived_at")
+  sourceLinks      CurriculumSourceMasterContentLink[] @relation("MasterResourceSourceLinks")
+  activityLinks    MasterActivityResource[]            @relation("MasterResourceActivityLinks")
+  projectLinks     MasterProjectResource[]             @relation("MasterResourceProjectLinks")
+  users            User                                @relation(fields: [createdById], references: [id])
+  schools          School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@index([resourceType, reviewStatus])
+  @@index([status, isActive])
+  @@index([reviewStatus, lastVerifiedAt, status], map: "master_resources_verification_filter_idx")
+  @@map("master_resources")
+}
+
+model MasterAssessmentTemplate {
+  id                   String                                    @id @default(uuid()) @map("master_assessment_template_id") @db.Uuid
+  schoolId             String?                                   @map("school_id") @db.Uuid
+  title                String                                    @map("title") @db.VarChar(200)
+  description          String                                    @map("description")
+  assessmentType       MasterAssessmentType                      @map("assessment_type")
+  instructions         String?                                   @map("instructions")
+  maximumScore         Decimal?                                  @map("maximum_score") @db.Decimal(8, 2)
+  passingScore         Decimal?                                  @map("passing_score") @db.Decimal(8, 2)
+  durationMinutes      Int?                                      @map("duration_minutes")
+  gradingMethod        String?                                   @map("grading_method") @db.VarChar(100)
+  templateData         Json?                                     @map("template_data")
+  status               MasterContentStatus                       @default(DRAFT) @map("status")
+  versionNumber        Int                                       @default(1) @map("version_number")
+  isActive             Boolean                                   @default(true) @map("is_active")
+  createdById          String                                    @map("created_by_id") @db.Uuid
+  createdAt            DateTime                                  @default(now()) @map("created_at")
+  updatedAt            DateTime                                  @updatedAt @map("updated_at")
+  archivedAt           DateTime?                                 @map("archived_at")
+  sourceLinks          CurriculumSourceMasterContentLink[]       @relation("MasterAssessmentTemplateSourceLinks")
+  learningOutcomeLinks MasterAssessmentTemplateLearningOutcome[] @relation("MasterAssessmentTemplateLearningOutcomeLinks")
+  users                User                                      @relation(fields: [createdById], references: [id])
+  schools              School?                                   @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@index([assessmentType, status])
+  @@index([status, isActive])
+  @@map("master_assessment_templates")
+}
+
+model MasterRubric {
+  id            String                              @id @default(uuid()) @map("master_rubric_id") @db.Uuid
+  schoolId      String?                             @map("school_id") @db.Uuid
+  title         String                              @map("title") @db.VarChar(200)
+  description   String                              @map("description")
+  rubricType    String?                             @map("rubric_type") @db.VarChar(100)
+  maximumScore  Decimal?                            @map("maximum_score") @db.Decimal(8, 2)
+  status        MasterContentStatus                 @default(DRAFT) @map("status")
+  versionNumber Int                                 @default(1) @map("version_number")
+  isActive      Boolean                             @default(true) @map("is_active")
+  createdById   String                              @map("created_by_id") @db.Uuid
+  createdAt     DateTime                            @default(now()) @map("created_at")
+  updatedAt     DateTime                            @updatedAt @map("updated_at")
+  archivedAt    DateTime?                           @map("archived_at")
+  sourceLinks   CurriculumSourceMasterContentLink[] @relation("MasterRubricSourceLinks")
+  criteria      MasterRubricCriterion[]             @relation("MasterRubricCriteria")
+  users         User                                @relation(fields: [createdById], references: [id])
+  schools       School?                             @relation(fields: [schoolId], references: [id], onDelete: Restrict)
+
+  @@index([status, isActive])
+  @@map("master_rubrics")
+}
+
+model MasterRubricCriterion {
+  id             String              @id @default(uuid()) @map("master_rubric_criterion_id") @db.Uuid
+  masterRubricId String              @map("master_rubric_id") @db.Uuid
+  title          String              @map("title") @db.VarChar(200)
+  description    String?             @map("description")
+  sequenceOrder  Int                 @map("sequence_order")
+  maximumScore   Decimal?            @map("maximum_score") @db.Decimal(8, 2)
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @updatedAt @map("updated_at")
+  masterRubric   MasterRubric        @relation("MasterRubricCriteria", fields: [masterRubricId], references: [id])
+  levels         MasterRubricLevel[] @relation("MasterRubricCriterionLevels")
+
+  @@unique([masterRubricId, sequenceOrder])
+  @@index([masterRubricId])
+  @@map("master_rubric_criteria")
+}
+
+model MasterRubricLevel {
+  id                      String                @id @default(uuid()) @map("master_rubric_level_id") @db.Uuid
+  masterRubricCriterionId String                @map("master_rubric_criterion_id") @db.Uuid
+  title                   String                @map("title") @db.VarChar(150)
+  description             String?               @map("description")
+  scoreValue              Decimal               @map("score_value") @db.Decimal(8, 2)
+  sequenceOrder           Int                   @map("sequence_order")
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+  masterRubricCriterion   MasterRubricCriterion @relation("MasterRubricCriterionLevels", fields: [masterRubricCriterionId], references: [id])
+
+  @@unique([masterRubricCriterionId, sequenceOrder])
+  @@index([masterRubricCriterionId])
+  @@map("master_rubric_levels")
+}
+
+model MasterCurriculumUnitSubject {
+  id                     String               @id @default(uuid()) @map("master_curriculum_unit_subject_id") @db.Uuid
+  masterCurriculumUnitId String               @map("master_curriculum_unit_id") @db.Uuid
+  subjectId              String               @map("subject_id") @db.Uuid
+  isActive               Boolean              @default(true) @map("is_active")
+  createdById            String               @map("created_by_id") @db.Uuid
+  createdAt              DateTime             @default(now()) @map("created_at")
+  updatedAt              DateTime             @updatedAt @map("updated_at")
+  users                  User                 @relation(fields: [createdById], references: [id])
+  masterCurriculumUnit   MasterCurriculumUnit @relation("MasterCurriculumUnitSubjectLinks", fields: [masterCurriculumUnitId], references: [id])
+  subjects               Subject              @relation(fields: [subjectId], references: [id])
+
+  @@unique([masterCurriculumUnitId, subjectId])
+  @@index([subjectId])
+  @@map("master_curriculum_unit_subjects")
+}
+
+model MasterCurriculumUnitIntegrationDomain {
+  id                     String               @id @default(uuid()) @map("master_curriculum_unit_integration_domain_id") @db.Uuid
+  masterCurriculumUnitId String               @map("master_curriculum_unit_id") @db.Uuid
+  integrationDomainId    String               @map("integration_domain_id") @db.Uuid
+  isActive               Boolean              @default(true) @map("is_active")
+  createdById            String               @map("created_by_id") @db.Uuid
+  createdAt              DateTime             @default(now()) @map("created_at")
+  updatedAt              DateTime             @updatedAt @map("updated_at")
+  users                  User                 @relation(fields: [createdById], references: [id])
+  integration_domains    IntegrationDomain    @relation(fields: [integrationDomainId], references: [id], map: "master_curriculum_unit_integration_domains_domain_id_fkey")
+  masterCurriculumUnit   MasterCurriculumUnit @relation("MasterCurriculumUnitIntegrationDomainLinks", fields: [masterCurriculumUnitId], references: [id])
+
+  @@unique([masterCurriculumUnitId, integrationDomainId])
+  @@index([integrationDomainId])
+  @@map("master_curriculum_unit_integration_domains")
+}
+
+model MasterCurriculumUnitProgrammeComponent {
+  id                     String               @id @default(uuid()) @map("master_curriculum_unit_programme_component_id") @db.Uuid
+  masterCurriculumUnitId String               @map("master_curriculum_unit_id") @db.Uuid
+  programmeComponentId   String               @map("programme_component_id") @db.Uuid
+  isActive               Boolean              @default(true) @map("is_active")
+  createdById            String               @map("created_by_id") @db.Uuid
+  createdAt              DateTime             @default(now()) @map("created_at")
+  updatedAt              DateTime             @updatedAt @map("updated_at")
+  programme_components   ProgrammeComponent   @relation(fields: [programmeComponentId], references: [id], map: "master_curriculum_unit_programme_components_component_id_fkey")
+  users                  User                 @relation(fields: [createdById], references: [id])
+  masterCurriculumUnit   MasterCurriculumUnit @relation("MasterCurriculumUnitProgrammeComponentLinks", fields: [masterCurriculumUnitId], references: [id])
+
+  @@unique([masterCurriculumUnitId, programmeComponentId])
+  @@index([programmeComponentId])
+  @@map("master_curriculum_unit_programme_components")
+}
+
+model MasterTopicSubject {
+  id            String      @id @default(uuid()) @map("master_topic_subject_id") @db.Uuid
+  masterTopicId String      @map("master_topic_id") @db.Uuid
+  subjectId     String      @map("subject_id") @db.Uuid
+  isActive      Boolean     @default(true) @map("is_active")
+  createdById   String      @map("created_by_id") @db.Uuid
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  users         User        @relation(fields: [createdById], references: [id])
+  masterTopic   MasterTopic @relation("MasterTopicSubjectLinks", fields: [masterTopicId], references: [id])
+  subjects      Subject     @relation(fields: [subjectId], references: [id])
+
+  @@unique([masterTopicId, subjectId])
+  @@index([subjectId])
+  @@map("master_topic_subjects")
+}
+
+model MasterTopicIntegrationDomain {
+  id                  String            @id @default(uuid()) @map("master_topic_integration_domain_id") @db.Uuid
+  masterTopicId       String            @map("master_topic_id") @db.Uuid
+  integrationDomainId String            @map("integration_domain_id") @db.Uuid
+  isActive            Boolean           @default(true) @map("is_active")
+  createdById         String            @map("created_by_id") @db.Uuid
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+  users               User              @relation(fields: [createdById], references: [id])
+  integration_domains IntegrationDomain @relation(fields: [integrationDomainId], references: [id], map: "master_topic_integration_domains_domain_id_fkey")
+  masterTopic         MasterTopic       @relation("MasterTopicIntegrationDomainLinks", fields: [masterTopicId], references: [id])
+
+  @@unique([masterTopicId, integrationDomainId])
+  @@index([integrationDomainId])
+  @@map("master_topic_integration_domains")
+}
+
+model MasterTopicConcept {
+  id                    String        @id @default(uuid()) @map("master_topic_concept_id") @db.Uuid
+  masterTopicId         String        @map("master_topic_id") @db.Uuid
+  masterConceptId       String        @map("master_concept_id") @db.Uuid
+  sequenceOrder         Int?          @map("sequence_order")
+  importanceLevel       String?       @map("importance_level") @db.VarChar(50)
+  expectedDepth         String?       @map("expected_depth") @db.VarChar(50)
+  instructionalEmphasis String?       @map("instructional_emphasis") @db.VarChar(100)
+  isCore                Boolean       @default(false) @map("is_core")
+  assessmentRelevance   String?       @map("assessment_relevance") @db.VarChar(100)
+  teacherNote           String?       @map("teacher_note")
+  isActive              Boolean       @default(true) @map("is_active")
+  createdById           String        @map("created_by_id") @db.Uuid
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+  users                 User          @relation(fields: [createdById], references: [id])
+  masterConcept         MasterConcept @relation("MasterConceptTopicLinks", fields: [masterConceptId], references: [id])
+  masterTopic           MasterTopic   @relation("MasterTopicConceptLinks", fields: [masterTopicId], references: [id])
+
+  @@unique([masterTopicId, masterConceptId])
+  @@index([masterConceptId])
+  @@map("master_topic_concepts")
+}
+
+model MasterTopicSkill {
+  id                String      @id @default(uuid()) @map("master_topic_skill_id") @db.Uuid
+  masterTopicId     String      @map("master_topic_id") @db.Uuid
+  masterSkillId     String      @map("master_skill_id") @db.Uuid
+  sequenceOrder     Int?        @map("sequence_order")
+  proficiencyTarget String?     @map("proficiency_target") @db.VarChar(50)
+  isCore            Boolean     @default(false) @map("is_core")
+  isActive          Boolean     @default(true) @map("is_active")
+  createdById       String      @map("created_by_id") @db.Uuid
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  users             User        @relation(fields: [createdById], references: [id])
+  masterSkill       MasterSkill @relation("MasterSkillTopicLinks", fields: [masterSkillId], references: [id])
+  masterTopic       MasterTopic @relation("MasterTopicSkillLinks", fields: [masterTopicId], references: [id])
+
+  @@unique([masterTopicId, masterSkillId])
+  @@index([masterSkillId])
+  @@map("master_topic_skills")
+}
+
+model MasterTopicLearningOutcome {
+  id                      String                @id @default(uuid()) @map("master_topic_learning_outcome_id") @db.Uuid
+  masterTopicId           String                @map("master_topic_id") @db.Uuid
+  masterLearningOutcomeId String                @map("master_learning_outcome_id") @db.Uuid
+  sequenceOrder           Int?                  @map("sequence_order")
+  isPrimary               Boolean               @default(false) @map("is_primary")
+  isActive                Boolean               @default(true) @map("is_active")
+  createdById             String                @map("created_by_id") @db.Uuid
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+  users                   User                  @relation(fields: [createdById], references: [id])
+  masterLearningOutcome   MasterLearningOutcome @relation("MasterLearningOutcomeTopicLinks", fields: [masterLearningOutcomeId], references: [id])
+  masterTopic             MasterTopic           @relation("MasterTopicLearningOutcomeLinks", fields: [masterTopicId], references: [id])
+
+  @@unique([masterTopicId, masterLearningOutcomeId])
+  @@index([masterLearningOutcomeId])
+  @@map("master_topic_learning_outcomes")
+}
+
+model MasterTopicActivity {
+  id               String         @id @default(uuid()) @map("master_topic_activity_id") @db.Uuid
+  masterTopicId    String         @map("master_topic_id") @db.Uuid
+  masterActivityId String         @map("master_activity_id") @db.Uuid
+  sequenceOrder    Int?           @map("sequence_order")
+  isRequired       Boolean        @default(false) @map("is_required")
+  isActive         Boolean        @default(true) @map("is_active")
+  createdById      String         @map("created_by_id") @db.Uuid
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  users            User           @relation(fields: [createdById], references: [id])
+  masterActivity   MasterActivity @relation("MasterActivityTopicLinks", fields: [masterActivityId], references: [id])
+  masterTopic      MasterTopic    @relation("MasterTopicActivityLinks", fields: [masterTopicId], references: [id])
+
+  @@unique([masterTopicId, masterActivityId])
+  @@index([masterActivityId])
+  @@map("master_topic_activities")
+}
+
+model MasterTopicProject {
+  id              String        @id @default(uuid()) @map("master_topic_project_id") @db.Uuid
+  masterTopicId   String        @map("master_topic_id") @db.Uuid
+  masterProjectId String        @map("master_project_id") @db.Uuid
+  sequenceOrder   Int?          @map("sequence_order")
+  isRequired      Boolean       @default(false) @map("is_required")
+  isActive        Boolean       @default(true) @map("is_active")
+  createdById     String        @map("created_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  users           User          @relation(fields: [createdById], references: [id])
+  masterProject   MasterProject @relation("MasterProjectTopicLinks", fields: [masterProjectId], references: [id])
+  masterTopic     MasterTopic   @relation("MasterTopicProjectLinks", fields: [masterTopicId], references: [id])
+
+  @@unique([masterTopicId, masterProjectId])
+  @@index([masterProjectId])
+  @@map("master_topic_projects")
+}
+
+model MasterActivityResource {
+  id               String         @id @default(uuid()) @map("master_activity_resource_id") @db.Uuid
+  masterActivityId String         @map("master_activity_id") @db.Uuid
+  masterResourceId String         @map("master_resource_id") @db.Uuid
+  sequenceOrder    Int?           @map("sequence_order")
+  isRequired       Boolean        @default(false) @map("is_required")
+  createdById      String         @map("created_by_id") @db.Uuid
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  users            User           @relation(fields: [createdById], references: [id])
+  masterActivity   MasterActivity @relation("MasterActivityResourceLinks", fields: [masterActivityId], references: [id])
+  masterResource   MasterResource @relation("MasterResourceActivityLinks", fields: [masterResourceId], references: [id])
+
+  @@unique([masterActivityId, masterResourceId])
+  @@index([masterResourceId])
+  @@map("master_activity_resources")
+}
+
+model MasterProjectResource {
+  id               String         @id @default(uuid()) @map("master_project_resource_id") @db.Uuid
+  masterProjectId  String         @map("master_project_id") @db.Uuid
+  masterResourceId String         @map("master_resource_id") @db.Uuid
+  sequenceOrder    Int?           @map("sequence_order")
+  isRequired       Boolean        @default(false) @map("is_required")
+  createdById      String         @map("created_by_id") @db.Uuid
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  users            User           @relation(fields: [createdById], references: [id])
+  masterProject    MasterProject  @relation("MasterProjectResourceLinks", fields: [masterProjectId], references: [id])
+  masterResource   MasterResource @relation("MasterResourceProjectLinks", fields: [masterResourceId], references: [id])
+
+  @@unique([masterProjectId, masterResourceId])
+  @@index([masterResourceId])
+  @@map("master_project_resources")
+}
+
+model MasterProjectSkill {
+  id              String        @id @default(uuid()) @map("master_project_skill_id") @db.Uuid
+  masterProjectId String        @map("master_project_id") @db.Uuid
+  masterSkillId   String        @map("master_skill_id") @db.Uuid
+  isPrimary       Boolean       @default(false) @map("is_primary")
+  createdById     String        @map("created_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  users           User          @relation(fields: [createdById], references: [id])
+  masterProject   MasterProject @relation("MasterProjectSkillLinks", fields: [masterProjectId], references: [id])
+  masterSkill     MasterSkill   @relation("MasterSkillProjectLinks", fields: [masterSkillId], references: [id])
+
+  @@unique([masterProjectId, masterSkillId])
+  @@index([masterSkillId])
+  @@map("master_project_skills")
+}
+
+model MasterProjectLearningOutcome {
+  id                      String                @id @default(uuid()) @map("master_project_learning_outcome_id") @db.Uuid
+  masterProjectId         String                @map("master_project_id") @db.Uuid
+  masterLearningOutcomeId String                @map("master_learning_outcome_id") @db.Uuid
+  isPrimary               Boolean               @default(false) @map("is_primary")
+  createdById             String                @map("created_by_id") @db.Uuid
+  createdAt               DateTime              @default(now()) @map("created_at")
+  updatedAt               DateTime              @updatedAt @map("updated_at")
+  users                   User                  @relation(fields: [createdById], references: [id])
+  masterLearningOutcome   MasterLearningOutcome @relation("MasterLearningOutcomeProjectLinks", fields: [masterLearningOutcomeId], references: [id])
+  masterProject           MasterProject         @relation("MasterProjectLearningOutcomeLinks", fields: [masterProjectId], references: [id])
+
+  @@unique([masterProjectId, masterLearningOutcomeId])
+  @@index([masterLearningOutcomeId])
+  @@map("master_project_learning_outcomes")
+}
+
+model MasterAssessmentTemplateLearningOutcome {
+  id                         String                   @id @default(uuid()) @map("master_assessment_template_learning_outcome_id") @db.Uuid
+  masterAssessmentTemplateId String                   @map("master_assessment_template_id") @db.Uuid
+  masterLearningOutcomeId    String                   @map("master_learning_outcome_id") @db.Uuid
+  isPrimary                  Boolean                  @default(false) @map("is_primary")
+  createdById                String                   @map("created_by_id") @db.Uuid
+  createdAt                  DateTime                 @default(now()) @map("created_at")
+  updatedAt                  DateTime                 @updatedAt @map("updated_at")
+  users                      User                     @relation(fields: [createdById], references: [id])
+  masterAssessmentTemplate   MasterAssessmentTemplate @relation("MasterAssessmentTemplateLearningOutcomeLinks", fields: [masterAssessmentTemplateId], references: [id])
+  masterLearningOutcome      MasterLearningOutcome    @relation("MasterLearningOutcomeAssessmentTemplateLinks", fields: [masterLearningOutcomeId], references: [id])
+
+  @@unique([masterAssessmentTemplateId, masterLearningOutcomeId])
+  @@index([masterLearningOutcomeId])
+  @@map("master_assessment_template_learning_outcomes")
+}
+
+model CurriculumSourceMasterContentLink {
+  id                            String                       @id @default(uuid()) @map("curriculum_source_master_content_link_id") @db.Uuid
+  curriculumSourceId            String                       @map("curriculum_source_id") @db.Uuid
+  masterCurriculumUnitId        String?                      @map("master_curriculum_unit_id") @db.Uuid
+  masterTopicId                 String?                      @map("master_topic_id") @db.Uuid
+  masterConceptId               String?                      @map("master_concept_id") @db.Uuid
+  masterSkillId                 String?                      @map("master_skill_id") @db.Uuid
+  masterLearningOutcomeId       String?                      @map("master_learning_outcome_id") @db.Uuid
+  masterActivityId              String?                      @map("master_activity_id") @db.Uuid
+  masterProjectId               String?                      @map("master_project_id") @db.Uuid
+  masterProjectImplementationId String?                      @map("master_project_implementation_id") @db.Uuid
+  masterResourceId              String?                      @map("master_resource_id") @db.Uuid
+  masterAssessmentTemplateId    String?                      @map("master_assessment_template_id") @db.Uuid
+  masterRubricId                String?                      @map("master_rubric_id") @db.Uuid
+  sourceVersionLabel            String?                      @map("source_version_label") @db.VarChar(50)
+  sourcePage                    String?                      @map("source_page") @db.VarChar(50)
+  sourceSection                 String?                      @map("source_section") @db.VarChar(150)
+  extractionNote                String?                      @map("extraction_note")
+  adaptationNote                String?                      @map("adaptation_note")
+  attribution                   String?                      @map("attribution")
+  usageRestriction              String?                      @map("usage_restriction") @db.VarChar(150)
+  reviewStatus                  ContentReviewStatus          @default(DRAFT) @map("review_status")
+  createdById                   String                       @map("created_by_id") @db.Uuid
+  createdAt                     DateTime                     @default(now()) @map("created_at")
+  updatedAt                     DateTime                     @updatedAt @map("updated_at")
+  users                         User                         @relation(fields: [createdById], references: [id])
+  curriculumSource              CurriculumSource             @relation("CurriculumSourceMasterContentLinks", fields: [curriculumSourceId], references: [id])
+  masterActivity                MasterActivity?              @relation("MasterActivitySourceLinks", fields: [masterActivityId], references: [id], onDelete: Restrict)
+  masterAssessmentTemplate      MasterAssessmentTemplate?    @relation("MasterAssessmentTemplateSourceLinks", fields: [masterAssessmentTemplateId], references: [id], onDelete: Restrict)
+  masterConcept                 MasterConcept?               @relation("MasterConceptSourceLinks", fields: [masterConceptId], references: [id], onDelete: Restrict)
+  masterCurriculumUnit          MasterCurriculumUnit?        @relation("MasterCurriculumUnitSourceLinks", fields: [masterCurriculumUnitId], references: [id], onDelete: Restrict)
+  masterLearningOutcome         MasterLearningOutcome?       @relation("MasterLearningOutcomeSourceLinks", fields: [masterLearningOutcomeId], references: [id], onDelete: Restrict)
+  masterProject                 MasterProject?               @relation("MasterProjectSourceLinks", fields: [masterProjectId], references: [id], onDelete: Restrict)
+  masterProjectImplementation   MasterProjectImplementation? @relation("MasterProjectImplementationSourceLinks", fields: [masterProjectImplementationId], references: [id], onDelete: Restrict)
+  masterResource                MasterResource?              @relation("MasterResourceSourceLinks", fields: [masterResourceId], references: [id], onDelete: Restrict)
+  masterRubric                  MasterRubric?                @relation("MasterRubricSourceLinks", fields: [masterRubricId], references: [id], onDelete: Restrict)
+  masterSkill                   MasterSkill?                 @relation("MasterSkillSourceLinks", fields: [masterSkillId], references: [id], onDelete: Restrict)
+  masterTopic                   MasterTopic?                 @relation("MasterTopicSourceLinks", fields: [masterTopicId], references: [id], onDelete: Restrict)
+
+  @@index([curriculumSourceId, reviewStatus])
+  @@index([reviewStatus, createdAt])
+  @@map("curriculum_source_master_content_links")
+}
+
+enum SchoolStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum UserStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  LOCKED
+  ARCHIVED
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  GRADUATED
+  TRANSFERRED
+  ARCHIVED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum AcademicSessionStatus {
+  PLANNED
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum TermStatus {
+  PLANNED
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum AcademicClassStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum EnrolmentStatus {
+  PENDING
+  ACTIVE
+  PROMOTED
+  TRANSFERRED
+  WITHDRAWN
+  GRADUATED
+  COMPLETED
+  ARCHIVED
+}
+
+enum AcademicClassTeacherAssignmentType {
+  CLASS_TEACHER
+  ASSISTANT_TEACHER
+  SUPERVISOR
+}
+
+enum SubjectStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum IntegrationDomainStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum ProgrammeComponentStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum CurriculumSourceType {
+  GOVERNMENT_CURRICULUM
+  SCHOOL_SCHEME_OF_WORK
+  INTERNATIONAL_FRAMEWORK
+  TEXTBOOK
+  TEACHER_MATERIAL
+  WEBSITE
+  INTERNAL_NOBLETECH_CONTENT
+  UPLOADED_DOCUMENT
+  OTHER
+}
+
+enum CurriculumSourceFormat {
+  PDF
+  DOCX
+  XLSX
+  CSV
+  HTML
+  URL
+  TEXT
+  IMAGE
+  OTHER
+}
+
+enum ContentReviewStatus {
+  DRAFT
+  PENDING_REVIEW
+  REVISION_REQUIRED
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum MasterContentStatus {
+  DRAFT
+  UNDER_REVIEW
+  REVISION_REQUIRED
+  APPROVED
+  ARCHIVED
+}
+
+enum CurriculumSourceContentType {
+  SECTION
+  TOPIC
+  CONCEPT
+  SKILL
+  LEARNING_OUTCOME
+  ACTIVITY
+  PROJECT
+  RESOURCE
+  ASSESSMENT
+  OTHER
+}
+
+enum MasterActivityType {
+  DISCUSSION
+  EXPERIMENT
+  CREATIVE_TASK
+  CODING_TASK
+  ROBOTICS_TASK
+  ENGINEERING_CHALLENGE
+  RESEARCH_TASK
+  OTHER
+}
+
+enum MasterProjectImplementationType {
+  PHYSICAL_ROBOTICS
+  SIMULATION_ONLY
+  LOW_RESOURCE
+  NO_LAPTOP
+  INDIVIDUAL
+  GROUP
+  OTHER
+}
+
+enum MasterResourceType {
+  SOFTWARE
+  WEBSITE
+  HARDWARE
+  KIT
+  DOCUMENT
+  VIDEO
+  AUDIO
+  IMAGE
+  OTHER
+}
+
+enum MasterAssessmentType {
+  QUIZ
+  PRACTICAL
+  PROJECT
+  ORAL
+  WRITTEN
+  PERFORMANCE
+  OTHER
+}

@@ -1,0 +1,28 @@
+
+> frontend@1.0.0 test
+> vitest run --config vitest.config.ts
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/NOBLETECH ACADEMY/Documents/nobletech Academy details/nobletech-education-management-platform/frontend[39m
+
+ [32m✓[39m tests/master-content-admin.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 543[2mms[22m[39m
+   [33m[2m✓[22m[39m Master-content administration routes[2m > [22mrenders master-content dashboard route [33m341[2mms[22m[39m
+ [32m✓[39m tests/curriculum-admin.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 897[2mms[22m[39m
+   [33m[2m✓[22m[39m Curriculum administrative routes[2m > [22mrenders source administration foundation route [33m518[2mms[22m[39m
+ [32m✓[39m tests/curriculum-structure-editor.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 13141[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates topics with full payload fields [33m3119[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mblocks structural actions in immutable lifecycle states [33m437[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mblocks edit actions when curriculum.edit permission is absent [33m655[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mlinks master concept and updates mappings [33m2103[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates project implementations and supports reordering [33m2735[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates outcomes and prevents duplicate topic mapping requests [33m1375[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mcreates resources and updates visibility with concurrency token [33m1932[2mms[22m[39m
+   [33m[2m✓[22m[39m CurriculumStructurePage workflows[2m > [22mshows dedicated concurrency conflict state for stale updates [33m781[2mms[22m[39m
+ [32m✓[39m tests/version-comparison.test.ts [2m([22m[2m2 tests[22m[2m)[22m[90m 10[2mms[22m[39m
+ [32m✓[39m tests/health.test.tsx [2m([22m[2m1 test[22m[2m)[22m[90m 200[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 07:47:06
+[2m   Duration [22m 48.39s[2m (transform 10.57s, setup 10.54s, collect 40.87s, tests 14.79s, environment 47.58s, prepare 4.96s)[22m
+

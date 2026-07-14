@@ -691,3 +691,156 @@ export const deleteSourceMasterLink = async (req: Request, res: Response): Promi
   const data = await curriculumService.deleteSourceMasterLink(getAuth(req), param(req, 'linkId'), req.requestId);
   res.status(200).json({ success: true, message: 'Source-to-master content link removed.', data });
 };
+
+export const uploadSourceFile = async (req: Request, res: Response): Promise<void> => {
+  if (!req.file) {
+    throw badRequest('No file was uploaded.');
+  }
+
+  const data = await curriculumService.uploadSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body,
+    {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      buffer: req.file.buffer,
+      size: req.file.size,
+    },
+    req.requestId,
+  );
+  res.status(201).json({ success: true, message: 'Curriculum source file uploaded.', data });
+};
+
+export const replaceSourceFile = async (req: Request, res: Response): Promise<void> => {
+  if (!req.file) {
+    throw badRequest('No file was uploaded.');
+  }
+
+  const data = await curriculumService.replaceSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    {
+      originalname: req.file.originalname,
+      mimetype: req.file.mimetype,
+      buffer: req.file.buffer,
+      size: req.file.size,
+    },
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file replaced.', data });
+};
+
+export const reorderSourceFiles = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.reorderSourceFiles(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body.orderedFileIds,
+    req.body.lastKnownUpdatedAt,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source files reordered.', data });
+};
+
+export const makePrimarySourceFile = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.setSourcePrimaryFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Primary curriculum source file updated.', data });
+};
+
+export const archiveSourceFile = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.archiveSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file archived.', data });
+};
+
+export const deleteSourceFile = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file deleted.', data });
+};
+
+export const updateSourceFileMetadata = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateSourceFileMetadata(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file metadata updated.', data });
+};
+
+export const updateSourceFileScan = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateSourceFileScan(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file scan status updated.', data });
+};
+
+export const unlinkSourceFile = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.unlinkSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file unlinked from source.', data });
+};
+
+export const purgeSourceFile = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.purgeSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source file physically deleted.', data });
+};
+
+export const downloadSourceFile = async (req: Request, res: Response): Promise<void> => {
+  const result = await curriculumService.downloadSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+  );
+
+  res.setHeader('Content-Type', result.mimeType);
+  res.setHeader('Content-Disposition', `attachment; filename="${result.fileName}"`);
+  res.status(200).send(result.content);
+};
+
+export const previewSourceFile = async (req: Request, res: Response): Promise<void> => {
+  const result = await curriculumService.previewSourceFile(
+    getAuth(req),
+    param(req, 'sourceId'),
+    param(req, 'fileId'),
+  );
+
+  res.setHeader('Content-Type', result.mimeType);
+  res.setHeader('Content-Disposition', `inline; filename="${result.fileName}"`);
+  res.status(200).send(result.content);
+};

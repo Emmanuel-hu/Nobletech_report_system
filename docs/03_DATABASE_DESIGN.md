@@ -526,4 +526,61 @@ This design serves as the authoritative guide for implementing the PostgreSQL da
 
 ---
 
+# 27. Phase 1.2 Identity and Access Planning Decisions
+
+The database design must preserve a strict identity distinction:
+
+- student_id: immutable internal learner identifier.
+- student_number: canonical NEMP academic reference identifier.
+- admission_number: optional external school-provided reference identifier.
+- username: login identifier.
+- email: optional contact or optional login attribute based on policy.
+
+For pupil and student identities:
+
+- Email must not be mandatory.
+- Username must be globally unique across NEMP.
+- Username must support permanent learner access unless changed by authorized administrators.
+- Username generation must be case-insensitive.
+- Username change history must remain auditable.
+- Password reset and account recovery must not rely exclusively on learner email.
+
+---
+
+# 28. Phase 1.1 Curriculum Concept Planning Decisions
+
+The approved instructional hierarchy remains unchanged:
+
+Programme Component -> Curriculum -> Curriculum Unit -> Topic -> Project -> Learning Outcome
+
+Concept modelling recommendation for future schema mapping:
+
+- Introduce reusable concept structures linked to topics through relationships, not by replacing Topic.
+- A topic may map to multiple concepts.
+- Skills and learning outcomes remain distinct measurable entities.
+
+No new concept table is created in this phase.
+
+---
+
+# 29. Phase 1.1 External Resource and Reporting Planning Decisions
+
+External learning resources should support launch policy metadata including EMBEDDED, NEW_TAB, SAME_WINDOW, and INTERNAL_RESOURCE modes.
+
+Design controls:
+
+- Embed only where external platform policy permits.
+- Enforce secure fallback to NEW_TAB where embedding is blocked.
+- Require approval and active status before learner visibility.
+- Store third-party access details securely and never in plain text.
+
+One-page report planning controls:
+
+- A4 Portrait default.
+- A4 Landscape only for approved template exceptions.
+- One-page mode must support preview and overflow warning before publication.
+- Published outputs remain immutable and corrected via versioned revisions.
+
+---
+
 # End of Document

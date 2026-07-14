@@ -1,0 +1,3 @@
+COMMAND: "C:\Progra~1\nodejs\npx.cmd" prisma migrate status --schema prisma\schema.prisma
+WORKDIR: C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\backend
+EXITCODE: 1

@@ -1,0 +1,193 @@
+{
+  "results": [
+    {
+      "id": "frontend_typecheck",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run typecheck",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 14456,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_typecheck.log"
+    },
+    {
+      "id": "frontend_lint",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run lint",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 3901,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_lint.log"
+    },
+    {
+      "id": "frontend_structure_editor_run1",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run test -- --run tests/curriculum-structure-editor.test.tsx --reporter=basic",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 1,
+      "signal": null,
+      "durationMs": 18818,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_structure_editor_run1.log"
+    },
+    {
+      "id": "frontend_structure_editor_run2",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run test -- --run tests/curriculum-structure-editor.test.tsx --reporter=basic",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 1,
+      "signal": null,
+      "durationMs": 21355,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_structure_editor_run2.log"
+    },
+    {
+      "id": "frontend_test_run1",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run test -- --run --reporter=basic",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 1,
+      "signal": null,
+      "durationMs": 23357,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_test_run1.log"
+    },
+    {
+      "id": "frontend_test_run2",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run test -- --run --reporter=basic",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 1,
+      "signal": null,
+      "durationMs": 40204,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_test_run2.log"
+    },
+    {
+      "id": "frontend_build",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w frontend run build",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 30726,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\frontend_build.log"
+    },
+    {
+      "id": "backend_typecheck",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run typecheck",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 2,
+      "signal": null,
+      "durationMs": 25013,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\backend_typecheck.log"
+    },
+    {
+      "id": "backend_lint",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run lint",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 7645,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\backend_lint.log"
+    },
+    {
+      "id": "backend_test",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run test",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 15542,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\backend_test.log"
+    },
+    {
+      "id": "backend_build",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run build",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 2,
+      "signal": null,
+      "durationMs": 25002,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\backend_build.log"
+    },
+    {
+      "id": "prisma_validate",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run prisma:validate",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 19586,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\prisma_validate.log"
+    },
+    {
+      "id": "prisma_generate",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run prisma:generate",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 20092,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\prisma_generate.log"
+    },
+    {
+      "id": "prisma_migrate_status",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run prisma:migrate:status",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 20697,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\prisma_migrate_status.log"
+    },
+    {
+      "id": "db_health",
+      "command": "node C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js -w backend run db:health",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 7391,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\db_health.log"
+    },
+    {
+      "id": "git_status",
+      "command": "git status --porcelain=v1",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 542,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\git_status.log"
+    },
+    {
+      "id": "git_branch_head_remote",
+      "command": "git rev-parse --abbrev-ref HEAD",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 862,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\git_branch_head_remote.log"
+    },
+    {
+      "id": "git_head",
+      "command": "git rev-parse HEAD",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 891,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\git_head.log"
+    },
+    {
+      "id": "git_remote",
+      "command": "git remote -v",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 514,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\git_remote.log"
+    },
+    {
+      "id": "git_staged_names",
+      "command": "git diff --cached --name-only",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 1638,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\git_staged_names.log"
+    },
+    {
+      "id": "git_staged_diff",
+      "command": "git diff --cached",
+      "cwd": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 1968,
+      "logPath": "C:\\Users\\NOBLETECH ACADEMY\\Documents\\nobletech Academy details\\nobletech-education-management-platform\\artifacts\\phase2k1-validation-20260713\\git_staged_diff.log"
+    }
+  ]
+}

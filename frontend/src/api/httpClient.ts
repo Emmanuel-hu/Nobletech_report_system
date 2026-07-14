@@ -45,17 +45,26 @@ export const apiRequest = async <T>(
   options: RequestInitWithBody,
   session: AuthSession,
 ): Promise<T> => {
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+  const headers: HeadersInit = {
+    Accept: 'application/json',
+    'x-user-id': session.userId,
+    'x-school-id': session.schoolId,
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...(options.headers ?? {}),
+  };
+
   let response: Response;
   try {
     response = await fetch(`${runtimeConfig.apiBaseUrl}${path}`, {
       ...options,
-      headers: {
-        ...defaultHeaders,
-        'x-user-id': session.userId,
-        'x-school-id': session.schoolId,
-        ...(options.headers ?? {}),
-      },
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      headers,
+      body:
+        options.body === undefined
+          ? undefined
+          : isFormData
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
     });
   } catch {
     throw new ApiClientError(0, 'NETWORK_ERROR', 'Unable to reach the API. Check network connectivity and retry.');

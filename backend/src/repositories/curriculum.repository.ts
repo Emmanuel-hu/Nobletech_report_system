@@ -52,6 +52,9 @@ const sourceInclude = {
   sourceContents: {
     orderBy: { sequenceOrder: 'asc' },
   },
+  sourceFiles: {
+    orderBy: [{ sequenceOrder: 'asc' }, { createdAt: 'asc' }],
+  },
   masterContentLinks: {
     orderBy: { createdAt: 'desc' },
   },
@@ -125,6 +128,13 @@ export class CurriculumRepository {
   async findSourceMasterLinkById(linkId: string) {
     return this.db.curriculumSourceMasterContentLink.findUnique({
       where: { id: linkId },
+      include: { curriculumSource: true },
+    });
+  }
+
+  async findSourceFileById(fileId: string) {
+    return this.db.curriculumSourceFile.findUnique({
+      where: { id: fileId },
       include: { curriculumSource: true },
     });
   }

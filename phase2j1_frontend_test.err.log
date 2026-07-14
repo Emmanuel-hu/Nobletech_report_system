@@ -1,0 +1,245 @@
+[90mstderr[2m | tests/curriculum-structure-editor.test.tsx[2m > [22m[2mCurriculumStructurePage workflows[2m > [22m[2mcreates topics with full payload fields
+[22m[39m⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m tests/curriculum-structure-editor.test.tsx[2m > [22mCurriculumStructurePage workflows[2m > [22mcreates topics with full payload fields
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text of: Duration (minutes)
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mmin[39m=[32m"1"[39m
+  [33mtype[39m=[32m"number"[39m
+  [33mvalue[39m=[32m""[39m
+[36m/>[39m
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mmin[39m=[32m"1"[39m
+  [33mtype[39m=[32m"number"[39m
+  [33mvalue[39m=[32m""[39m
+[36m/>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<section>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"page-header"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0mCurriculum structure editor[0m
+        [36m</h2>[39m
+        [36m<p>[39m
+          [0mComplete manual workflows for topics, concepts, projects, implementations, learning outcomes, resources, and visibility controls.[0m
+        [36m</p>[39m
+      [36m</header>[39m
+      [36m<article[39m
+        [33mclass[39m=[32m"card"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"split-header"[39m
+        [36m>[39m
+          [36m<h3>[39m
+            [0mTopics[0m
+          [36m</h3>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [0mCreate, update, delete, reorder, and manage week/duration/difficulty metadata.[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"structure-block"[39m
+        [36m>[39m
+          [36m<h4>[39m
+            [0m1[0m
+            [0m. [0m
+            [0mUnit One[0m
+          [36m</h4>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"muted"[39m
+          [36m>[39m
+            [0mCode: [0m
+            [0mU1[0m
+            [0m | Estimated weeks: [0m
+            [0m5[0m
+          [36m</p>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"form-grid"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"grid-two"[39m
+            [36m>[39m
+              [36m<label>[39m
+                [0mTopic title[0m
+                [36m<input[39m
+                  [33mrequired[39m=[32m""[39m
+                  [33mvalue[39m=[32m"New Topic"[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0mTopic code[0m
+                [36m<input[39m
+                  [33mvalue[39m=[32m"NT-1"[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0mWeek number[0m
+                [36m<input[39m
+                  [33mmin[39m=[32m"1"[39m
+                  [33mtype[39m=[32m"number"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0mDuration (minutes)[0m
+                [36m<input[39m
+                  [33mmin[39m=[32m"1"[39m
+                  [33mtype[39m=[32m"number"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0mDifficulty[0m
+                [36m<input[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</label>[39m
+              [36m<label>[39m
+                [0mTeacher note[0m
+                [36m<textarea />[39m
+              [36m</label>[39m
+            [36m</div>[39m
+            [36m<label>[39m
+              [0mDescription[0m
+              [36m<textarea />[39m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"form-actions"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mtype[39m=[32m"submit"[39m
+              [36m>[39m
+                [0mCreate topic[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</form>[39m
+          [36m<article[39m
+            [33mclass[39m=[32m"nested-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"split-header"[39m
+            [36m>[39m
+              [36m<h5>[39m
+                [0m1[0m
+                [0m. [0m
+                [0mTopic One[0m
+              [36m</h5>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"inline-actions"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33maria-label[39m=[32m"Move Topic One up"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mMove up[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33maria-label[39m=[32m"Move Topic One down"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mMove down[0m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [0mDelete topic[0m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<p>[39m
+              [0mTopic description[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"muted"[39m
+            [36m>[39m
+              [0mWeek: [0m
+              [0m1[0m
+              [0m | Duration: [0m
+              [0m45[0m
+              [0m mins | Difficulty:[0m
+              [0m [0m
+              [0mMEDIUM[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"muted"[39m
+            [36m>[39m
+              [0mMaster lineage: [0m
+              [0mNo master topic lineage.[0m
+            [36m</p>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0mTopic details and concept mappings[0m
+              [36m</summary>[39m
+              [36m<form[39m
+                [33mclass[39m=[32m"form-grid"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"grid-two"[39m
+                [36m>[39m
+                  [36m<label>[39m
+                    [0mTitle[0m
+                    [36m<input[39m
+                      [33mname[39m=[32m"title"[39m
+                      [33mrequired[39m=[32m""[39m
+                      [33mvalue[39m=[32m"Topic One"[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0mCode[0m
+                    [36m<input[39m
+                      [33mname[39m=[32m"code"[39m
+                      [33mvalue[39m=[32m"T1"[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0mSequence order[0m
+                    [36m<input[39m
+                      [33mmin[39m=[32m"1"[39m
+                      [33mname[39m=[32m"sequenceOrder"[39m
+                      [33mtype[39m=[32m"number"[39m
+                      [33mvalue[39m=[32m"1"[39m
+                    [36m/>[39m
+                  [36m</label>[39m
+                  [36m<label>[39m
+                    [0mWeek[0m
+                    [36m<input[39m
+                      [33mmin[39m=[32...
+[90m [2m❯[22m Object.getElementError ../node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m ../node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m tests/curriculum-structure-editor.test.tsx:[2m322:28[22m[39m
+    [90m320| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(screen[33m.[39m[34mgetByLabelText[39m([32m'Topic code'[39m)[33m,[39m [32m'NT-1'[39m)[33m;[39m
+    [90m321| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(screen[33m.[39m[34mgetByLabelText[39m([32m'Week number'[39m)[33m,[39m [32m'3'[39m)[33m;[39m
+    [90m322| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(screen[33m.[39m[34mgetByLabelText[39m([32m'Duration (minutes)'[39m)[33m,[39m [32m'90'[39m)[33m;[39m
+    [90m   | [39m                           [31m^[39m
+    [90m323| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(screen[33m.[39m[34mgetByLabelText[39m([32m'Difficulty'[39m)[33m,[39m [32m'EASY'[39m)[33m;[39m
+    [90m324| [39m    [35mawait[39m user[33m.[39m[34mtype[39m(screen[33m.[39m[34mgetByLabelText[39m([32m'Teacher note'[39m)[33m,[39m [32m'Note'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend
+npm error workspace frontend@1.0.0
+npm error location C:\Users\NOBLETECH ACADEMY\Documents\nobletech Academy details\nobletech-education-management-platform\frontend
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run --config vitest.config.ts

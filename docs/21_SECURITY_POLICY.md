@@ -1,4 +1,4 @@
-# Module Name
+# Security Policy
 
 Version 1.0
 
@@ -6,160 +6,117 @@ Version 1.0
 
 # Purpose
 
-Describe why this module exists.
+Define enforceable security and authorization rules for curriculum authoring, review, approval, publication, and reporting across all schools.
 
 ---
 
 # Objectives
 
-List the objectives.
+- Enforce strict RBAC for curriculum lifecycle actions.
+- Separate approval authority from publication authority.
+- Preserve tenant isolation for every curriculum operation.
+- Require auditable lineage for master-derived curriculum records.
+- Protect published records from unauthorized modification.
+- Support learner authentication without mandatory learner email.
+- Protect external learning resource launch and credential handling.
 
 ---
 
 # User Roles
 
-Who can access this module?
-
 Super Admin
 
 School Admin
 
+Curriculum Supervisor
+
 Teacher
 
-Supervisor
-
-Parent
-
-Student
-
----
-
-# Features
-
-List every feature.
-
----
-
-# User Stories
-
-Example
-
-As a Teacher,
-
-I want to...
-
-so that...
+Auditor
 
 ---
 
 # Business Rules
 
-Rule 1
+1. Curriculum status values are restricted to GENERATED_DRAFT, DRAFT, UNDER_REVIEW, REVISION_REQUIRED, APPROVED, PUBLISHED, and ARCHIVED.
 
-Rule 2
+2. Generated curriculum content must start as GENERATED_DRAFT and cannot be directly published.
 
-Rule 3
+3. Approval and publication are separate actions requiring separate permissions.
 
----
+4. Published curricula are immutable; corrections require a new DRAFT version.
 
-# Workflow
+5. Every curriculum operation must be scoped by school, session, term, class, and programme component context.
 
-Step-by-step workflow.
+6. Master Library records are source assets only and cannot be directly published.
 
----
+7. Learner email must be optional for pupil and student accounts.
 
-# Screens
+8. Username changes require explicit authorization and immutable audit history.
 
-List every screen.
+9. Password reset and account recovery for learners must not depend only on learner email.
 
----
+10. External platform credentials, join codes, and tokens must never be stored in plain text.
 
-# Screen Fields
-
-Every field.
-
-Validation.
-
-Default values.
+11. Embedded third-party launches are conditional on platform policy and must fall back securely when blocked.
 
 ---
 
-# Permissions
+# Workflow Controls
 
-Who can View
+1. Authoring: curriculum.edit, curriculum.reorder
 
-Create
+2. Review Submission: curriculum.submit_review
 
-Edit
+3. Review Decision: curriculum.request_revision or curriculum.approve
 
-Delete
+4. Publication: curriculum.publish
 
-Approve
-
-Print
-
-Export
+5. Archival and Recovery: curriculum.archive, curriculum.restore_version
 
 ---
 
-# Database Tables
+# Permission Matrix
 
-Tables involved.
-
----
-
-# API Endpoints
-
-GET
-
-POST
-
-PUT
-
-DELETE
-
-PATCH
+| Permission | Super Admin | School Admin | Curriculum Supervisor | Teacher | Auditor |
+|------------|-------------|--------------|------------------------|---------|---------|
+| curriculum.view | Yes | Yes | Yes | Yes | Yes |
+| curriculum.edit | Yes | Yes | Yes | Yes | No |
+| curriculum.submit_review | Yes | Yes | Yes | Yes | No |
+| curriculum.request_revision | Yes | Yes | Yes | No | No |
+| curriculum.approve | Yes | Yes | Yes | No | No |
+| curriculum.publish | Yes | Yes | No | No | No |
+| curriculum.archive | Yes | Yes | No | No | No |
+| curriculum.restore_version | Yes | Yes | Yes | No | No |
 
 ---
 
-# Calculations
+# Audit Trail Requirements
 
-If applicable.
+The following events must be logged:
 
----
+- Curriculum creation and derivation source metadata
+- Lifecycle status transitions with before and after values
+- Review comments, approvals, and revision reasons
+- Publication, archival, and restoration actions
+- Permission denied events for protected curriculum actions
 
-# Notifications
-
-Email
-
-SMS
-
-WhatsApp
-
----
-
-# Error Handling
-
-Validation
-
-Friendly messages
-
-Logging
-
----
-
-# Audit Trail
-
-What should be logged.
+Each audit event must include actor, role, tenant, timestamp, client context, and change summary.
 
 ---
 
 # Acceptance Criteria
 
-When is this module considered complete?
+- No user can publish curriculum without curriculum.publish permission.
+- No generated curriculum can bypass review and approval steps.
+- Published curriculum records are immutable in normal edit flows.
+- Every status transition is visible in audit logs.
+- Permission checks are enforced before every protected API operation.
 
 ---
 
 # Future Enhancements
 
-Ideas for Version 2.
+- Multi-factor step-up authentication for publication actions
+- Risk-based access controls for high-impact operations
+- Automated compliance checks for curriculum workflow violations

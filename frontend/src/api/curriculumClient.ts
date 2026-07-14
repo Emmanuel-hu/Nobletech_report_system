@@ -18,6 +18,7 @@ import type { AuthSession } from '../types/auth';
 
 import { apiRequest } from './httpClient';
 import { masterContentClient } from './masterContentClient';
+import { runtimeConfig } from '../config/runtime';
 
 const queryString = (filters: Record<string, string | undefined>): string => {
   const query = new URLSearchParams();
@@ -33,6 +34,40 @@ const queryString = (filters: Record<string, string | undefined>): string => {
 };
 
 export const curriculumClient = {
+  downloadSourceFileBlob: async (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    mode: 'download' | 'preview' = 'download',
+  ) => {
+    const endpoint =
+      mode === 'preview'
+        ? `/curriculum/sources/${sourceId}/files/${fileId}/preview`
+        : `/curriculum/sources/${sourceId}/files/${fileId}/download`;
+
+    const response = await fetch(`${runtimeConfig.apiBaseUrl}${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'x-user-id': session.userId,
+        'x-school-id': session.schoolId,
+      },
+    });
+
+    if (!response.ok) {
+      const message = await response.text();
+      throw new Error(message || 'Unable to download file.');
+    }
+
+    const disposition = response.headers.get('content-disposition') || '';
+    const fileNameMatch = disposition.match(/filename="([^"]+)"/i);
+    const fileName = fileNameMatch?.[1] || 'source-file';
+
+    return {
+      blob: await response.blob(),
+      fileName,
+      mimeType: response.headers.get('content-type') || 'application/octet-stream',
+    };
+  },
   listCurricula: (session: AuthSession, filters: CurriculumListFilters) => {
     return apiRequest<CurriculumSummary[]>(
       `/curriculum/curricula${queryString({
@@ -647,5 +682,139 @@ export const curriculumClient = {
   ) => apiRequest<CurriculumSource>(`/curriculum/source-master-links/${linkId}`, { method: 'PATCH', body: payload }, session),
   deleteSourceMasterLink: (session: AuthSession, linkId: string) =>
     apiRequest<CurriculumSource>(`/curriculum/source-master-links/${linkId}`, { method: 'DELETE' }, session),
+  uploadSourceFile: (
+    session: AuthSession,
+    sourceId: string,
+    file: File,
+    lastKnownUpdatedAt?: string,
+  ) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (lastKnownUpdatedAt) {
+      formData.append('lastKnownUpdatedAt', lastKnownUpdatedAt);
+    }
+
+    return apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files`,
+      { method: 'POST', body: formData },
+      session,
+    );
+  },
+  replaceSourceFile: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    file: File,
+    lastKnownUpdatedAt: string,
+  ) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('lastKnownUpdatedAt', lastKnownUpdatedAt);
+
+    return apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/replace`,
+      { method: 'POST', body: formData },
+      session,
+    );
+  },
+  reorderSourceFiles: (
+    session: AuthSession,
+    sourceId: string,
+    orderedFileIds: string[],
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/reorder`,
+      { method: 'POST', body: { orderedFileIds, lastKnownUpdatedAt } },
+      session,
+    ),
+  makePrimarySourceFile: (session: AuthSession, sourceId: string, fileId: string, lastKnownUpdatedAt: string) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/make-primary`,
+      { method: 'POST', body: { lastKnownUpdatedAt } },
+      session,
+    ),
+  archiveSourceFile: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    reason: string,
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/archive`,
+      { method: 'POST', body: { reason, lastKnownUpdatedAt } },
+      session,
+    ),
+  deleteSourceFile: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    reason: string,
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}`,
+      { method: 'DELETE', body: { reason, lastKnownUpdatedAt } },
+      session,
+    ),
+  updateSourceFileMetadata: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    payload: {
+      fileCategory?: 'SOURCE_DOCUMENT' | 'SUPPLEMENTARY_IMAGE' | 'SUPPLEMENTARY_DATA' | 'OTHER';
+      documentVersion?: string;
+      effectiveDate?: string;
+      metadata?: Record<string, unknown>;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/metadata`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  updateSourceFileScan: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    payload: {
+      uploadStatus?: 'UPLOADED' | 'PROCESSING' | 'READY' | 'FAILED';
+      scanStatus?: 'PENDING' | 'NOT_CONFIGURED' | 'CLEAN' | 'REJECTED' | 'FAILED';
+      scanDetails?: string;
+      verifiedAt?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/scan`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  unlinkSourceFile: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    reason: string,
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/unlink`,
+      { method: 'POST', body: { reason, lastKnownUpdatedAt } },
+      session,
+    ),
+  purgeSourceFile: (
+    session: AuthSession,
+    sourceId: string,
+    fileId: string,
+    reason: string,
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/files/${fileId}/purge`,
+      { method: 'DELETE', body: { reason, lastKnownUpdatedAt } },
+      session,
+    ),
   masterContent: masterContentClient,
 };

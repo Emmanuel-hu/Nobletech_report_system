@@ -1,0 +1,8 @@
+$ node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js -w backend run db:health
+
+
+> backend@1.0.0 db:health
+> tsx src/scripts/db-health.ts
+
+[NEMP] Database connection check passed.
+

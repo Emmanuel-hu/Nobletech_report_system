@@ -1,0 +1,6 @@
+
+> backend@1.0.0 prisma:validate
+> tsx src/scripts/prisma-validate.ts
+
+Prisma schema loaded from prisma\schema.prisma
+The schema at prisma\schema.prisma is valid 🚀
