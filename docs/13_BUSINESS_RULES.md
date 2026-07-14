@@ -7,6 +7,19 @@
 - Optimistic concurrency tokens are required for mutable structure updates and visibility changes; stale updates are rejected with conflict responses.
 - Duplicate mappings for topic/project learning outcomes and topic-concept relationships are blocked by API constraints and surfaced as safe conflict responses.
 
+## Phase 2K.2 Rules
+
+- Master-content administration must remain manual and auditable; automated generation and extraction are outside this milestone.
+- Approved and archived master-content records are immutable; changes require explicit revision creation.
+- Approval is a separate lifecycle action and must not be merged with edit operations.
+- Global master content may only be created or edited by authorized global administrators.
+- School-owned master content must not be readable or writable across tenant boundaries.
+- Mapping and lineage operations are allowed only when target content is in editable lifecycle states.
+- Concurrency conflicts must return safe conflict responses when `lastKnownUpdatedAt` is stale.
+- Privileged and state-changing operations must write audit records with actor and context metadata.
+- Assessment-template to rubric relationship is modeled as explicit reusable mapping (`master_assessment_template_rubrics`), allowing reusable rubrics across templates and multiple rubrics per template.
+- AI extraction, OCR parsing, file-upload ingestion, and AI-assisted curriculum generation remain explicitly deferred.
+
 ## Phase 2G Rules
 
 - Curriculum root records are reusable within a school and are not permanently bound to session or class context.

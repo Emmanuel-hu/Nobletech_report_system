@@ -40,7 +40,8 @@ type MappingType =
   | 'project-resource'
   | 'project-skill'
   | 'project-outcome'
-  | 'assessment-outcome';
+  | 'assessment-outcome'
+  | 'assessment-rubric';
 
 type LineageEntityType =
   | 'unit'
@@ -1289,6 +1290,23 @@ export class MasterContentService {
           masterAssessmentTemplateId: payload.leftId,
           masterLearningOutcomeId: payload.rightId,
           isPrimary: payload.isPrimary ?? false,
+          createdById: userId,
+        }),
+      },
+      'assessment-rubric': {
+        modelName: 'masterAssessmentTemplateRubric',
+        leftEntityType: 'assessments' as MasterEntityType,
+        rightEntityType: 'rubrics' as MasterEntityType,
+        readLeftId: (row: Record<string, unknown>) => String(row.masterAssessmentTemplateId),
+        leftStatus: (left: Record<string, unknown>) => this.getStatus(left),
+        leftSchoolId: (left: Record<string, unknown>) => this.getNullableSchoolId(left),
+        createData: (payload: any, userId: string) => ({
+          masterAssessmentTemplateId: payload.leftId,
+          masterRubricId: payload.rightId,
+          sequenceOrder: payload.sequenceOrder,
+          isPrimary: payload.isPrimary ?? false,
+          purpose: payload.purpose,
+          isActive: payload.isActive ?? true,
           createdById: userId,
         }),
       },

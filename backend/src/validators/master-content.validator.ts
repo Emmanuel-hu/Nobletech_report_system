@@ -38,6 +38,7 @@ export const mappingTypeSchema = z.enum([
   'project-skill',
   'project-outcome',
   'assessment-outcome',
+  'assessment-rubric',
 ]);
 
 export const lineageEntityTypeSchema = z.enum([
@@ -99,6 +100,8 @@ export const createMappingSchema = z.object({
   instructionalEmphasis: nonEmpty(100).optional(),
   assessmentRelevance: nonEmpty(100).optional(),
   teacherNote: optionalText(2000),
+  purpose: nonEmpty(150).optional(),
+  isActive: z.boolean().optional(),
 });
 
 export const updateMappingSchema = z.object({

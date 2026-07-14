@@ -6,6 +6,18 @@
 - Concurrency behavior: optimistic concurrency conflict responses are surfaced as explicit conflict states with reload-latest action and no silent overwrite.
 - Deferred boundary remains active: curriculum source uploads, AI extraction, AI curriculum generation, lesson notes, assessments, CBT, reports, attendance, and student portal remain out of scope.
 
+## Phase 2K.2 Delivery Update
+
+- Milestone completed: Master-Content Administration Completion.
+- Delivered manual administration for master entities: units, topics, concepts, skills, learning outcomes, activities, projects, project implementations, resources, assessment templates, rubrics, rubric criteria, and rubric levels.
+- Delivered backend capabilities: dashboard counts, list with search or filter or pagination, detail retrieval, create or update, explicit lifecycle transitions (submit review, request revision, approve, archive), revision creation, audit-history retrieval, typed mapping administration, and source-lineage administration.
+- Delivered lifecycle protections: approved and archived entities are immutable; revision creation is required for post-approval changes; approval remains separate from editing.
+- Delivered security and tenancy controls: permission-code enforcement, global-versus-school ownership restrictions, tenant isolation for read and write paths, and service-level sanitization of unknown errors.
+- Delivered concurrency controls: mutable operations require `lastKnownUpdatedAt`; stale writes return safe conflict responses without silent overwrite.
+- Delivered audit controls: privileged and state-changing operations write audit records with actor, entity, action, and contextual reason metadata.
+- Delivered assessment-template to rubric relationship as explicit reusable mapping model (`master_assessment_template_rubrics`) with typed API mapping support.
+- Deferred boundary remains active: AI extraction, OCR, file upload ingestion, and AI-assisted curriculum generation are not implemented in this milestone.
+
 ## Phase 2J Delivery Update
 
 - Milestone completed: Curriculum Portal UX Hardening and Backend Data Integration Completion.

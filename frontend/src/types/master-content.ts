@@ -30,7 +30,8 @@ export type MappingType =
   | 'project-resource'
   | 'project-skill'
   | 'project-outcome'
-  | 'assessment-outcome';
+  | 'assessment-outcome'
+  | 'assessment-rubric';
 
 export type LineageEntityType =
   | 'unit'

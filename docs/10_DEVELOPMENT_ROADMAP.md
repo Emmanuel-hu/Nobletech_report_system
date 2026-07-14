@@ -226,6 +226,13 @@ Deliverables
 - Delivered frontend administrative route for source register and master catalog visibility access.
 - Deferred AI extraction or generation workflows remain outside this milestone.
 
+## Phase 2K.2 Milestone Note
+
+- Completed master-content administration workflows for approved master entities and typed mapping or lineage controls.
+- Added dedicated backend and frontend administration surfaces for lifecycle transitions, revision creation, and audit visibility.
+- Implemented explicit assessment-template to rubric reusable mapping model with focused schema migration.
+- Preserved milestone boundary: AI extraction, OCR, source-file upload ingestion, and AI-assisted curriculum generation remain deferred.
+
 | Milestone | Description | Status |
 |------------|-------------|--------|
 | Milestone 1 | Project Foundation | Completed |

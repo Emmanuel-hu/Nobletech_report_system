@@ -9,6 +9,17 @@
 - Visibility workflow: full toggle coverage with optimistic concurrency token validation.
 - Conflict workflow: version conflicts display explicit user-facing conflict state and require reload before retry.
 
+## Phase 2K.2 Workflow Completion
+
+- Master-content dashboard workflow: open admin area -> load entity and lifecycle counts -> navigate to entity or review queue actions.
+- Entity administration workflow: list -> search or filter -> paginate -> inspect detail -> create draft or edit mutable record.
+- Lifecycle workflow: submit-review -> request-revision or approve -> archive when authorized; approval is distinct from edit operations.
+- Revision workflow: immutable approved or archived content requires explicit new revision creation before further edits.
+- Mapping workflow: create or remove typed mappings in editable lifecycle states; duplicate and cross-tenant writes are rejected.
+- Lineage workflow: create or update or remove source lineage with source metadata while enforcing ownership and lifecycle restrictions.
+- Audit workflow: privileged mutations write audit entries retrievable from entity-level audit endpoints.
+- Deferred boundary retained: AI extraction, OCR, upload-based ingestion, and AI-assisted generation workflows are not part of Phase 2K.2.
+
 ## Phase 2J Workflow Additions
 
 - Editor lookup workflow: on entry, load curriculum-scoped sessions, terms, classes, components, teachers, published versions, and approved master-library references.

@@ -1311,6 +1311,7 @@ model MasterAssessmentTemplate {
   archivedAt      DateTime?            @map("archived_at")
 
   learningOutcomeLinks MasterAssessmentTemplateLearningOutcome[] @relation("MasterAssessmentTemplateLearningOutcomeLinks")
+  rubricLinks         MasterAssessmentTemplateRubric[]          @relation("MasterAssessmentTemplateRubricLinks")
   sourceLinks          CurriculumSourceMasterContentLink[]       @relation("MasterAssessmentTemplateSourceLinks")
 
   @@index([assessmentType, status])
@@ -1334,6 +1335,7 @@ model MasterRubric {
   archivedAt    DateTime?           @map("archived_at")
 
   criteria    MasterRubricCriterion[]             @relation("MasterRubricCriteria")
+  templateLinks MasterAssessmentTemplateRubric[]  @relation("MasterRubricTemplateLinks")
   sourceLinks CurriculumSourceMasterContentLink[] @relation("MasterRubricSourceLinks")
 
   @@index([status, isActive])
@@ -1641,6 +1643,27 @@ model MasterAssessmentTemplateLearningOutcome {
   @@unique([masterAssessmentTemplateId, masterLearningOutcomeId])
   @@index([masterLearningOutcomeId])
   @@map("master_assessment_template_learning_outcomes")
+}
+
+model MasterAssessmentTemplateRubric {
+  id                         String   @id @default(uuid()) @map("master_assessment_template_rubric_id") @db.Uuid
+  masterAssessmentTemplateId String   @map("master_assessment_template_id") @db.Uuid
+  masterRubricId             String   @map("master_rubric_id") @db.Uuid
+  sequenceOrder              Int?     @map("sequence_order")
+  isPrimary                  Boolean  @default(false) @map("is_primary")
+  purpose                    String?  @map("purpose") @db.VarChar(150)
+  isActive                   Boolean  @default(true) @map("is_active")
+  createdById                String   @map("created_by_id") @db.Uuid
+  createdAt                  DateTime @default(now()) @map("created_at")
+  updatedAt                  DateTime @updatedAt @map("updated_at")
+
+  masterAssessmentTemplate MasterAssessmentTemplate @relation("MasterAssessmentTemplateRubricLinks", fields: [masterAssessmentTemplateId], references: [id], onDelete: Restrict)
+  masterRubric             MasterRubric             @relation("MasterRubricTemplateLinks", fields: [masterRubricId], references: [id], onDelete: Restrict)
+
+  @@unique([masterAssessmentTemplateId, masterRubricId])
+  @@index([masterRubricId])
+  @@index([masterAssessmentTemplateId, isActive])
+  @@map("master_assessment_template_rubrics")
 }
 
 model CurriculumSourceMasterContentLink {

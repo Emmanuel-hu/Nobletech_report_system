@@ -79,3 +79,29 @@ Every API endpoint we'll need
 	- School-owned source records are editable only in `DRAFT` or `REVISION_REQUIRED` review states.
 	- Global source records can be listed but are immutable from school-scoped admin operations.
 	- All state-changing operations emit audit log entries with actor, entity, and reason/comment metadata.
+
+## Phase 2K.2 Update: Master-Content Administration Completion
+
+- Added `/api/v1/master-content` administration API group.
+- Added dashboard and review endpoints:
+	- `GET /api/v1/master-content/dashboard`
+	- `GET /api/v1/master-content/review-queue`
+- Added entity administration endpoints:
+	- `GET /api/v1/master-content/entities/:entityType`
+	- `GET /api/v1/master-content/entities/:entityType/:entityId`
+	- `POST /api/v1/master-content/entities/:entityType`
+	- `PATCH /api/v1/master-content/entities/:entityType/:entityId`
+	- `POST /api/v1/master-content/entities/:entityType/:entityId/lifecycle/:action`
+	- `POST /api/v1/master-content/entities/:entityType/:entityId/revisions`
+	- `GET /api/v1/master-content/entities/:entityType/:entityId/audit`
+- Added typed mapping administration endpoints:
+	- `POST /api/v1/master-content/mappings/:mappingType`
+	- `DELETE /api/v1/master-content/mappings/:mappingType/:mappingId`
+- Added source-lineage administration endpoints:
+	- `POST /api/v1/master-content/lineage/:entityType/:entityId`
+	- `PATCH /api/v1/master-content/lineage/:lineageId`
+	- `DELETE /api/v1/master-content/lineage/:lineageId`
+- Mapping coverage includes unit-subject, unit-integration-domain, unit-programme-component, topic-concept, topic-skill, topic-outcome, topic-activity, topic-project, activity-resource, project-resource, project-skill, project-outcome, assessment-outcome, and assessment-rubric.
+- Assessment-template to rubric relationship decision: implemented as explicit reusable mapping model (`master_assessment_template_rubrics`) to support rubric reuse and multi-rubric assessment templates.
+- Safety posture: lifecycle immutability for approved or archived content, optimistic concurrency checks for mutable operations, tenant-scope enforcement, and auditable privileged mutation flows.
+- Deferred boundary retained: AI extraction, OCR parsing, upload-driven ingestion, and AI-assisted generation APIs remain out of scope.
