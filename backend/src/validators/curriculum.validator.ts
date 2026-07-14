@@ -30,6 +30,9 @@ export const conceptIdParamSchema = z.object({ conceptId: uuid });
 export const assignmentIdParamSchema = z.object({ assignmentId: uuid });
 export const versionIdParamSchema = z.object({ curriculumId: uuid, versionId: uuid });
 export const conceptMappingIdParamSchema = z.object({ mappingId: uuid });
+export const sourceIdParamSchema = z.object({ sourceId: uuid });
+export const sourceContentIdParamSchema = z.object({ contentId: uuid });
+export const sourceMasterLinkIdParamSchema = z.object({ linkId: uuid });
 export const topicProjectLinkIdParamSchema = z.object({ linkId: uuid });
 export const topicOutcomeLinkIdParamSchema = z.object({ linkId: uuid });
 export const projectOutcomeLinkIdParamSchema = z.object({ linkId: uuid });
@@ -368,4 +371,211 @@ export const versionCompareQuerySchema = z.object({
 
 export const editorLookupsQuerySchema = z.object({
   sessionId: uuid.optional(),
+});
+
+const sourceTypeSchema = z.enum([
+  'GOVERNMENT_CURRICULUM',
+  'SCHOOL_SCHEME_OF_WORK',
+  'INTERNATIONAL_FRAMEWORK',
+  'TEXTBOOK',
+  'TEACHER_MATERIAL',
+  'WEBSITE',
+  'INTERNAL_NOBLETECH_CONTENT',
+  'UPLOADED_DOCUMENT',
+  'OTHER',
+]);
+
+const sourceFormatSchema = z.enum(['PDF', 'DOCX', 'XLSX', 'CSV', 'HTML', 'URL', 'TEXT', 'IMAGE', 'OTHER']);
+
+const sourceReviewStatusSchema = z.enum([
+  'DRAFT',
+  'PENDING_REVIEW',
+  'REVISION_REQUIRED',
+  'APPROVED',
+  'REJECTED',
+  'ARCHIVED',
+]);
+
+const sourceContentTypeSchema = z.enum([
+  'SECTION',
+  'TOPIC',
+  'CONCEPT',
+  'SKILL',
+  'LEARNING_OUTCOME',
+  'ACTIVITY',
+  'PROJECT',
+  'RESOURCE',
+  'ASSESSMENT',
+  'OTHER',
+]);
+
+const masterCatalogTypeSchema = z.enum([
+  'unit',
+  'topic',
+  'concept',
+  'skill',
+  'learning_outcome',
+  'activity',
+  'project',
+  'project_implementation',
+  'resource',
+  'assessment_template',
+  'rubric',
+]);
+
+export const listSourcesQuerySchema = z.object({
+  reviewStatus: sourceReviewStatusSchema.optional(),
+  sourceType: sourceTypeSchema.optional(),
+  sourceFormat: sourceFormatSchema.optional(),
+  subjectId: uuid.optional(),
+  ownership: z.enum(['school', 'global', 'all']).optional(),
+  q: nonEmpty(100).optional(),
+  includeGlobal: z.enum(['true', 'false']).optional(),
+  page: z.coerce.number().int().positive().optional(),
+  pageSize: z.coerce.number().int().positive().max(100).optional(),
+});
+
+export const createSourceSchema = z.object({
+  isGlobal: z.boolean().optional(),
+  sourceCode: nonEmpty(100).optional(),
+  title: nonEmpty(200),
+  description: optionalText(4000),
+  sourceType: sourceTypeSchema,
+  sourceFormat: sourceFormatSchema,
+  subjectId: uuid.optional(),
+  integrationDomainId: uuid.optional(),
+  programmeComponentId: uuid.optional(),
+  classLevel: nonEmpty(100).optional(),
+  termLabel: nonEmpty(100).optional(),
+  educationLevel: nonEmpty(100).optional(),
+  curriculumStandard: nonEmpty(150).optional(),
+  frameworkName: nonEmpty(150).optional(),
+  countryCode: nonEmpty(10).optional(),
+  academicYear: nonEmpty(20).optional(),
+  versionLabel: nonEmpty(50).optional(),
+  publisher: nonEmpty(150).optional(),
+  author: nonEmpty(150).optional(),
+  sourceUrl: z.string().url().optional(),
+  usageRights: nonEmpty(150),
+  copyrightNote: optionalText(4000),
+  fileReference: nonEmpty(255).optional(),
+  originalFileName: nonEmpty(255).optional(),
+  mimeType: nonEmpty(150).optional(),
+  fileSize: z.number().int().positive().optional(),
+  checksum: nonEmpty(128).optional(),
+});
+
+export const updateSourceSchema = z.object({
+  sourceCode: nonEmpty(100).optional(),
+  title: nonEmpty(200).optional(),
+  description: optionalText(4000),
+  sourceType: sourceTypeSchema.optional(),
+  sourceFormat: sourceFormatSchema.optional(),
+  subjectId: uuid.nullable().optional(),
+  integrationDomainId: uuid.nullable().optional(),
+  programmeComponentId: uuid.nullable().optional(),
+  classLevel: nonEmpty(100).optional(),
+  termLabel: nonEmpty(100).optional(),
+  educationLevel: nonEmpty(100).optional(),
+  curriculumStandard: nonEmpty(150).optional(),
+  frameworkName: nonEmpty(150).optional(),
+  countryCode: nonEmpty(10).optional(),
+  academicYear: nonEmpty(20).optional(),
+  versionLabel: nonEmpty(50).optional(),
+  publisher: nonEmpty(150).optional(),
+  author: nonEmpty(150).optional(),
+  sourceUrl: z.string().url().optional(),
+  usageRights: nonEmpty(150).optional(),
+  copyrightNote: optionalText(4000),
+  fileReference: nonEmpty(255).optional(),
+  originalFileName: nonEmpty(255).optional(),
+  mimeType: nonEmpty(150).optional(),
+  fileSize: z.number().int().positive().optional(),
+  checksum: nonEmpty(128).optional(),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const createSourceContentSchema = z.object({
+  sequenceOrder: positiveInt.optional(),
+  contentType: sourceContentTypeSchema,
+  heading: nonEmpty(200).optional(),
+  rawText: optionalText(20000),
+  structuredData: z.record(z.unknown()).optional(),
+  sourcePage: nonEmpty(50).optional(),
+  sourceSection: nonEmpty(150).optional(),
+  confidenceScore: z.number().min(0).max(100).optional(),
+  extractionMethod: nonEmpty(100).optional(),
+});
+
+export const updateSourceContentSchema = z.object({
+  sequenceOrder: positiveInt.optional(),
+  contentType: sourceContentTypeSchema.optional(),
+  heading: nonEmpty(200).optional(),
+  rawText: optionalText(20000),
+  structuredData: z.record(z.unknown()).optional(),
+  sourcePage: nonEmpty(50).optional(),
+  sourceSection: nonEmpty(150).optional(),
+  confidenceScore: z.number().min(0).max(100).optional(),
+  extractionMethod: nonEmpty(100).optional(),
+  reviewed: z.boolean().optional(),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const reorderSourceContentsSchema = z.object({
+  orderedContentIds: z.array(uuid).min(1),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const sourceLifecycleActionSchema = z.object({
+  comment: optionalText(2000),
+  reason: optionalText(2000),
+  requestedChanges: optionalText(4000),
+  rejectionReason: optionalText(4000),
+  lastKnownUpdatedAt: z.string().datetime().optional(),
+});
+
+export const sourceRevisionActionSchema = z.object({
+  comment: optionalText(2000),
+  requestedChanges: nonEmpty(4000),
+  lastKnownUpdatedAt: z.string().datetime().optional(),
+});
+
+export const sourceRejectActionSchema = z.object({
+  comment: optionalText(2000),
+  rejectionReason: nonEmpty(4000),
+  lastKnownUpdatedAt: z.string().datetime().optional(),
+});
+
+export const deleteSourceContentSchema = z.object({
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const createSourceMasterLinkSchema = z.object({
+  masterContentType: masterCatalogTypeSchema,
+  masterContentId: uuid,
+  sourceVersionLabel: nonEmpty(50).optional(),
+  sourcePage: nonEmpty(50).optional(),
+  sourceSection: nonEmpty(150).optional(),
+  extractionNote: optionalText(4000),
+  adaptationNote: optionalText(4000),
+  attribution: optionalText(4000),
+  usageRestriction: nonEmpty(150).optional(),
+});
+
+export const updateSourceMasterLinkSchema = z.object({
+  reviewStatus: sourceReviewStatusSchema.optional(),
+  sourceVersionLabel: nonEmpty(50).optional(),
+  sourcePage: nonEmpty(50).optional(),
+  sourceSection: nonEmpty(150).optional(),
+  extractionNote: optionalText(4000),
+  adaptationNote: optionalText(4000),
+  attribution: optionalText(4000),
+  usageRestriction: nonEmpty(150).optional(),
+  lastKnownUpdatedAt: z.string().datetime(),
+});
+
+export const listMasterCatalogQuerySchema = z.object({
+  type: masterCatalogTypeSchema,
+  q: nonEmpty(100).optional(),
+  includeGlobal: z.enum(['true', 'false']).optional(),
 });

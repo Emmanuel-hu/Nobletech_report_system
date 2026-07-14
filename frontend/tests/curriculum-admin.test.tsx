@@ -47,4 +47,11 @@ describe('Curriculum administrative routes', () => {
 
     expect(screen.getByText('NEMP Frontend is running.')).toBeInTheDocument();
   });
+
+  it('renders source administration foundation route', () => {
+    renderApp('/admin/curricula/sources');
+
+    expect(screen.getByText('Curriculum source and master-content administration')).toBeInTheDocument();
+    expect(screen.getByText('Source register')).toBeInTheDocument();
+  });
 });

@@ -48,7 +48,17 @@ const curriculumInclude = {
   statusHistory: { orderBy: { changedAt: 'desc' } },
 } satisfies Prisma.CurriculumInclude;
 
+const sourceInclude = {
+  sourceContents: {
+    orderBy: { sequenceOrder: 'asc' },
+  },
+  masterContentLinks: {
+    orderBy: { createdAt: 'desc' },
+  },
+} satisfies Prisma.CurriculumSourceInclude;
+
 export type CurriculumAggregate = Prisma.CurriculumGetPayload<{ include: typeof curriculumInclude }>;
+export type CurriculumSourceAggregate = Prisma.CurriculumSourceGetPayload<{ include: typeof sourceInclude }>;
 
 export class CurriculumRepository {
   private readonly db: PrismaClient;
@@ -73,6 +83,212 @@ export class CurriculumRepository {
       where,
       include: curriculumInclude,
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async listSources(args: {
+    where: Prisma.CurriculumSourceWhereInput;
+    skip?: number;
+    take?: number;
+  }): Promise<CurriculumSourceAggregate[]> {
+    return this.db.curriculumSource.findMany({
+      where: args.where,
+      include: sourceInclude,
+      orderBy: [{ updatedAt: 'desc' }],
+      ...(typeof args.skip === 'number' ? { skip: args.skip } : {}),
+      ...(typeof args.take === 'number' ? { take: args.take } : {}),
+    });
+  }
+
+  async countSources(where: Prisma.CurriculumSourceWhereInput): Promise<number> {
+    return this.db.curriculumSource.count({ where });
+  }
+
+  async findSourceById(sourceId: string): Promise<CurriculumSourceAggregate | null> {
+    return this.db.curriculumSource.findUnique({
+      where: { id: sourceId },
+      include: sourceInclude,
+    });
+  }
+
+  async findSourceRecordById(sourceId: string) {
+    return this.db.curriculumSource.findUnique({ where: { id: sourceId } });
+  }
+
+  async findSourceContentById(contentId: string) {
+    return this.db.curriculumSourceContent.findUnique({
+      where: { id: contentId },
+      include: { curriculumSource: true },
+    });
+  }
+
+  async findSourceMasterLinkById(linkId: string) {
+    return this.db.curriculumSourceMasterContentLink.findUnique({
+      where: { id: linkId },
+      include: { curriculumSource: true },
+    });
+  }
+
+  async listApprovedMasterCatalog(args: {
+    type:
+      | 'unit'
+      | 'topic'
+      | 'concept'
+      | 'skill'
+      | 'learning_outcome'
+      | 'activity'
+      | 'project'
+      | 'project_implementation'
+      | 'resource'
+      | 'assessment_template'
+      | 'rubric';
+    schoolId: string;
+    q?: string;
+    includeGlobal?: boolean;
+  }) {
+    const scopedWhere = args.includeGlobal === false ? { schoolId: args.schoolId } : { OR: [{ schoolId: args.schoolId }, { schoolId: null }] };
+    const q = args.q?.trim();
+
+    if (args.type === 'unit') {
+      return this.db.masterCurriculumUnit.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    if (args.type === 'topic') {
+      return this.db.masterTopic.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    if (args.type === 'concept') {
+      return this.db.masterConcept.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q
+            ? {
+                OR: [
+                  { name: { contains: q, mode: 'insensitive' } },
+                  { definition: { contains: q, mode: 'insensitive' } },
+                ],
+              }
+            : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { name: 'asc' }],
+      });
+    }
+
+    if (args.type === 'skill') {
+      return this.db.masterSkill.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { name: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { name: 'asc' }],
+      });
+    }
+
+    if (args.type === 'learning_outcome') {
+      return this.db.masterLearningOutcome.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { statement: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { createdAt: 'desc' }],
+      });
+    }
+
+    if (args.type === 'activity') {
+      return this.db.masterActivity.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    if (args.type === 'project') {
+      return this.db.masterProject.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    if (args.type === 'project_implementation') {
+      return this.db.masterProjectImplementation.findMany({
+        where: {
+          ...scopedWhere,
+          isActive: true,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    if (args.type === 'resource') {
+      return this.db.masterResource.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    if (args.type === 'assessment_template') {
+      return this.db.masterAssessmentTemplate.findMany({
+        where: {
+          ...scopedWhere,
+          status: 'APPROVED',
+          archivedAt: null,
+          ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+        },
+        orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      });
+    }
+
+    return this.db.masterRubric.findMany({
+      where: {
+        ...scopedWhere,
+        status: 'APPROVED',
+        archivedAt: null,
+        ...(q ? { title: { contains: q, mode: 'insensitive' } } : {}),
+      },
+      orderBy: [{ schoolId: 'desc' }, { title: 'asc' }],
+      include: {
+        criteria: {
+          orderBy: { sequenceOrder: 'asc' },
+          include: { levels: { orderBy: { sequenceOrder: 'asc' } } },
+        },
+      },
     });
   }
 

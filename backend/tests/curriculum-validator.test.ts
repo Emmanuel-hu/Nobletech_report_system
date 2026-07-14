@@ -3,12 +3,27 @@ import { describe, expect, it } from 'vitest';
 import {
   conceptIdParamSchema,
   conceptMappingIdParamSchema,
+  createSourceSchema,
+  createSourceContentSchema,
+  deleteSourceContentSchema,
+  createSourceMasterLinkSchema,
   createConceptSchema,
   createProjectImplementationSchema,
   implementationIdParamSchema,
+  listMasterCatalogQuerySchema,
+  listSourcesQuerySchema,
   projectOutcomeLinkIdParamSchema,
+  reorderSourceContentsSchema,
   reorderProjectImplementationsSchema,
   reorderTopicConceptsSchema,
+  sourceContentIdParamSchema,
+  sourceIdParamSchema,
+  sourceRejectActionSchema,
+  sourceRevisionActionSchema,
+  sourceMasterLinkIdParamSchema,
+  updateSourceSchema,
+  updateSourceContentSchema,
+  updateSourceMasterLinkSchema,
   topicOutcomeLinkIdParamSchema,
   topicProjectLinkIdParamSchema,
   updateConceptSchema,
@@ -107,5 +122,97 @@ describe('curriculum phase 2J validators', () => {
     });
 
     expect(visibility.showResources).toBe(true);
+  });
+
+  it('validates curriculum source and source content payloads', () => {
+    const source = createSourceSchema.parse({
+      isGlobal: true,
+      title: 'Primary robotics source',
+      sourceType: 'SCHOOL_SCHEME_OF_WORK',
+      sourceFormat: 'PDF',
+      usageRights: 'Internal educational use',
+    });
+
+    expect(source.title).toBe('Primary robotics source');
+
+    const update = updateSourceSchema.parse({
+      title: 'Updated source title',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(update.title).toBe('Updated source title');
+
+    const content = createSourceContentSchema.parse({
+      contentType: 'TOPIC',
+      heading: 'Week 1 orientation',
+      rawText: 'Learners identify robotics components.',
+      confidenceScore: 90,
+    });
+
+    expect(content.contentType).toBe('TOPIC');
+
+    const contentUpdate = updateSourceContentSchema.parse({
+      reviewed: true,
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(contentUpdate.reviewed).toBe(true);
+  });
+
+  it('validates source/master link and catalog query schemas', () => {
+    const link = createSourceMasterLinkSchema.parse({
+      masterContentType: 'concept',
+      masterContentId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      sourcePage: '12',
+    });
+
+    expect(link.masterContentType).toBe('concept');
+
+    const linkUpdate = updateSourceMasterLinkSchema.parse({
+      reviewStatus: 'APPROVED',
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(linkUpdate.reviewStatus).toBe('APPROVED');
+
+    const query = listMasterCatalogQuerySchema.parse({ type: 'resource', q: 'kit' });
+    expect(query.type).toBe('resource');
+
+    const sourceQuery = listSourcesQuerySchema.parse({ includeGlobal: 'true' });
+    expect(sourceQuery.includeGlobal).toBe('true');
+
+    const scopedQuery = listSourcesQuerySchema.parse({
+      ownership: 'school',
+      sourceFormat: 'DOCX',
+      page: '2',
+      pageSize: '25',
+    });
+    expect(scopedQuery.ownership).toBe('school');
+    expect(scopedQuery.page).toBe(2);
+
+    const revision = sourceRevisionActionSchema.parse({ requestedChanges: 'Clarify unit sequencing.' });
+    expect(revision.requestedChanges).toContain('Clarify');
+
+    const rejection = sourceRejectActionSchema.parse({ rejectionReason: 'Source does not match scope.' });
+    expect(rejection.rejectionReason).toContain('scope');
+
+    const deleteContent = deleteSourceContentSchema.parse({
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+    expect(deleteContent.lastKnownUpdatedAt).toBe('2026-01-01T00:00:00.000Z');
+  });
+
+  it('validates source params and source content reorder payload', () => {
+    const uuid = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    expect(sourceIdParamSchema.parse({ sourceId: uuid }).sourceId).toBe(uuid);
+    expect(sourceContentIdParamSchema.parse({ contentId: uuid }).contentId).toBe(uuid);
+    expect(sourceMasterLinkIdParamSchema.parse({ linkId: uuid }).linkId).toBe(uuid);
+
+    const reorder = reorderSourceContentsSchema.parse({
+      orderedContentIds: [uuid],
+      lastKnownUpdatedAt: '2026-01-01T00:00:00.000Z',
+    });
+
+    expect(reorder.orderedContentIds).toHaveLength(1);
   });
 });

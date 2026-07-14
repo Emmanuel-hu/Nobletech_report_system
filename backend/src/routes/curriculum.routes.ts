@@ -2,22 +2,29 @@ import { Router } from 'express';
 
 import {
   activateAssignment,
+  approveSource,
   addTopicConcept,
   approveCurriculum,
   archiveAssignment,
+  archiveSource,
   archiveCurriculum,
   compareVersions,
+  createSource,
+  createSourceContent,
+  createSourceMasterLink,
   createConcept,
   createProjectImplementation,
   completeAssignment,
   createAssignment,
   createCurriculum,
+  deleteSourceContent,
   createLearningOutcome,
   createProject,
   createResource,
   createTopic,
   createUnit,
   createVersion,
+  deleteSourceMasterLink,
   deleteProject,
   deleteProjectImplementation,
   deleteProjectLearningOutcomeLink,
@@ -30,6 +37,7 @@ import {
   deleteTopic,
   deleteUnit,
   getEditorLookups,
+  getSource,
   getCurriculum,
   getSnapshot,
   getVersion,
@@ -37,17 +45,26 @@ import {
   linkProjectLearningOutcome,
   linkProjectTopic,
   linkTopicLearningOutcome,
+  listMasterCatalog,
+  listSources,
   listAssignments,
   listCurricula,
   listVersions,
+  rejectSource,
   publishCurriculum,
   reorderProjectImplementations,
+  reorderSourceContents,
   reorderTopicConcepts,
   reorderTopics,
   reorderUnits,
   requestRevision,
+  requestSourceRevision,
+  submitSourceReview,
   submitReview,
   suspendAssignment,
+  updateSource,
+  updateSourceContent,
+  updateSourceMasterLink,
   updateConcept,
   updateAssignment,
   updateCurriculum,
@@ -71,6 +88,10 @@ import {
   assignmentIdParamSchema,
   conceptMappingIdParamSchema,
   conceptIdParamSchema,
+  createSourceSchema,
+  createSourceContentSchema,
+  deleteSourceContentSchema,
+  createSourceMasterLinkSchema,
   createConceptSchema,
   createAssignmentSchema,
   createCurriculumSchema,
@@ -85,11 +106,14 @@ import {
   curriculumIdParamSchema,
   curriculumUnitIdParamSchema,
   listCurriculaQuerySchema,
+  listMasterCatalogQuerySchema,
+  listSourcesQuerySchema,
   linkProjectTopicSchema,
   mapLearningOutcomeSchema,
   implementationIdParamSchema,
   projectOutcomeLinkIdParamSchema,
   reorderProjectImplementationsSchema,
+  reorderSourceContentsSchema,
   reorderTopicConceptsSchema,
   outcomeIdParamSchema,
   topicOutcomeLinkIdParamSchema,
@@ -100,12 +124,21 @@ import {
   reorderUnitsSchema,
   requestRevisionSchema,
   resourceIdParamSchema,
+  sourceContentIdParamSchema,
+  sourceIdParamSchema,
+  sourceRejectActionSchema,
+  sourceRevisionActionSchema,
+  sourceLifecycleActionSchema,
+  sourceMasterLinkIdParamSchema,
   submitReviewSchema,
   topicIdParamSchema,
   unitIdParamSchema,
   unitTopicIdParamSchema,
   updateAssignmentSchema,
   updateCurriculumSchema,
+  updateSourceSchema,
+  updateSourceContentSchema,
+  updateSourceMasterLinkSchema,
   updateConceptSchema,
   updateLearningOutcomeSchema,
   updateProjectSchema,
@@ -575,6 +608,137 @@ curriculumRouter.post(
   validateParams(assignmentIdParamSchema),
   validateBody(archiveCurriculumSchema),
   asyncHandler(archiveAssignment),
+);
+
+curriculumRouter.get(
+  '/sources',
+  requirePermission('curriculum.view'),
+  validateQuery(listSourcesQuerySchema),
+  asyncHandler(listSources),
+);
+
+curriculumRouter.post(
+  '/sources',
+  requirePermission('curriculum.edit'),
+  validateBody(createSourceSchema),
+  asyncHandler(createSource),
+);
+
+curriculumRouter.get(
+  '/sources/:sourceId',
+  requirePermission('curriculum.view'),
+  validateParams(sourceIdParamSchema),
+  asyncHandler(getSource),
+);
+
+curriculumRouter.patch(
+  '/sources/:sourceId',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceIdParamSchema),
+  validateBody(updateSourceSchema),
+  asyncHandler(updateSource),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/submit-review',
+  requirePermission('curriculum.submit_review'),
+  validateParams(sourceIdParamSchema),
+  validateBody(sourceLifecycleActionSchema),
+  asyncHandler(submitSourceReview),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/approve',
+  requirePermission('curriculum.approve'),
+  validateParams(sourceIdParamSchema),
+  validateBody(sourceLifecycleActionSchema),
+  asyncHandler(approveSource),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/request-revision',
+  requirePermission('curriculum.request_revision'),
+  validateParams(sourceIdParamSchema),
+  validateBody(sourceRevisionActionSchema),
+  asyncHandler(requestSourceRevision),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/reject',
+  requirePermission('curriculum.approve'),
+  validateParams(sourceIdParamSchema),
+  validateBody(sourceRejectActionSchema),
+  asyncHandler(rejectSource),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/archive',
+  requirePermission('curriculum.archive'),
+  validateParams(sourceIdParamSchema),
+  validateBody(sourceLifecycleActionSchema),
+  asyncHandler(archiveSource),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/contents',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceIdParamSchema),
+  validateBody(createSourceContentSchema),
+  asyncHandler(createSourceContent),
+);
+
+curriculumRouter.patch(
+  '/source-contents/:contentId',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceContentIdParamSchema),
+  validateBody(updateSourceContentSchema),
+  asyncHandler(updateSourceContent),
+);
+
+curriculumRouter.delete(
+  '/source-contents/:contentId',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceContentIdParamSchema),
+  validateBody(deleteSourceContentSchema),
+  asyncHandler(deleteSourceContent),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/contents/reorder',
+  requirePermission('curriculum.reorder'),
+  validateParams(sourceIdParamSchema),
+  validateBody(reorderSourceContentsSchema),
+  asyncHandler(reorderSourceContents),
+);
+
+curriculumRouter.get(
+  '/master-content/catalog',
+  requirePermission('curriculum.view'),
+  validateQuery(listMasterCatalogQuerySchema),
+  asyncHandler(listMasterCatalog),
+);
+
+curriculumRouter.post(
+  '/sources/:sourceId/master-links',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceIdParamSchema),
+  validateBody(createSourceMasterLinkSchema),
+  asyncHandler(createSourceMasterLink),
+);
+
+curriculumRouter.patch(
+  '/source-master-links/:linkId',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceMasterLinkIdParamSchema),
+  validateBody(updateSourceMasterLinkSchema),
+  asyncHandler(updateSourceMasterLink),
+);
+
+curriculumRouter.delete(
+  '/source-master-links/:linkId',
+  requirePermission('curriculum.edit'),
+  validateParams(sourceMasterLinkIdParamSchema),
+  asyncHandler(deleteSourceMasterLink),
 );
 
 export default curriculumRouter;

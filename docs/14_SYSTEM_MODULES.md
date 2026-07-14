@@ -1,5 +1,13 @@
 ## Phase 2J.1 Module Scope Update
 
+## Phase 2K.1 Module Scope Update
+
+- Added Curriculum Source Administration module foundation for school-scoped source intake, metadata maintenance, and review lifecycle transitions.
+- Added Structured Source Content module foundation for ordered source sections with optimistic concurrency support.
+- Added Source-to-Master Lineage module foundation for explicit provenance links across approved master content entities.
+- Added Master Content Catalog module foundation for type-filtered browsing of approved global or school-owned records.
+- Deferred boundary retained: AI extraction, AI source parsing, and AI curriculum generation remain out of scope in this milestone.
+
 - Completed Curriculum Structure Editor module workflows for:
 	- Topic CRUD and topic reorder.
 	- Master concept linking, operational concept CRUD, and topic-concept mapping maintenance.

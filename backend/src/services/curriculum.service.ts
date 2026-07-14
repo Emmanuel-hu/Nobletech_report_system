@@ -34,6 +34,40 @@ type CurriculumListFilters = {
   isPublished?: boolean;
 };
 
+type SourceListFilters = {
+  reviewStatus?: 'DRAFT' | 'PENDING_REVIEW' | 'REVISION_REQUIRED' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
+  sourceType?:
+    | 'GOVERNMENT_CURRICULUM'
+    | 'SCHOOL_SCHEME_OF_WORK'
+    | 'INTERNATIONAL_FRAMEWORK'
+    | 'TEXTBOOK'
+    | 'TEACHER_MATERIAL'
+    | 'WEBSITE'
+    | 'INTERNAL_NOBLETECH_CONTENT'
+    | 'UPLOADED_DOCUMENT'
+    | 'OTHER';
+  sourceFormat?: 'PDF' | 'DOCX' | 'XLSX' | 'CSV' | 'HTML' | 'URL' | 'TEXT' | 'IMAGE' | 'OTHER';
+  subjectId?: string;
+  q?: string;
+  ownership?: 'school' | 'global' | 'all';
+  includeGlobal?: boolean;
+  page?: number;
+  pageSize?: number;
+};
+
+type MasterCatalogType =
+  | 'unit'
+  | 'topic'
+  | 'concept'
+  | 'skill'
+  | 'learning_outcome'
+  | 'activity'
+  | 'project'
+  | 'project_implementation'
+  | 'resource'
+  | 'assessment_template'
+  | 'rubric';
+
 type AuditPayload = {
   action: string;
   entityType: string;
@@ -2566,6 +2600,1049 @@ export class CurriculumService {
     });
 
     return this.reloadCurriculum(curriculum.id);
+  }
+
+  async listSources(auth: AuthContext, filters: SourceListFilters) {
+    const schoolId = auth.schoolId;
+    const normalizedQuery = filters.q?.trim();
+
+    if (!schoolId && !auth.isSuperAdmin) {
+      throw forbidden('School scope is required for source listing.');
+    }
+
+    if (filters.ownership === 'school' && !schoolId) {
+      return [];
+    }
+
+    const where: Prisma.CurriculumSourceWhereInput = {
+      ...(filters.ownership === 'global'
+        ? { schoolId: null }
+        : filters.ownership === 'school'
+          ? { schoolId: schoolId as string }
+          : schoolId
+            ? filters.includeGlobal === false
+              ? { schoolId }
+              : { OR: [{ schoolId }, { schoolId: null }] }
+            : { schoolId: null }),
+      ...(filters.reviewStatus ? { reviewStatus: filters.reviewStatus } : {}),
+      ...(filters.sourceType ? { sourceType: filters.sourceType } : {}),
+      ...(filters.sourceFormat ? { sourceFormat: filters.sourceFormat } : {}),
+      ...(filters.subjectId ? { subjectId: filters.subjectId } : {}),
+      ...(normalizedQuery
+        ? {
+            OR: [
+              { title: { contains: normalizedQuery, mode: 'insensitive' } },
+              { sourceCode: { contains: normalizedQuery, mode: 'insensitive' } },
+              { description: { contains: normalizedQuery, mode: 'insensitive' } },
+            ],
+          }
+        : {}),
+    };
+
+    const page = filters.page && filters.page > 0 ? filters.page : 1;
+    const pageSize = filters.pageSize && filters.pageSize > 0 ? Math.min(filters.pageSize, 100) : undefined;
+
+    return curriculumRepository.listSources({
+      where,
+      ...(pageSize ? { skip: (page - 1) * pageSize, take: pageSize } : {}),
+    });
+  }
+
+  async getSource(auth: AuthContext, sourceId: string) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+
+    return prisma.curriculumSource.findUnique({
+      where: { id: source.id },
+      include: {
+        sourceContents: { orderBy: { sequenceOrder: 'asc' } },
+        masterContentLinks: { orderBy: { createdAt: 'desc' } },
+      },
+    });
+  }
+
+  async createSource(
+    auth: AuthContext,
+    payload: {
+      sourceCode?: string;
+      title: string;
+      description?: string;
+      sourceType:
+        | 'GOVERNMENT_CURRICULUM'
+        | 'SCHOOL_SCHEME_OF_WORK'
+        | 'INTERNATIONAL_FRAMEWORK'
+        | 'TEXTBOOK'
+        | 'TEACHER_MATERIAL'
+        | 'WEBSITE'
+        | 'INTERNAL_NOBLETECH_CONTENT'
+        | 'UPLOADED_DOCUMENT'
+        | 'OTHER';
+      sourceFormat: 'PDF' | 'DOCX' | 'XLSX' | 'CSV' | 'HTML' | 'URL' | 'TEXT' | 'IMAGE' | 'OTHER';
+      subjectId?: string;
+      integrationDomainId?: string;
+      programmeComponentId?: string;
+      classLevel?: string;
+      termLabel?: string;
+      educationLevel?: string;
+      curriculumStandard?: string;
+      frameworkName?: string;
+      countryCode?: string;
+      academicYear?: string;
+      versionLabel?: string;
+      publisher?: string;
+      author?: string;
+      sourceUrl?: string;
+      usageRights: string;
+      copyrightNote?: string;
+      fileReference?: string;
+      originalFileName?: string;
+      mimeType?: string;
+      fileSize?: number;
+      checksum?: string;
+      isGlobal?: boolean;
+    },
+    requestId?: string,
+  ) {
+    if (payload.isGlobal && !auth.isSuperAdmin) {
+      throw forbidden('Only super administrators can create global curriculum sources.');
+    }
+
+    const schoolId = payload.isGlobal ? null : requireSchoolScope({ auth } as never);
+
+    const source = await prisma.$transaction(async (tx) => {
+      const created = await tx.curriculumSource.create({
+        data: {
+          schoolId,
+          sourceCode: payload.sourceCode,
+          title: payload.title,
+          description: payload.description,
+          sourceType: payload.sourceType,
+          sourceFormat: payload.sourceFormat,
+          subjectId: payload.subjectId,
+          integrationDomainId: payload.integrationDomainId,
+          programmeComponentId: payload.programmeComponentId,
+          classLevel: payload.classLevel,
+          termLabel: payload.termLabel,
+          educationLevel: payload.educationLevel,
+          curriculumStandard: payload.curriculumStandard,
+          frameworkName: payload.frameworkName,
+          countryCode: payload.countryCode,
+          academicYear: payload.academicYear,
+          versionLabel: payload.versionLabel,
+          publisher: payload.publisher,
+          author: payload.author,
+          sourceUrl: payload.sourceUrl,
+          usageRights: payload.usageRights,
+          copyrightNote: payload.copyrightNote,
+          fileReference: payload.fileReference,
+          originalFileName: payload.originalFileName,
+          mimeType: payload.mimeType,
+          fileSize: payload.fileSize,
+          checksum: payload.checksum,
+          status: 'DRAFT',
+          reviewStatus: 'DRAFT',
+          isActive: true,
+          uploadedById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.create',
+        entityType: 'curriculum_source',
+        entityId: created.id,
+        schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          sourceType: created.sourceType,
+          sourceFormat: created.sourceFormat,
+          reviewStatus: created.reviewStatus,
+          ownership: created.schoolId ? 'school' : 'global',
+        },
+        requestId,
+      });
+
+      return created;
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async updateSource(
+    auth: AuthContext,
+    sourceId: string,
+    payload: {
+      sourceCode?: string;
+      title?: string;
+      description?: string;
+      sourceType?:
+        | 'GOVERNMENT_CURRICULUM'
+        | 'SCHOOL_SCHEME_OF_WORK'
+        | 'INTERNATIONAL_FRAMEWORK'
+        | 'TEXTBOOK'
+        | 'TEACHER_MATERIAL'
+        | 'WEBSITE'
+        | 'INTERNAL_NOBLETECH_CONTENT'
+        | 'UPLOADED_DOCUMENT'
+        | 'OTHER';
+      sourceFormat?: 'PDF' | 'DOCX' | 'XLSX' | 'CSV' | 'HTML' | 'URL' | 'TEXT' | 'IMAGE' | 'OTHER';
+      subjectId?: string | null;
+      integrationDomainId?: string | null;
+      programmeComponentId?: string | null;
+      classLevel?: string;
+      termLabel?: string;
+      educationLevel?: string;
+      curriculumStandard?: string;
+      frameworkName?: string;
+      countryCode?: string;
+      academicYear?: string;
+      versionLabel?: string;
+      publisher?: string;
+      author?: string;
+      sourceUrl?: string;
+      usageRights?: string;
+      copyrightNote?: string;
+      fileReference?: string;
+      originalFileName?: string;
+      mimeType?: string;
+      fileSize?: number;
+      checksum?: string;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.curriculumSource.update({
+        where: { id: sourceId },
+        data: {
+          sourceCode: payload.sourceCode,
+          title: payload.title,
+          description: payload.description,
+          sourceType: payload.sourceType,
+          sourceFormat: payload.sourceFormat,
+          subjectId: payload.subjectId,
+          integrationDomainId: payload.integrationDomainId,
+          programmeComponentId: payload.programmeComponentId,
+          classLevel: payload.classLevel,
+          termLabel: payload.termLabel,
+          educationLevel: payload.educationLevel,
+          curriculumStandard: payload.curriculumStandard,
+          frameworkName: payload.frameworkName,
+          countryCode: payload.countryCode,
+          academicYear: payload.academicYear,
+          versionLabel: payload.versionLabel,
+          publisher: payload.publisher,
+          author: payload.author,
+          sourceUrl: payload.sourceUrl,
+          usageRights: payload.usageRights,
+          copyrightNote: payload.copyrightNote,
+          fileReference: payload.fileReference,
+          originalFileName: payload.originalFileName,
+          mimeType: payload.mimeType,
+          fileSize: payload.fileSize,
+          checksum: payload.checksum,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.edit',
+        entityType: 'curriculum_source',
+        entityId: updated.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          title: source.title,
+          reviewStatus: source.reviewStatus,
+        },
+        newValues: {
+          title: updated.title,
+          reviewStatus: updated.reviewStatus,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, sourceId);
+  }
+
+  async submitSourceReview(auth: AuthContext, sourceId: string, comment?: string, requestId?: string) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const next = await tx.curriculumSource.update({
+        where: { id: sourceId },
+        data: {
+          reviewStatus: 'PENDING_REVIEW',
+          reviewedAt: null,
+          reviewedById: null,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.submit_review',
+        entityType: 'curriculum_source',
+        entityId: sourceId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: { reviewStatus: source.reviewStatus },
+        newValues: { reviewStatus: next.reviewStatus },
+        reason: comment,
+        requestId,
+      });
+
+      return next;
+    });
+
+    return this.getSource(auth, updated.id);
+  }
+
+  async requestSourceRevision(
+    auth: AuthContext,
+    sourceId: string,
+    payload: { requestedChanges: string; comment?: string; lastKnownUpdatedAt?: string },
+    requestId?: string,
+  ) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+    this.assertSourceReviewPrivilege(source, auth);
+
+    if (source.reviewStatus !== 'PENDING_REVIEW') {
+      throw lifecycleConflict('Revision request requires PENDING_REVIEW source status.');
+    }
+
+    if (payload.lastKnownUpdatedAt) {
+      this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const next = await tx.curriculumSource.update({
+        where: { id: sourceId },
+        data: {
+          reviewStatus: 'REVISION_REQUIRED',
+          status: 'REVISION_REQUIRED',
+          reviewedById: auth.userId,
+          reviewedAt: now,
+          approvedById: null,
+          approvedAt: null,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.request_revision',
+        entityType: 'curriculum_source',
+        entityId: sourceId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          reviewStatus: source.reviewStatus,
+          status: source.status,
+        },
+        newValues: {
+          reviewStatus: next.reviewStatus,
+          status: next.status,
+          requestedChanges: payload.requestedChanges,
+        },
+        reason: payload.comment ?? payload.requestedChanges,
+        requestId,
+      });
+
+      return next;
+    });
+
+    return this.getSource(auth, updated.id);
+  }
+
+  async rejectSource(
+    auth: AuthContext,
+    sourceId: string,
+    payload: { rejectionReason: string; comment?: string; lastKnownUpdatedAt?: string },
+    requestId?: string,
+  ) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+    this.assertSourceReviewPrivilege(source, auth);
+
+    if (source.reviewStatus !== 'PENDING_REVIEW') {
+      throw lifecycleConflict('Rejection requires PENDING_REVIEW source status.');
+    }
+
+    if (payload.lastKnownUpdatedAt) {
+      this.assertNoConcurrentModification(source.updatedAt, payload.lastKnownUpdatedAt);
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const next = await tx.curriculumSource.update({
+        where: { id: sourceId },
+        data: {
+          reviewStatus: 'REJECTED',
+          status: 'REVISION_REQUIRED',
+          reviewedById: auth.userId,
+          reviewedAt: now,
+          approvedById: null,
+          approvedAt: null,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.reject',
+        entityType: 'curriculum_source',
+        entityId: sourceId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          reviewStatus: source.reviewStatus,
+          status: source.status,
+        },
+        newValues: {
+          reviewStatus: next.reviewStatus,
+          status: next.status,
+          rejectionReason: payload.rejectionReason,
+        },
+        reason: payload.comment ?? payload.rejectionReason,
+        requestId,
+      });
+
+      return next;
+    });
+
+    return this.getSource(auth, updated.id);
+  }
+
+  async approveSource(auth: AuthContext, sourceId: string, comment?: string, requestId?: string) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+    this.assertSourceReviewPrivilege(source, auth);
+
+    if (source.reviewStatus !== 'PENDING_REVIEW') {
+      throw lifecycleConflict('Only PENDING_REVIEW curriculum sources can be approved.');
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const next = await tx.curriculumSource.update({
+        where: { id: sourceId },
+        data: {
+          reviewStatus: 'APPROVED',
+          status: 'APPROVED',
+          reviewedById: auth.userId,
+          approvedById: auth.userId,
+          reviewedAt: now,
+          approvedAt: now,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.approve',
+        entityType: 'curriculum_source',
+        entityId: sourceId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          reviewStatus: source.reviewStatus,
+          status: source.status,
+        },
+        newValues: {
+          reviewStatus: next.reviewStatus,
+          status: next.status,
+        },
+        reason: comment,
+        requestId,
+      });
+
+      return next;
+    });
+
+    return this.getSource(auth, updated.id);
+  }
+
+  async archiveSource(auth: AuthContext, sourceId: string, reason?: string, requestId?: string) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+    this.assertSourceReviewPrivilege(source, auth);
+
+    const archiveReason = reason?.trim();
+    if (!archiveReason) {
+      throw badRequest('Archiving a curriculum source requires a reason.');
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const next = await tx.curriculumSource.update({
+        where: { id: sourceId },
+        data: {
+          reviewStatus: 'ARCHIVED',
+          status: 'ARCHIVED',
+          archivedAt: now,
+          isActive: false,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source.archive',
+        entityType: 'curriculum_source',
+        entityId: sourceId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          reviewStatus: source.reviewStatus,
+          status: source.status,
+          isActive: source.isActive,
+        },
+        newValues: {
+          reviewStatus: next.reviewStatus,
+          status: next.status,
+          isActive: next.isActive,
+        },
+        reason: archiveReason,
+        requestId,
+      });
+
+      return next;
+    });
+
+    return this.getSource(auth, updated.id);
+  }
+
+  async createSourceContent(
+    auth: AuthContext,
+    sourceId: string,
+    payload: {
+      sequenceOrder?: number;
+      contentType:
+        | 'SECTION'
+        | 'TOPIC'
+        | 'CONCEPT'
+        | 'SKILL'
+        | 'LEARNING_OUTCOME'
+        | 'ACTIVITY'
+        | 'PROJECT'
+        | 'RESOURCE'
+        | 'ASSESSMENT'
+        | 'OTHER';
+      heading?: string;
+      rawText?: string;
+      structuredData?: Prisma.InputJsonValue;
+      sourcePage?: string;
+      sourceSection?: string;
+      confidenceScore?: number;
+      extractionMethod?: string;
+    },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      const currentMax = await tx.curriculumSourceContent.aggregate({
+        where: { curriculumSourceId: sourceId },
+        _max: { sequenceOrder: true },
+      });
+
+      const sequenceOrder = payload.sequenceOrder ?? (currentMax._max.sequenceOrder ?? 0) + 1;
+      const content = await tx.curriculumSourceContent.create({
+        data: {
+          curriculumSourceId: sourceId,
+          sequenceOrder,
+          contentType: payload.contentType,
+          heading: payload.heading,
+          rawText: payload.rawText,
+          structuredData: payload.structuredData,
+          sourcePage: payload.sourcePage,
+          sourceSection: payload.sourceSection,
+          confidenceScore: payload.confidenceScore,
+          extractionMethod: payload.extractionMethod,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_content.create',
+        entityType: 'curriculum_source_content',
+        entityId: content.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          curriculumSourceId: sourceId,
+          sequenceOrder: content.sequenceOrder,
+          contentType: content.contentType,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, sourceId);
+  }
+
+  async updateSourceContent(
+    auth: AuthContext,
+    contentId: string,
+    payload: {
+      sequenceOrder?: number;
+      contentType?:
+        | 'SECTION'
+        | 'TOPIC'
+        | 'CONCEPT'
+        | 'SKILL'
+        | 'LEARNING_OUTCOME'
+        | 'ACTIVITY'
+        | 'PROJECT'
+        | 'RESOURCE'
+        | 'ASSESSMENT'
+        | 'OTHER';
+      heading?: string;
+      rawText?: string;
+      structuredData?: Prisma.InputJsonValue;
+      sourcePage?: string;
+      sourceSection?: string;
+      confidenceScore?: number;
+      extractionMethod?: string;
+      reviewed?: boolean;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ) {
+    const content = await prisma.curriculumSourceContent.findUnique({
+      where: { id: contentId },
+      include: { curriculumSource: true },
+    });
+    if (!content) {
+      throw notFound('Curriculum source content not found.');
+    }
+
+    const source = await this.requireEditableOwnedSource(content.curriculumSourceId, auth);
+    this.assertNoConcurrentModification(content.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.curriculumSourceContent.update({
+        where: { id: contentId },
+        data: {
+          sequenceOrder: payload.sequenceOrder,
+          contentType: payload.contentType,
+          heading: payload.heading,
+          rawText: payload.rawText,
+          structuredData: payload.structuredData,
+          sourcePage: payload.sourcePage,
+          sourceSection: payload.sourceSection,
+          confidenceScore: payload.confidenceScore,
+          extractionMethod: payload.extractionMethod,
+          reviewed: payload.reviewed,
+          reviewedAt: payload.reviewed ? new Date() : null,
+          reviewedById: payload.reviewed ? auth.userId : null,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_content.edit',
+        entityType: 'curriculum_source_content',
+        entityId: contentId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          sequenceOrder: content.sequenceOrder,
+          contentType: content.contentType,
+        },
+        newValues: {
+          sequenceOrder: updated.sequenceOrder,
+          contentType: updated.contentType,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async reorderSourceContents(
+    auth: AuthContext,
+    sourceId: string,
+    orderedContentIds: string[],
+    lastKnownUpdatedAt: string,
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+    this.assertNoConcurrentModification(source.updatedAt, lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const contents = await tx.curriculumSourceContent.findMany({
+        where: { curriculumSourceId: sourceId },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      this.assertFullReorderSet(
+        contents.map((item) => item.id),
+        orderedContentIds,
+        'source content',
+      );
+
+      for (let index = 0; index < orderedContentIds.length; index += 1) {
+        await tx.curriculumSourceContent.update({
+          where: { id: orderedContentIds[index] },
+          data: { sequenceOrder: index + 1 },
+        });
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_content.reorder',
+        entityType: 'curriculum_source',
+        entityId: sourceId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        newValues: { orderedContentIds },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, sourceId);
+  }
+
+  async deleteSourceContent(
+    auth: AuthContext,
+    contentId: string,
+    payload: { lastKnownUpdatedAt: string },
+    requestId?: string,
+  ) {
+    const content = await curriculumRepository.findSourceContentById(contentId);
+    if (!content) {
+      throw notFound('Curriculum source content not found.');
+    }
+
+    const source = await this.requireEditableOwnedSource(content.curriculumSourceId, auth);
+    this.assertNoConcurrentModification(content.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceContent.delete({ where: { id: contentId } });
+
+      const remaining = await tx.curriculumSourceContent.findMany({
+        where: { curriculumSourceId: source.id },
+        orderBy: { sequenceOrder: 'asc' },
+      });
+
+      for (let index = 0; index < remaining.length; index += 1) {
+        const expectedSequence = index + 1;
+        if (remaining[index]?.sequenceOrder !== expectedSequence) {
+          await tx.curriculumSourceContent.update({
+            where: { id: remaining[index]!.id },
+            data: { sequenceOrder: expectedSequence },
+          });
+        }
+      }
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_content.delete',
+        entityType: 'curriculum_source_content',
+        entityId: contentId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          curriculumSourceId: content.curriculumSourceId,
+          sequenceOrder: content.sequenceOrder,
+          contentType: content.contentType,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async listMasterCatalog(
+    auth: AuthContext,
+    payload: {
+      type: MasterCatalogType;
+      q?: string;
+      includeGlobal?: boolean;
+    },
+  ) {
+    const schoolId = requireSchoolScope({ auth } as never);
+    return curriculumRepository.listApprovedMasterCatalog({
+      type: payload.type,
+      schoolId,
+      q: payload.q,
+      includeGlobal: payload.includeGlobal,
+    });
+  }
+
+  async createSourceMasterLink(
+    auth: AuthContext,
+    sourceId: string,
+    payload: {
+      masterContentType: MasterCatalogType;
+      masterContentId: string;
+      sourceVersionLabel?: string;
+      sourcePage?: string;
+      sourceSection?: string;
+      extractionNote?: string;
+      adaptationNote?: string;
+      attribution?: string;
+      usageRestriction?: string;
+    },
+    requestId?: string,
+  ) {
+    const source = await this.requireEditableOwnedSource(sourceId, auth);
+
+    const targetField = this.resolveMasterLinkTargetField(payload.masterContentType);
+    const targetExists = await this.ensureMasterTargetExists(payload.masterContentType, payload.masterContentId, auth.schoolId);
+    if (!targetExists) {
+      throw tenantScopeViolation('Master content target does not exist in accessible school scope.');
+    }
+
+    await prisma.$transaction(async (tx) => {
+      const created = await tx.curriculumSourceMasterContentLink.create({
+        data: {
+          curriculumSourceId: sourceId,
+          [targetField]: payload.masterContentId,
+          sourceVersionLabel: payload.sourceVersionLabel,
+          sourcePage: payload.sourcePage,
+          sourceSection: payload.sourceSection,
+          extractionNote: payload.extractionNote,
+          adaptationNote: payload.adaptationNote,
+          attribution: payload.attribution,
+          usageRestriction: payload.usageRestriction,
+          reviewStatus: 'DRAFT',
+          createdById: auth.userId,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_master_link.create',
+        entityType: 'curriculum_source_master_content_link',
+        entityId: created.id,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        newValues: {
+          sourceId,
+          targetField,
+          targetId: payload.masterContentId,
+          reviewStatus: created.reviewStatus,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, sourceId);
+  }
+
+  async updateSourceMasterLink(
+    auth: AuthContext,
+    linkId: string,
+    payload: {
+      reviewStatus?: 'DRAFT' | 'PENDING_REVIEW' | 'REVISION_REQUIRED' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
+      sourceVersionLabel?: string;
+      sourcePage?: string;
+      sourceSection?: string;
+      extractionNote?: string;
+      adaptationNote?: string;
+      attribution?: string;
+      usageRestriction?: string;
+      lastKnownUpdatedAt: string;
+    },
+    requestId?: string,
+  ) {
+    const link = await prisma.curriculumSourceMasterContentLink.findUnique({
+      where: { id: linkId },
+      include: { curriculumSource: true },
+    });
+    if (!link) {
+      throw notFound('Source-to-master content link not found.');
+    }
+
+    const source = await this.requireEditableOwnedSource(link.curriculumSourceId, auth);
+    this.assertNoConcurrentModification(link.updatedAt, payload.lastKnownUpdatedAt);
+
+    await prisma.$transaction(async (tx) => {
+      const updated = await tx.curriculumSourceMasterContentLink.update({
+        where: { id: linkId },
+        data: {
+          reviewStatus: payload.reviewStatus,
+          sourceVersionLabel: payload.sourceVersionLabel,
+          sourcePage: payload.sourcePage,
+          sourceSection: payload.sourceSection,
+          extractionNote: payload.extractionNote,
+          adaptationNote: payload.adaptationNote,
+          attribution: payload.attribution,
+          usageRestriction: payload.usageRestriction,
+        },
+      });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_master_link.edit',
+        entityType: 'curriculum_source_master_content_link',
+        entityId: linkId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        oldValues: {
+          reviewStatus: link.reviewStatus,
+        },
+        newValues: {
+          reviewStatus: updated.reviewStatus,
+        },
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  async deleteSourceMasterLink(auth: AuthContext, linkId: string, requestId?: string) {
+    const link = await prisma.curriculumSourceMasterContentLink.findUnique({
+      where: { id: linkId },
+      include: { curriculumSource: true },
+    });
+    if (!link) {
+      throw notFound('Source-to-master content link not found.');
+    }
+
+    const source = await this.requireEditableOwnedSource(link.curriculumSourceId, auth);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.curriculumSourceMasterContentLink.delete({ where: { id: linkId } });
+
+      await this.createAuditLogTx(tx, {
+        action: 'curriculum.source_master_link.delete',
+        entityType: 'curriculum_source_master_content_link',
+        entityId: linkId,
+        schoolId: source.schoolId,
+        actorUserId: auth.userId,
+        reason: 'Draft-only link removal',
+        requestId,
+      });
+    });
+
+    return this.getSource(auth, source.id);
+  }
+
+  private async requireSourceInScope(sourceId: string, auth: AuthContext) {
+    const source = await curriculumRepository.findSourceRecordById(sourceId);
+    if (!source) {
+      throw notFound('Curriculum source not found.');
+    }
+
+    if (source.schoolId && source.schoolId !== auth.schoolId) {
+      throw tenantScopeViolation('Curriculum source does not belong to authenticated school scope.');
+    }
+
+    return source;
+  }
+
+  private assertSourceReviewPrivilege(
+    source: { schoolId: string | null },
+    auth: AuthContext,
+  ): void {
+    if (!source.schoolId && !auth.isSuperAdmin) {
+      throw forbidden('Global source lifecycle changes require super administrator privileges.');
+    }
+
+    if (source.schoolId && source.schoolId !== auth.schoolId) {
+      throw tenantScopeViolation('Source does not belong to authenticated school scope.');
+    }
+  }
+
+  private async requireEditableOwnedSource(sourceId: string, auth: AuthContext) {
+    const source = await this.requireSourceInScope(sourceId, auth);
+    if (!source.schoolId || source.schoolId !== auth.schoolId) {
+      throw forbidden('Global source records cannot be modified from school-scoped administration.');
+    }
+
+    if (!source.isActive || source.status === 'ARCHIVED' || source.reviewStatus === 'ARCHIVED') {
+      throw lifecycleConflict('Archived source records are immutable.');
+    }
+
+    if (!(source.reviewStatus === 'DRAFT' || source.reviewStatus === 'REVISION_REQUIRED')) {
+      throw lifecycleConflict('Source can only be edited in DRAFT or REVISION_REQUIRED review status.');
+    }
+
+    return source;
+  }
+
+  private resolveMasterLinkTargetField(type: MasterCatalogType):
+    | 'masterCurriculumUnitId'
+    | 'masterTopicId'
+    | 'masterConceptId'
+    | 'masterSkillId'
+    | 'masterLearningOutcomeId'
+    | 'masterActivityId'
+    | 'masterProjectId'
+    | 'masterProjectImplementationId'
+    | 'masterResourceId'
+    | 'masterAssessmentTemplateId'
+    | 'masterRubricId' {
+    if (type === 'unit') {
+      return 'masterCurriculumUnitId';
+    }
+    if (type === 'topic') {
+      return 'masterTopicId';
+    }
+    if (type === 'concept') {
+      return 'masterConceptId';
+    }
+    if (type === 'skill') {
+      return 'masterSkillId';
+    }
+    if (type === 'learning_outcome') {
+      return 'masterLearningOutcomeId';
+    }
+    if (type === 'activity') {
+      return 'masterActivityId';
+    }
+    if (type === 'project') {
+      return 'masterProjectId';
+    }
+    if (type === 'project_implementation') {
+      return 'masterProjectImplementationId';
+    }
+    if (type === 'resource') {
+      return 'masterResourceId';
+    }
+    if (type === 'assessment_template') {
+      return 'masterAssessmentTemplateId';
+    }
+
+    return 'masterRubricId';
+  }
+
+  private async ensureMasterTargetExists(type: MasterCatalogType, id: string, schoolId: string | null): Promise<boolean> {
+    const scopedWhere = schoolId ? { OR: [{ schoolId }, { schoolId: null }] } : { schoolId: null };
+
+    if (type === 'unit') {
+      const found = await prisma.masterCurriculumUnit.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'topic') {
+      const found = await prisma.masterTopic.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'concept') {
+      const found = await prisma.masterConcept.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'skill') {
+      const found = await prisma.masterSkill.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'learning_outcome') {
+      const found = await prisma.masterLearningOutcome.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'activity') {
+      const found = await prisma.masterActivity.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'project') {
+      const found = await prisma.masterProject.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'project_implementation') {
+      const found = await prisma.masterProjectImplementation.findFirst({ where: { id, ...scopedWhere, isActive: true } });
+      return Boolean(found);
+    }
+    if (type === 'resource') {
+      const found = await prisma.masterResource.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+    if (type === 'assessment_template') {
+      const found = await prisma.masterAssessmentTemplate.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+      return Boolean(found);
+    }
+
+    const found = await prisma.masterRubric.findFirst({ where: { id, ...scopedWhere, archivedAt: null } });
+    return Boolean(found);
   }
 
   private async requireCurriculumInScope(curriculumId: string, auth: AuthContext): Promise<CurriculumAggregate> {

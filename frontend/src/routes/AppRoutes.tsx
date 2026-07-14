@@ -10,6 +10,7 @@ import { CurriculumEditPage } from '../pages/admin/curricula/CurriculumEditPage'
 import { CurriculumListPage } from '../pages/admin/curricula/CurriculumListPage';
 import { CurriculumReviewPage } from '../pages/admin/curricula/CurriculumReviewPage';
 import { CurriculumStructurePage } from '../pages/admin/curricula/CurriculumStructurePage';
+import { CurriculumSourceAdminPage } from '../pages/admin/curricula/CurriculumSourceAdminPage';
 import { CurriculumVersionsPage } from '../pages/admin/curricula/CurriculumVersionsPage';
 import HealthPage from '../pages/HealthPage';
 import HomePage from '../pages/HomePage';
@@ -23,6 +24,7 @@ const AppRoutes = (): JSX.Element => {
         <Route path="curricula" element={<CurriculumDashboardPage />} />
         <Route path="curricula/list" element={<CurriculumListPage />} />
         <Route path="curricula/create" element={<CurriculumCreatePage />} />
+        <Route path="curricula/sources" element={<CurriculumSourceAdminPage />} />
         <Route path="curricula/:curriculumId" element={<CurriculumDetailPage />} />
         <Route path="curricula/:curriculumId/edit" element={<CurriculumEditPage />} />
         <Route path="curricula/:curriculumId/structure" element={<CurriculumStructurePage />} />

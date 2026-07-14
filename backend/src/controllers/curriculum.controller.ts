@@ -1,15 +1,11 @@
 import type { Request, Response } from 'express';
 
 import { curriculumService } from '../services/curriculum.service';
-import { badRequest, forbidden, unauthorized } from '../utils/app-error';
+import { badRequest, unauthorized } from '../utils/app-error';
 
 const getAuth = (req: Request) => {
   if (!req.auth) {
     throw unauthorized();
-  }
-
-  if (!req.auth.schoolId) {
-    throw forbidden('School scope is required for this operation.');
   }
 
   return req.auth;
@@ -535,4 +531,163 @@ export const archiveAssignment = async (req: Request, res: Response): Promise<vo
     req.requestId,
   );
   res.status(200).json({ success: true, message: 'Assignment archived.', data });
+};
+
+export const listSources = async (req: Request, res: Response): Promise<void> => {
+  const sourceFilters: Parameters<typeof curriculumService.listSources>[1] = {
+    reviewStatus: req.query.reviewStatus
+      ? (String(req.query.reviewStatus) as Parameters<typeof curriculumService.listSources>[1]['reviewStatus'])
+      : undefined,
+    sourceType: req.query.sourceType
+      ? (String(req.query.sourceType) as Parameters<typeof curriculumService.listSources>[1]['sourceType'])
+      : undefined,
+    sourceFormat: req.query.sourceFormat
+      ? (String(req.query.sourceFormat) as Parameters<typeof curriculumService.listSources>[1]['sourceFormat'])
+      : undefined,
+    subjectId: req.query.subjectId ? String(req.query.subjectId) : undefined,
+    q: req.query.q ? String(req.query.q) : undefined,
+    ownership: req.query.ownership
+      ? (String(req.query.ownership) as Parameters<typeof curriculumService.listSources>[1]['ownership'])
+      : undefined,
+    includeGlobal: req.query.includeGlobal !== 'false',
+    page: req.query.page ? Number(req.query.page) : undefined,
+    pageSize: req.query.pageSize ? Number(req.query.pageSize) : undefined,
+  };
+
+  const data = await curriculumService.listSources(getAuth(req), {
+    ...sourceFilters,
+  });
+  res.status(200).json({ success: true, message: 'Curriculum sources fetched.', data });
+};
+
+export const getSource = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.getSource(getAuth(req), param(req, 'sourceId'));
+  res.status(200).json({ success: true, message: 'Curriculum source fetched.', data });
+};
+
+export const createSource = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.createSource(getAuth(req), req.body, req.requestId);
+  res.status(201).json({ success: true, message: 'Curriculum source created.', data });
+};
+
+export const updateSource = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateSource(getAuth(req), param(req, 'sourceId'), req.body, req.requestId);
+  res.status(200).json({ success: true, message: 'Curriculum source updated.', data });
+};
+
+export const submitSourceReview = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.submitSourceReview(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body.comment,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source submitted for review.', data });
+};
+
+export const requestSourceRevision = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.requestSourceRevision(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source revision requested.', data });
+};
+
+export const rejectSource = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.rejectSource(getAuth(req), param(req, 'sourceId'), req.body, req.requestId);
+  res.status(200).json({ success: true, message: 'Curriculum source rejected.', data });
+};
+
+export const approveSource = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.approveSource(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body.comment,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source approved.', data });
+};
+
+export const archiveSource = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.archiveSource(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body.reason ?? req.body.comment,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source archived.', data });
+};
+
+export const createSourceContent = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.createSourceContent(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(201).json({ success: true, message: 'Curriculum source content created.', data });
+};
+
+export const updateSourceContent = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateSourceContent(
+    getAuth(req),
+    param(req, 'contentId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source content updated.', data });
+};
+
+export const deleteSourceContent = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteSourceContent(getAuth(req), param(req, 'contentId'), req.body, req.requestId);
+  res.status(200).json({ success: true, message: 'Curriculum source content deleted.', data });
+};
+
+export const reorderSourceContents = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.reorderSourceContents(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body.orderedContentIds,
+    req.body.lastKnownUpdatedAt,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Curriculum source contents reordered.', data });
+};
+
+export const listMasterCatalog = async (req: Request, res: Response): Promise<void> => {
+  const type = String(req.query.type) as Parameters<typeof curriculumService.listMasterCatalog>[1]['type'];
+
+  const data = await curriculumService.listMasterCatalog(getAuth(req), {
+    type,
+    q: req.query.q ? String(req.query.q) : undefined,
+    includeGlobal: req.query.includeGlobal !== 'false',
+  });
+  res.status(200).json({ success: true, message: 'Master content catalog fetched.', data });
+};
+
+export const createSourceMasterLink = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.createSourceMasterLink(
+    getAuth(req),
+    param(req, 'sourceId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(201).json({ success: true, message: 'Source-to-master content link created.', data });
+};
+
+export const updateSourceMasterLink = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.updateSourceMasterLink(
+    getAuth(req),
+    param(req, 'linkId'),
+    req.body,
+    req.requestId,
+  );
+  res.status(200).json({ success: true, message: 'Source-to-master content link updated.', data });
+};
+
+export const deleteSourceMasterLink = async (req: Request, res: Response): Promise<void> => {
+  const data = await curriculumService.deleteSourceMasterLink(getAuth(req), param(req, 'linkId'), req.requestId);
+  res.status(200).json({ success: true, message: 'Source-to-master content link removed.', data });
 };

@@ -51,3 +51,31 @@ Every API endpoint we'll need
 - Added versioning endpoints for snapshot retrieval and version comparison.
 - Added assignment endpoints with explicit state transition actions (activate, complete, suspend, archive).
 - All protected endpoints require authenticated user context plus permission checks.
+
+## Phase 2K.1 Update: Curriculum Source Administration Foundation
+
+- Added source register endpoints under `/api/v1/curriculum`:
+	- `GET /sources`
+	- `POST /sources`
+	- `GET /sources/:sourceId`
+	- `PATCH /sources/:sourceId`
+	- `POST /sources/:sourceId/submit-review`
+	- `POST /sources/:sourceId/request-revision`
+	- `POST /sources/:sourceId/reject`
+	- `POST /sources/:sourceId/approve`
+	- `POST /sources/:sourceId/archive`
+- Added source content administration endpoints:
+	- `POST /sources/:sourceId/contents`
+	- `PATCH /source-contents/:contentId`
+	- `DELETE /source-contents/:contentId`
+	- `POST /sources/:sourceId/contents/reorder`
+- Added source-to-master lineage endpoints:
+	- `POST /sources/:sourceId/master-links`
+	- `PATCH /source-master-links/:linkId`
+	- `DELETE /source-master-links/:linkId`
+- Added approved master-content catalog endpoint:
+	- `GET /master-content/catalog?type=<catalogType>&q=<optionalSearch>`
+- Multi-tenant and lifecycle rules:
+	- School-owned source records are editable only in `DRAFT` or `REVISION_REQUIRED` review states.
+	- Global source records can be listed but are immutable from school-scoped admin operations.
+	- All state-changing operations emit audit log entries with actor, entity, and reason/comment metadata.

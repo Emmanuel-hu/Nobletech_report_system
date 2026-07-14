@@ -1,4 +1,9 @@
 import type {
+  CurriculumSource,
+  CurriculumSourceContentType,
+  CurriculumSourceFormat,
+  CurriculumSourceType,
+  MasterCatalogType,
   CurriculumAssignment,
   CurriculumDetail,
   CurriculumEditorLookups,
@@ -471,4 +476,174 @@ export const curriculumClient = {
       { method: 'POST', body: { reason } },
       session,
     ),
+  listSources: (
+    session: AuthSession,
+    filters?: {
+      reviewStatus?: string;
+      sourceType?: CurriculumSourceType;
+      sourceFormat?: CurriculumSourceFormat;
+      subjectId?: string;
+      ownership?: 'school' | 'global' | 'all';
+      q?: string;
+      page?: number;
+      pageSize?: number;
+      includeGlobal?: boolean;
+    },
+  ) =>
+    apiRequest<CurriculumSource[]>(
+      `/curriculum/sources${queryString({
+        reviewStatus: filters?.reviewStatus,
+        sourceType: filters?.sourceType,
+        sourceFormat: filters?.sourceFormat,
+        subjectId: filters?.subjectId,
+        ownership: filters?.ownership,
+        q: filters?.q,
+        page: typeof filters?.page === 'number' ? String(filters.page) : undefined,
+        pageSize: typeof filters?.pageSize === 'number' ? String(filters.pageSize) : undefined,
+        includeGlobal: filters?.includeGlobal === false ? 'false' : undefined,
+      })}`,
+      { method: 'GET' },
+      session,
+    ),
+  getSource: (session: AuthSession, sourceId: string) =>
+    apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}`, { method: 'GET' }, session),
+  createSource: (
+    session: AuthSession,
+    payload: {
+      sourceCode?: string;
+      title: string;
+      description?: string;
+      sourceType: CurriculumSourceType;
+      sourceFormat: CurriculumSourceFormat;
+      usageRights: string;
+      sourceUrl?: string;
+      fileReference?: string;
+      isGlobal?: boolean;
+    },
+  ) => apiRequest<CurriculumSource>('/curriculum/sources', { method: 'POST', body: payload }, session),
+  updateSource: (
+    session: AuthSession,
+    sourceId: string,
+    payload: {
+      sourceCode?: string;
+      title?: string;
+      description?: string;
+      sourceType?: CurriculumSourceType;
+      sourceFormat?: CurriculumSourceFormat;
+      usageRights?: string;
+      sourceUrl?: string;
+      fileReference?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) => apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}`, { method: 'PATCH', body: payload }, session),
+  submitSourceReview: (session: AuthSession, sourceId: string, comment?: string) =>
+    apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}/submit-review`, { method: 'POST', body: { comment } }, session),
+  requestSourceRevision: (
+    session: AuthSession,
+    sourceId: string,
+    payload: { requestedChanges: string; comment?: string; lastKnownUpdatedAt?: string },
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/request-revision`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  rejectSource: (
+    session: AuthSession,
+    sourceId: string,
+    payload: { rejectionReason: string; comment?: string; lastKnownUpdatedAt?: string },
+  ) => apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}/reject`, { method: 'POST', body: payload }, session),
+  approveSource: (session: AuthSession, sourceId: string, comment?: string) =>
+    apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}/approve`, { method: 'POST', body: { comment } }, session),
+  archiveSource: (session: AuthSession, sourceId: string, reason?: string) =>
+    apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}/archive`, { method: 'POST', body: { reason } }, session),
+  createSourceContent: (
+    session: AuthSession,
+    sourceId: string,
+    payload: {
+      sequenceOrder?: number;
+      contentType: CurriculumSourceContentType;
+      heading?: string;
+      rawText?: string;
+      sourcePage?: string;
+      sourceSection?: string;
+      confidenceScore?: number;
+      extractionMethod?: string;
+    },
+  ) => apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}/contents`, { method: 'POST', body: payload }, session),
+  updateSourceContent: (
+    session: AuthSession,
+    contentId: string,
+    payload: {
+      sequenceOrder?: number;
+      contentType?: CurriculumSourceContentType;
+      heading?: string;
+      rawText?: string;
+      sourcePage?: string;
+      sourceSection?: string;
+      confidenceScore?: number;
+      extractionMethod?: string;
+      reviewed?: boolean;
+      lastKnownUpdatedAt: string;
+    },
+  ) => apiRequest<CurriculumSource>(`/curriculum/source-contents/${contentId}`, { method: 'PATCH', body: payload }, session),
+  deleteSourceContent: (session: AuthSession, contentId: string, lastKnownUpdatedAt: string) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/source-contents/${contentId}`,
+      { method: 'DELETE', body: { lastKnownUpdatedAt } },
+      session,
+    ),
+  reorderSourceContents: (
+    session: AuthSession,
+    sourceId: string,
+    orderedContentIds: string[],
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<CurriculumSource>(
+      `/curriculum/sources/${sourceId}/contents/reorder`,
+      { method: 'POST', body: { orderedContentIds, lastKnownUpdatedAt } },
+      session,
+    ),
+  listMasterCatalog: (session: AuthSession, type: MasterCatalogType, q?: string, includeGlobal = true) =>
+    apiRequest<Array<Record<string, unknown>>>(
+      `/curriculum/master-content/catalog${queryString({
+        type,
+        q,
+        includeGlobal: includeGlobal ? undefined : 'false',
+      })}`,
+      { method: 'GET' },
+      session,
+    ),
+  createSourceMasterLink: (
+    session: AuthSession,
+    sourceId: string,
+    payload: {
+      masterContentType: MasterCatalogType;
+      masterContentId: string;
+      sourceVersionLabel?: string;
+      sourcePage?: string;
+      sourceSection?: string;
+      extractionNote?: string;
+      adaptationNote?: string;
+      attribution?: string;
+      usageRestriction?: string;
+    },
+  ) => apiRequest<CurriculumSource>(`/curriculum/sources/${sourceId}/master-links`, { method: 'POST', body: payload }, session),
+  updateSourceMasterLink: (
+    session: AuthSession,
+    linkId: string,
+    payload: {
+      reviewStatus?: string;
+      sourceVersionLabel?: string;
+      sourcePage?: string;
+      sourceSection?: string;
+      extractionNote?: string;
+      adaptationNote?: string;
+      attribution?: string;
+      usageRestriction?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) => apiRequest<CurriculumSource>(`/curriculum/source-master-links/${linkId}`, { method: 'PATCH', body: payload }, session),
+  deleteSourceMasterLink: (session: AuthSession, linkId: string) =>
+    apiRequest<CurriculumSource>(`/curriculum/source-master-links/${linkId}`, { method: 'DELETE' }, session),
 };

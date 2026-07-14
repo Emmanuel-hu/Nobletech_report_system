@@ -219,6 +219,13 @@ Deliverables
 
 # Development Milestones
 
+## Phase 2K.1 Milestone Note
+
+- Completed foundation implementation for Curriculum Source Administration.
+- Delivered backend source lifecycle APIs, structured source content operations, and source-to-master lineage endpoints.
+- Delivered frontend administrative route for source register and master catalog visibility access.
+- Deferred AI extraction or generation workflows remain outside this milestone.
+
 | Milestone | Description | Status |
 |------------|-------------|--------|
 | Milestone 1 | Project Foundation | Completed |

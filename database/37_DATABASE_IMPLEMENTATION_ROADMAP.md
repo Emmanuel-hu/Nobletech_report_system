@@ -1,10 +1,19 @@
 ## Phase 2J.1 Status Update
 
+## Phase 2K.1 Status Update
+
+- Completed: curriculum source administration foundation implementation against existing Phase 2F schema.
+- Added backend service and API support for source registration, source review lifecycle, structured source content maintenance, and source-to-master lineage links.
+- Added master catalog retrieval endpoint for approved content types in school and optional global scope.
+- Added frontend administration route for source register operations and master catalog visibility.
+- Validation focus remained on API contract and lifecycle guardrails; no new database tables or schema duplication introduced.
+- Deferred boundary retained: AI extraction, AI-assisted parsing, and AI curriculum generation remain out of scope.
+
 - Completed: curriculum structure editor workflow completion using existing lifecycle and assignment-capable schema.
 - Added minimal API corrections only for existing structure domains: operational concept CRUD, concept-mapping reorder, project-implementation reorder, learning-outcome delete, and visibility concurrency token validation.
 - No new database domains were introduced; implementation remained within approved curriculum structure entities.
 - Optimistic concurrency enforcement now covers structure mutations and visibility updates consistently.
-- Next milestone recommendation remains: Phase 2K Curriculum Source and Master-Content Administration Foundation.
+- Next milestone recommendation remains: Phase 2K.2 Master-Content Administration Completion.
 - Deferred boundary retained: AI extraction and AI-assisted curriculum generation stay out of scope.
 
 ## Phase 2J Status Update

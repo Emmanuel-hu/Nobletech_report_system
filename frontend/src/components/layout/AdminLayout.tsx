@@ -5,6 +5,7 @@ import { NotificationTray } from '../feedback/NotificationTray';
 
 const navLinks = [
   { to: '/admin/curricula', label: 'Curricula', permission: 'curriculum.view' },
+  { to: '/admin/curricula/sources', label: 'Sources', permission: 'curriculum.view' },
   { to: '/admin/curricula/create', label: 'Create', permission: 'curriculum.create' },
   { to: '/health', label: 'Health', permission: 'curriculum.view' },
 ];

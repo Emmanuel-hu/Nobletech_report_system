@@ -380,3 +380,118 @@ export type CurriculumDetail = CurriculumSummary & {
   statusHistory: CurriculumStatusHistory[];
   visibilitySetting: CurriculumVisibility | null;
 };
+
+export type SourceReviewStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'REVISION_REQUIRED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'ARCHIVED';
+
+export type CurriculumSourceType =
+  | 'GOVERNMENT_CURRICULUM'
+  | 'SCHOOL_SCHEME_OF_WORK'
+  | 'INTERNATIONAL_FRAMEWORK'
+  | 'TEXTBOOK'
+  | 'TEACHER_MATERIAL'
+  | 'WEBSITE'
+  | 'INTERNAL_NOBLETECH_CONTENT'
+  | 'UPLOADED_DOCUMENT'
+  | 'OTHER';
+
+export type CurriculumSourceFormat = 'PDF' | 'DOCX' | 'XLSX' | 'CSV' | 'HTML' | 'URL' | 'TEXT' | 'IMAGE' | 'OTHER';
+
+export type CurriculumSourceContentType =
+  | 'SECTION'
+  | 'TOPIC'
+  | 'CONCEPT'
+  | 'SKILL'
+  | 'LEARNING_OUTCOME'
+  | 'ACTIVITY'
+  | 'PROJECT'
+  | 'RESOURCE'
+  | 'ASSESSMENT'
+  | 'OTHER';
+
+export type MasterCatalogType =
+  | 'unit'
+  | 'topic'
+  | 'concept'
+  | 'skill'
+  | 'learning_outcome'
+  | 'activity'
+  | 'project'
+  | 'project_implementation'
+  | 'resource'
+  | 'assessment_template'
+  | 'rubric';
+
+export type CurriculumSourceContent = {
+  id: string;
+  curriculumSourceId: string;
+  sequenceOrder: number;
+  contentType: CurriculumSourceContentType;
+  heading: string | null;
+  rawText: string | null;
+  structuredData: Record<string, unknown> | null;
+  sourcePage: string | null;
+  sourceSection: string | null;
+  confidenceScore: string | number | null;
+  extractionMethod: string | null;
+  reviewed: boolean;
+  reviewedById: string | null;
+  reviewedAt: string | null;
+  updatedAt: string;
+};
+
+export type CurriculumSourceMasterContentLink = {
+  id: string;
+  curriculumSourceId: string;
+  masterCurriculumUnitId: string | null;
+  masterTopicId: string | null;
+  masterConceptId: string | null;
+  masterSkillId: string | null;
+  masterLearningOutcomeId: string | null;
+  masterActivityId: string | null;
+  masterProjectId: string | null;
+  masterProjectImplementationId: string | null;
+  masterResourceId: string | null;
+  masterAssessmentTemplateId: string | null;
+  masterRubricId: string | null;
+  sourceVersionLabel: string | null;
+  sourcePage: string | null;
+  sourceSection: string | null;
+  extractionNote: string | null;
+  adaptationNote: string | null;
+  attribution: string | null;
+  usageRestriction: string | null;
+  reviewStatus: SourceReviewStatus;
+  updatedAt: string;
+};
+
+export type CurriculumSource = {
+  id: string;
+  schoolId: string | null;
+  sourceCode: string | null;
+  title: string;
+  description: string | null;
+  sourceType: CurriculumSourceType;
+  sourceFormat: CurriculumSourceFormat;
+  usageRights: string;
+  status: 'DRAFT' | 'UNDER_REVIEW' | 'REVISION_REQUIRED' | 'APPROVED' | 'ARCHIVED';
+  reviewStatus: SourceReviewStatus;
+  isActive: boolean;
+  sourceUrl: string | null;
+  fileReference: string | null;
+  uploadedById: string | null;
+  reviewedById: string | null;
+  approvedById: string | null;
+  uploadedAt: string;
+  reviewedAt: string | null;
+  approvedAt: string | null;
+  archivedAt: string | null;
+  updatedAt: string;
+  sourceContents: CurriculumSourceContent[];
+  masterContentLinks: CurriculumSourceMasterContentLink[];
+};

@@ -32,7 +32,7 @@ export const errorHandler = (
     errors: [
       {
         code: 'INTERNAL_ERROR',
-        message: err.message,
+        message: 'An unexpected error occurred.',
         ...(isProduction ? {} : { stack: err.stack }),
       },
     ],

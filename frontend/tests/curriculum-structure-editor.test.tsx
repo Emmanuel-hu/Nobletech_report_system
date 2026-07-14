@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -245,7 +245,10 @@ const lookups: CurriculumEditorLookups = {
 
 const renderPage = (session?: AuthSession) => {
   return render(
-    <MemoryRouter initialEntries={['/admin/curricula/curr-1/structure']}>
+    <MemoryRouter
+      initialEntries={['/admin/curricula/curr-1/structure']}
+      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+    >
       <AuthProvider
         initialSession={
           session ?? {
@@ -316,12 +319,31 @@ describe('CurriculumStructurePage workflows', () => {
 
     await screen.findByText('Curriculum structure editor');
 
-    await user.type(screen.getAllByLabelText('Topic title')[0], 'New Topic');
-    await user.type(screen.getAllByLabelText('Topic code')[0], 'NT-1');
-    await user.type(screen.getAllByLabelText('Week number')[0], '3');
-    await user.type(screen.getAllByLabelText('Duration (minutes)')[0], '90');
-    await user.type(screen.getAllByLabelText('Difficulty')[0], 'EASY');
-    await user.type(screen.getAllByLabelText('Teacher note')[0], 'Note');
+    const createTopicButton = screen.getByRole('button', { name: 'Create topic' });
+    const createTopicForm = createTopicButton.closest('form');
+    expect(createTopicForm).not.toBeNull();
+
+    fireEvent.change(within(createTopicForm as HTMLElement).getByLabelText('Topic title'), {
+      target: { value: 'New Topic' },
+    });
+    fireEvent.change(within(createTopicForm as HTMLElement).getByLabelText('Topic code'), {
+      target: { value: 'NT-1' },
+    });
+    fireEvent.change(within(createTopicForm as HTMLElement).getByLabelText('Week number'), {
+      target: { value: '3' },
+    });
+    fireEvent.change(
+      within(createTopicForm as HTMLElement).getByLabelText('Duration (minutes)'),
+      {
+        target: { value: '90' },
+      }
+    );
+    fireEvent.change(within(createTopicForm as HTMLElement).getByLabelText('Difficulty'), {
+      target: { value: 'EASY' },
+    });
+    fireEvent.change(within(createTopicForm as HTMLElement).getByLabelText('Teacher note'), {
+      target: { value: 'Note' },
+    });
     await user.click(screen.getByRole('button', { name: 'Create topic' }));
 
     await waitFor(() => expect(curriculumClient.createTopic).toHaveBeenCalled());
@@ -365,9 +387,19 @@ describe('CurriculumStructurePage workflows', () => {
     const user = userEvent.setup();
     renderPage();
 
-    await screen.findByText('Project implementations (1)');
+    const implementationSummary = await screen.findByText('Project implementations (1)');
+    const implementationDetails = implementationSummary.closest('details');
+    expect(implementationDetails).not.toBeNull();
+    const createImplementationButton = within(
+      implementationDetails as HTMLElement
+    ).getByRole('button', { name: 'Create implementation' });
+    const createImplementationForm = createImplementationButton.closest('form');
+    expect(createImplementationForm).not.toBeNull();
+    const implementationTitleInput = within(
+      createImplementationForm as HTMLElement
+    ).getByLabelText('Title');
 
-    await user.type(screen.getAllByLabelText('Title')[2], 'Implementation B');
+    await user.type(implementationTitleInput, 'Implementation B');
     await user.click(screen.getByRole('button', { name: 'Create implementation' }));
     await waitFor(() => expect(curriculumClient.createProjectImplementation).toHaveBeenCalled());
 
@@ -406,7 +438,15 @@ describe('CurriculumStructurePage workflows', () => {
 
     const resourceSection = screen.getByText('Curriculum resources').closest('article');
     expect(resourceSection).toBeTruthy();
-    await user.type(within(resourceSection as HTMLElement).getAllByLabelText('Title')[0], 'Laptop');
+    const createResourceButton = within(resourceSection as HTMLElement).getByRole('button', {
+      name: 'Create resource',
+    });
+    const createResourceForm = createResourceButton.closest('form');
+    expect(createResourceForm).not.toBeNull();
+    const resourceTitleInput = within(createResourceForm as HTMLElement).getByLabelText(
+      'Title'
+    );
+    await user.type(resourceTitleInput, 'Laptop');
     await user.click(screen.getByRole('button', { name: 'Create resource' }));
     await waitFor(() => expect(curriculumClient.createResource).toHaveBeenCalled());
 
