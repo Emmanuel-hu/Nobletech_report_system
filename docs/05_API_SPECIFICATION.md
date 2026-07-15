@@ -80,6 +80,12 @@ Every API endpoint we'll need
 	- Global source records can be listed but are immutable from school-scoped admin operations.
 	- All state-changing operations emit audit log entries with actor, entity, and reason/comment metadata.
 
+## Phase 2L Update: Curriculum Source File-Storage Foundation
+
+- Added curriculum source file endpoints for metadata updates, scan updates, unlink, and purge alongside the existing upload, replace, reorder, make-primary, archive, delete, download, and preview routes.
+- Added upload and storage enforcement for allow-listed extensions, blocked extensions, MIME validation, scan status tracking, and file-lifecycle metadata.
+- Deferred boundary retained: OCR, AI extraction, parsing, and generation remain out of scope for this phase.
+
 ## Phase 2K.2 Update: Master-Content Administration Completion
 
 - Added `/api/v1/master-content` administration API group.
@@ -105,9 +111,3 @@ Every API endpoint we'll need
 - Assessment-template to rubric relationship decision: implemented as explicit reusable mapping model (`master_assessment_template_rubrics`) to support rubric reuse and multi-rubric assessment templates.
 - Safety posture: lifecycle immutability for approved or archived content, optimistic concurrency checks for mutable operations, tenant-scope enforcement, and auditable privileged mutation flows.
 - Deferred boundary retained: AI extraction, OCR parsing, upload-driven ingestion, and AI-assisted generation APIs remain out of scope.
-
-## Phase 2L Update: Curriculum Source File-Storage Foundation
-
-- Added curriculum source file endpoints for metadata updates, scan updates, unlink, and purge alongside the existing upload, replace, reorder, make-primary, archive, delete, download, and preview routes.
-- Added upload and storage enforcement for allow-listed extensions, blocked extensions, MIME validation, scan status tracking, and file-lifecycle metadata.
-- Deferred boundary retained: OCR, AI extraction, parsing, and generation remain out of scope for this phase.
