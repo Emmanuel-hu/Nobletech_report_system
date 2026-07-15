@@ -99,6 +99,11 @@ shared/
 
 uploads/
 
+Phase 2L deployment note:
+
+- Local-development storage for curriculum source files now defaults to `uploads/` under repo root and must remain git-ignored.
+- Production deployment must provide a writable storage root or compatible provider configuration before source-file ingestion is enabled outside local development.
+
 tests/
 
 scripts/

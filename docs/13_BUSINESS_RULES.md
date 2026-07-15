@@ -20,6 +20,16 @@
 - Assessment-template to rubric relationship is modeled as explicit reusable mapping (`master_assessment_template_rubrics`), allowing reusable rubrics across templates and multiple rubrics per template.
 - AI extraction, OCR parsing, file-upload ingestion, and AI-assisted curriculum generation remain explicitly deferred.
 
+## Phase 2L Rules
+
+- Curriculum source files must be school-scoped and must not cross tenant boundaries.
+- Source-file mutations are allowed only while the parent source remains in editable lifecycle states.
+- File read access is allowed only when upload status is `READY` and scan status is in an approved readable state.
+- Blocked extensions and suspicious MIME patterns must be rejected before storage.
+- Logical archive/delete, unlink, and physical purge are distinct actions and must remain separately authorized and auditable.
+- Source-file supersession history must be preserved when files are replaced.
+- OCR parsing, AI extraction, and AI-assisted generation remain explicitly deferred in this milestone.
+
 ## Phase 2G Rules
 
 - Curriculum root records are reusable within a school and are not permanently bound to session or class context.

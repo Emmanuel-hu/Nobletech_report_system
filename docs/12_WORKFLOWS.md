@@ -20,6 +20,15 @@
 - Audit workflow: privileged mutations write audit entries retrievable from entity-level audit endpoints.
 - Deferred boundary retained: AI extraction, OCR, upload-based ingestion, and AI-assisted generation workflows are not part of Phase 2K.2.
 
+## Phase 2L Workflow Completion
+
+- Source-file upload workflow: select source -> choose file -> validate extension and MIME -> store file -> register metadata row -> refresh source aggregate.
+- Source-file replacement workflow: choose existing file -> upload replacement -> archive superseded file -> register replacement as active primary when applicable.
+- Source-file ordering workflow: list active/archived files -> move up/down -> persist ordered file identifiers with optimistic concurrency token.
+- Source-file read workflow: request download or preview -> verify tenant scope, upload status, and scan-read eligibility -> stream content from provider.
+- Source-file retention workflow: archive/delete for logical lifecycle control -> unlink from source when needed -> purge only for physical provider deletion with privileged access.
+- Deferred boundary retained: OCR, AI extraction, and automated content parsing are not part of Phase 2L.
+
 ## Phase 2J Workflow Additions
 
 - Editor lookup workflow: on entry, load curriculum-scoped sessions, terms, classes, components, teachers, published versions, and approved master-library references.

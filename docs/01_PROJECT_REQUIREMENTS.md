@@ -18,6 +18,13 @@
 - Delivered assessment-template to rubric relationship as explicit reusable mapping model (`master_assessment_template_rubrics`) with typed API mapping support.
 - Deferred boundary remains active: AI extraction, OCR, file upload ingestion, and AI-assisted curriculum generation are not implemented in this milestone.
 
+## Phase 2L Delivery Update
+
+- Milestone completed: Curriculum Source File-Storage and Upload Foundation.
+- Delivered backend source-file lifecycle support: upload, replace, reorder, make-primary, metadata update, scan update, archive, delete, unlink, purge, download, and preview.
+- Delivered storage and validation controls: dedicated source-file metadata table, local provider abstraction, extension allow-list, blocked-extension checks, MIME validation, optimistic concurrency, RBAC, audit logging, and scan/read access gates.
+- Deferred boundary remains active: OCR, AI extraction, AI curriculum generation, lesson notes, assessments, CBT, reports, attendance, and student portal remain out of scope.
+
 ## Phase 2J Delivery Update
 
 - Milestone completed: Curriculum Portal UX Hardening and Backend Data Integration Completion.

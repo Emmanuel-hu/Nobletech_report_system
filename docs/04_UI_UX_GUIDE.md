@@ -17,6 +17,12 @@
 - Retained separation of frontend UX gating from backend authorization; backend remains the final authority.
 - Deferred boundary retained: no AI extraction, OCR, source-file upload, or AI generation UI controls were introduced.
 
+## Phase 2L UI/UX Foundation Update
+
+- Added curriculum source file-management controls within the existing source administration surface for upload, replace, primary-file selection, reorder, archive, delete, download, and preview actions.
+- Added file list visibility for lifecycle state, primary designation, and per-source file count.
+- Preserved milestone boundary: metadata-edit, scan-review, unlink, and purge administrative surfaces remain backend-ready but not expanded into a separate dedicated frontend workflow in this pass.
+
 ## Phase 2J UI/UX Hardening Update
 
 - Assignment forms now use API-provided lookup selections for sessions, terms, classes, programme components, and teachers.
