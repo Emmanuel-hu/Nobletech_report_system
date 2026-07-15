@@ -52,6 +52,10 @@ const expectedIndexes = [
   'curriculum_source_files_superseded_file_id_idx',
 ];
 
+const normalizePostgresIdentifier = (identifier: string): string => {
+  return identifier.length > 63 ? identifier.slice(0, 63) : identifier;
+};
+
 const expectedConstraints = [
   'curriculum_source_files_pkey',
   'curriculum_source_files_curriculum_source_id_fkey',
@@ -94,7 +98,8 @@ const main = async (): Promise<void> => {
 
   const missingTables = expectedTables.filter((name) => !tableSet.has(name));
   const missingColumns = expectedColumns.filter((name) => !columnSet.has(name));
-  const missingIndexes = expectedIndexes.filter((name) => !indexSet.has(name));
+  const expectedIndexNames = expectedIndexes.map(normalizePostgresIdentifier);
+  const missingIndexes = expectedIndexNames.filter((name) => !indexSet.has(name));
   const missingConstraints = expectedConstraints.filter((name) => !constraintSet.has(name));
 
   const summary = {
