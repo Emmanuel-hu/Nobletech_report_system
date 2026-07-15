@@ -240,6 +240,14 @@ Deliverables
 - Added deterministic validation coverage for Phase 2L database verification, constraints, Prisma migration status, and Phase 2L-scoped checksum audit.
 - Preserved milestone boundary: OCR parsing, AI extraction, and AI-assisted generation remain deferred.
 
+## Phase 2M Milestone Note
+
+- Completed manual curriculum source processing foundation with dedicated processing-session and source-section domain models.
+- Added backend APIs for session lifecycle, section management, revision comparison, audit retrieval, and manual structured-record creation from reviewed sections.
+- Added frontend administration routes for manual processing workspace, review workflow, revision comparison, and review queue visibility.
+- Added deterministic validation coverage for Phase 2M database verification and relational-constraint checks.
+- Preserved milestone boundary: OCR parsing, AI extraction, and automatic curriculum generation remain deferred.
+
 | Milestone | Description | Status |
 |------------|-------------|--------|
 | Milestone 1 | Project Foundation | Completed |

@@ -86,6 +86,36 @@ Every API endpoint we'll need
 - Added upload and storage enforcement for allow-listed extensions, blocked extensions, MIME validation, scan status tracking, and file-lifecycle metadata.
 - Deferred boundary retained: OCR, AI extraction, parsing, and generation remain out of scope for this phase.
 
+## Phase 2M Update: Curriculum Source Manual Processing Foundation
+
+- Added processing-session endpoints:
+	- `GET /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions`
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions`
+	- `GET /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId`
+	- `PATCH /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId`
+- Added processing lifecycle endpoints:
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId/submit-review`
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId/request-revision`
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId/approve`
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId/reject`
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId/complete`
+	- `POST /api/v1/curriculum/curriculum-sources/:sourceId/processing-sessions/:sessionId/archive`
+- Added processing-section and record endpoints:
+	- `GET /api/v1/curriculum/processing-sessions/:sessionId/sections`
+	- `POST /api/v1/curriculum/processing-sessions/:sessionId/sections`
+	- `GET /api/v1/curriculum/processing-sessions/:sessionId/sections/:sectionId`
+	- `PATCH /api/v1/curriculum/processing-sessions/:sessionId/sections/:sectionId`
+	- `DELETE /api/v1/curriculum/processing-sessions/:sessionId/sections/:sectionId`
+	- `POST /api/v1/curriculum/processing-sessions/:sessionId/sections/:sectionId/archive`
+	- `POST /api/v1/curriculum/processing-sessions/:sessionId/sections/reorder`
+	- `POST /api/v1/curriculum/processing-sessions/:sessionId/sections/:sectionId/move`
+	- `POST /api/v1/curriculum/processing-sessions/:sessionId/sections/:sectionId/structured-records`
+	- `GET /api/v1/curriculum/processing-sessions/:sessionId/structured-records`
+	- `GET /api/v1/curriculum/processing-sessions/:sessionId/revisions`
+	- `GET /api/v1/curriculum/processing-sessions/:sessionId/compare`
+	- `GET /api/v1/curriculum/processing-sessions/:sessionId/audit-history`
+- Deferred boundary retained: OCR parsing, AI extraction, and automatic generation APIs remain out of scope.
+
 ## Phase 2K.2 Update: Master-Content Administration Completion
 
 - Added `/api/v1/master-content` administration API group.

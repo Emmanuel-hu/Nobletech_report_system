@@ -15,6 +15,15 @@
 - Added storage-provider abstraction and upload-validation module support for local development and production provider expansion.
 - Deferred boundary retained: OCR, AI extraction, and AI-assisted generation remain out of scope for this milestone.
 
+## Phase 2M Module Scope Update
+
+- Added Curriculum Source Manual Processing Session module foundation for revisionable session lifecycle management.
+- Added Source Section Extraction Workspace module foundation for manual section creation, editing, reordering, moving, and archive pathways.
+- Added Processing Review and Queue module foundation for submit, request revision, approve, reject, complete, and archive decision workflows.
+- Added Processing Revision Comparison and Audit module foundation for historical comparison and auditable lifecycle traces.
+- Added manual structured-record creation module support for converting reviewed sections into typed source-content records.
+- Deferred boundary retained: OCR parsing, AI extraction, and automatic generation remain out of scope for this milestone.
+
 ## Phase 2K.1 Module Scope Update
 
 - Added Curriculum Source Administration module foundation for school-scoped source intake, metadata maintenance, and review lifecycle transitions.

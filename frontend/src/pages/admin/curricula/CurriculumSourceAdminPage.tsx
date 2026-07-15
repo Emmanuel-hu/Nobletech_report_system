@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { curriculumClient } from '../../../api/curriculumClient';
 import { ErrorState, LoadingState } from '../../../components/feedback/DataState';
@@ -674,6 +675,9 @@ export const CurriculumSourceAdminPage = () => {
                       >
                         Delete first content
                       </button>
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <Link to={`/admin/curriculum-sources/${source.id}/processing`}>Open manual processing</Link>
+                      </div>
 
                       <div className="stacked-actions" style={{ marginTop: '0.75rem' }}>
                         <input

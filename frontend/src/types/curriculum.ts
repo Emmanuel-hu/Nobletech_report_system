@@ -404,6 +404,7 @@ export type CurriculumSourceFormat = 'PDF' | 'DOCX' | 'XLSX' | 'CSV' | 'HTML' | 
 
 export type CurriculumSourceContentType =
   | 'SECTION'
+  | 'UNIT'
   | 'TOPIC'
   | 'CONCEPT'
   | 'SKILL'
@@ -442,7 +443,127 @@ export type CurriculumSourceContent = {
   reviewed: boolean;
   reviewedById: string | null;
   reviewedAt: string | null;
+  reviewStatus?: SourceReviewStatus;
+  createdById?: string | null;
+  processingSessionId?: string | null;
+  sectionId?: string | null;
+  sourceFileId?: string | null;
+  sourceFileVersion?: string | null;
+  sourceFileChecksum?: string | null;
+  adaptationNote?: string | null;
+  archivedAt?: string | null;
   updatedAt: string;
+};
+
+export type CurriculumSourceProcessingStatus =
+  | 'DRAFT'
+  | 'IN_PROGRESS'
+  | 'PENDING_REVIEW'
+  | 'REVISION_REQUIRED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'COMPLETED'
+  | 'ARCHIVED';
+
+export type CurriculumSourceProcessingMethod = 'MANUAL' | 'OCR' | 'AI_ASSISTED' | 'IMPORTED' | 'HYBRID';
+
+export type CurriculumSourceSectionType =
+  | 'DOCUMENT_HEADING'
+  | 'INTRODUCTION'
+  | 'CLASS_LEVEL'
+  | 'TERM'
+  | 'SUBJECT'
+  | 'UNIT'
+  | 'TOPIC'
+  | 'CONCEPT'
+  | 'SKILL'
+  | 'LEARNING_OUTCOME'
+  | 'ACTIVITY'
+  | 'PROJECT'
+  | 'RESOURCE'
+  | 'ASSESSMENT'
+  | 'NOTE'
+  | 'OTHER';
+
+export type CurriculumSourceSectionReviewStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'REVISION_REQUIRED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'ARCHIVED';
+
+export type CurriculumSourceSection = {
+  id: string;
+  processingSessionId: string;
+  parentSectionId: string | null;
+  sectionType: CurriculumSourceSectionType;
+  heading: string;
+  rawText: string;
+  structuredData: Record<string, unknown> | null;
+  pageStart: number | null;
+  pageEnd: number | null;
+  sourceSectionReference: string | null;
+  sequenceOrder: number;
+  reviewStatus: CurriculumSourceSectionReviewStatus;
+  reviewNote: string | null;
+  createdById: string;
+  updatedById: string | null;
+  createdAt: string;
+  updatedAt: string;
+  archivedAt: string | null;
+  sourceContents?: CurriculumSourceContent[];
+};
+
+export type CurriculumSourceProcessingSession = {
+  id: string;
+  schoolId: string | null;
+  curriculumSourceId: string;
+  curriculumSourceFileId: string;
+  sourceFileVersion: string | null;
+  status: CurriculumSourceProcessingStatus;
+  processingMethod: CurriculumSourceProcessingMethod;
+  startedById: string;
+  assignedReviewerId: string | null;
+  startedAt: string;
+  submittedAt: string | null;
+  reviewedAt: string | null;
+  approvedAt: string | null;
+  completedAt: string | null;
+  archivedAt: string | null;
+  revisionNumber: number;
+  lastKnownSourceChecksum: string;
+  notes: string | null;
+  metadata: Record<string, unknown> | null;
+  revisionReason: string | null;
+  archiveReason: string | null;
+  previousSessionId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  sections?: CurriculumSourceSection[];
+  sourceContents?: CurriculumSourceContent[];
+};
+
+export type CurriculumSourceRevisionComparison = {
+  leftRevisionId: string | null;
+  rightRevisionId: string;
+  addedSections: CurriculumSourceSection[];
+  removedSections: CurriculumSourceSection[];
+  changedSections: Array<{ before: CurriculumSourceSection; after: CurriculumSourceSection }>;
+};
+
+export type CurriculumSourceProcessingAuditItem = {
+  id: string;
+  schoolId: string | null;
+  actorUserId: string | null;
+  action: string;
+  entityType: string;
+  entityId: string;
+  oldValues: Record<string, unknown> | null;
+  newValues: Record<string, unknown> | null;
+  reason: string | null;
+  requestId: string | null;
+  createdAt: string;
 };
 
 export type CurriculumSourceMasterContentLink = {

@@ -30,6 +30,13 @@
 - Added scoped migration checksum audit coverage for the Phase 2L migrations.
 - Deferred boundary retained: OCR parsing, AI extraction, and AI-assisted generation remain out of scope.
 
+## Phase 2M Status Update
+
+- Completed: manual curriculum source processing database foundation with processing-session and source-section entities.
+- Added schema and migration coverage for session lifecycle status, processing method, section hierarchy, section review status, and source-content lineage fields.
+- Added verification scripts for Phase 2M table, index, and constraint coverage plus relational-constraint behavior checks.
+- Deferred boundary retained: OCR parsing, AI extraction, and automatic generation remain out of scope.
+
 ## Phase 2J Status Update
 
 - Completed: Curriculum Portal UX hardening and backend data integration completion for assignment and version-management pathways.

@@ -74,6 +74,26 @@ Auditor
 
 5. Archival and Recovery: curriculum.archive, curriculum.restore_version
 
+6. Source Processing Session Lifecycle:
+	curriculum_source.processing.create,
+	curriculum_source.processing.edit,
+	curriculum_source.processing.submit_review,
+	curriculum_source.processing.request_revision,
+	curriculum_source.processing.approve,
+	curriculum_source.processing.reject,
+	curriculum_source.processing.complete,
+	curriculum_source.processing.archive
+
+7. Source Section Operations:
+	curriculum_source.section.create,
+	curriculum_source.section.edit,
+	curriculum_source.section.delete,
+	curriculum_source.section.reorder
+
+8. Source Processing Governance:
+	curriculum_source.processing.compare_versions,
+	curriculum_source.processing.view_audit
+
 ---
 
 # Permission Matrix
@@ -88,6 +108,21 @@ Auditor
 | curriculum.publish | Yes | Yes | No | No | No |
 | curriculum.archive | Yes | Yes | No | No | No |
 | curriculum.restore_version | Yes | Yes | Yes | No | No |
+| curriculum_source.processing.view | Yes | Yes | Yes | Yes | Yes |
+| curriculum_source.processing.create | Yes | Yes | Yes | Yes | No |
+| curriculum_source.processing.edit | Yes | Yes | Yes | Yes | No |
+| curriculum_source.processing.submit_review | Yes | Yes | Yes | Yes | No |
+| curriculum_source.processing.request_revision | Yes | Yes | Yes | No | No |
+| curriculum_source.processing.approve | Yes | Yes | Yes | No | No |
+| curriculum_source.processing.reject | Yes | Yes | Yes | No | No |
+| curriculum_source.processing.complete | Yes | Yes | Yes | No | No |
+| curriculum_source.processing.archive | Yes | Yes | No | No | No |
+| curriculum_source.processing.compare_versions | Yes | Yes | Yes | No | Yes |
+| curriculum_source.processing.view_audit | Yes | Yes | Yes | No | Yes |
+| curriculum_source.section.create | Yes | Yes | Yes | Yes | No |
+| curriculum_source.section.edit | Yes | Yes | Yes | Yes | No |
+| curriculum_source.section.delete | Yes | Yes | Yes | Yes | No |
+| curriculum_source.section.reorder | Yes | Yes | Yes | Yes | No |
 
 ---
 

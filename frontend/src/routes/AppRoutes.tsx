@@ -11,6 +11,12 @@ import { CurriculumListPage } from '../pages/admin/curricula/CurriculumListPage'
 import { CurriculumReviewPage } from '../pages/admin/curricula/CurriculumReviewPage';
 import { CurriculumStructurePage } from '../pages/admin/curricula/CurriculumStructurePage';
 import { CurriculumSourceAdminPage } from '../pages/admin/curricula/CurriculumSourceAdminPage';
+import { CurriculumSourceProcessingComparePage } from '../pages/admin/curricula/CurriculumSourceProcessingComparePage';
+import { CurriculumSourceProcessingCreatePage } from '../pages/admin/curricula/CurriculumSourceProcessingCreatePage';
+import { CurriculumSourceProcessingReviewPage } from '../pages/admin/curricula/CurriculumSourceProcessingReviewPage';
+import { CurriculumSourceProcessingReviewQueuePage } from '../pages/admin/curricula/CurriculumSourceProcessingReviewQueuePage';
+import { CurriculumSourceProcessingSessionsPage } from '../pages/admin/curricula/CurriculumSourceProcessingSessionsPage';
+import { CurriculumSourceProcessingWorkspacePage } from '../pages/admin/curricula/CurriculumSourceProcessingWorkspacePage';
 import { CurriculumVersionsPage } from '../pages/admin/curricula/CurriculumVersionsPage';
 import { MasterContentDashboardPage } from '../pages/admin/master-content/MasterContentDashboardPage';
 import { MasterContentEntityPage } from '../pages/admin/master-content/MasterContentEntityPage';
@@ -28,6 +34,12 @@ const AppRoutes = (): JSX.Element => {
         <Route path="curricula/list" element={<CurriculumListPage />} />
         <Route path="curricula/create" element={<CurriculumCreatePage />} />
         <Route path="curricula/sources" element={<CurriculumSourceAdminPage />} />
+        <Route path="curriculum-sources/:sourceId/processing" element={<CurriculumSourceProcessingSessionsPage />} />
+        <Route path="curriculum-sources/:sourceId/processing/new" element={<CurriculumSourceProcessingCreatePage />} />
+        <Route path="curriculum-sources/:sourceId/processing/:sessionId" element={<CurriculumSourceProcessingWorkspacePage />} />
+        <Route path="curriculum-sources/:sourceId/processing/:sessionId/review" element={<CurriculumSourceProcessingReviewPage />} />
+        <Route path="curriculum-sources/:sourceId/processing/:sessionId/compare" element={<CurriculumSourceProcessingComparePage />} />
+        <Route path="curriculum-processing/review-queue" element={<CurriculumSourceProcessingReviewQueuePage />} />
         <Route path="curricula/:curriculumId" element={<CurriculumDetailPage />} />
         <Route path="curricula/:curriculumId/edit" element={<CurriculumEditPage />} />
         <Route path="curricula/:curriculumId/structure" element={<CurriculumStructurePage />} />

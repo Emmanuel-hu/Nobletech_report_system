@@ -134,6 +134,7 @@ enum MasterContentStatus {
 
 enum CurriculumSourceContentType {
   SECTION
+  UNIT
   TOPIC
   CONCEPT
   SKILL
@@ -143,6 +144,53 @@ enum CurriculumSourceContentType {
   RESOURCE
   ASSESSMENT
   OTHER
+}
+
+enum CurriculumSourceProcessingStatus {
+  DRAFT
+  IN_PROGRESS
+  PENDING_REVIEW
+  REVISION_REQUIRED
+  APPROVED
+  REJECTED
+  COMPLETED
+  ARCHIVED
+}
+
+enum CurriculumSourceProcessingMethod {
+  MANUAL
+  OCR
+  AI_ASSISTED
+  IMPORTED
+  HYBRID
+}
+
+enum CurriculumSourceSectionType {
+  DOCUMENT_HEADING
+  INTRODUCTION
+  CLASS_LEVEL
+  TERM
+  SUBJECT
+  UNIT
+  TOPIC
+  CONCEPT
+  SKILL
+  LEARNING_OUTCOME
+  ACTIVITY
+  PROJECT
+  RESOURCE
+  ASSESSMENT
+  NOTE
+  OTHER
+}
+
+enum CurriculumSourceSectionReviewStatus {
+  DRAFT
+  PENDING_REVIEW
+  REVISION_REQUIRED
+  APPROVED
+  REJECTED
+  ARCHIVED
 }
 
 enum CurriculumSourceFileStatus {
@@ -261,6 +309,7 @@ model School {
   curricula         Curriculum[]
   curriculumConcepts CurriculumConcept[]
   curriculumAssignments CurriculumAssignment[]
+  curriculumSourceProcessingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingSchool")
 
   @@index([status])
   @@map("schools")
@@ -337,6 +386,11 @@ model User {
   curriculumAssignmentsAsTeacher CurriculumAssignment[]          @relation("CurriculumAssignmentTeacher")
   curriculumAssignmentsGiven CurriculumAssignment[]              @relation("CurriculumAssignedBy")
   curriculumAssignmentsActivated CurriculumAssignment[]          @relation("CurriculumActivatedBy")
+  startedCurriculumSourceProcessingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingStartedBy")
+  assignedCurriculumSourceProcessingReviews CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingAssignedReviewer")
+  createdCurriculumSourceSections CurriculumSourceSection[]      @relation("CurriculumSourceSectionCreatedBy")
+  updatedCurriculumSourceSections CurriculumSourceSection[]      @relation("CurriculumSourceSectionUpdatedBy")
+  createdCurriculumSourceContents CurriculumSourceContent[]      @relation("CurriculumSourceContentCreatedBy")
 
   @@unique([id, schoolId])
   @@index([schoolId, status])
@@ -1023,6 +1077,7 @@ model CurriculumSource {
   sourceContents     CurriculumSourceContent[]           @relation("CurriculumSourceContents")
   sourceFiles        CurriculumSourceFile[]              @relation("CurriculumSourceFiles")
   masterContentLinks CurriculumSourceMasterContentLink[] @relation("CurriculumSourceMasterContentLinks")
+  processingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingSessions")
 
   @@index([schoolId, status])
   @@index([schoolId, reviewStatus])
@@ -1072,6 +1127,8 @@ model CurriculumSourceFile {
   curriculumSource CurriculumSource @relation("CurriculumSourceFiles", fields: [curriculumSourceId], references: [id], onDelete: Restrict)
   supersededFile   CurriculumSourceFile? @relation("CurriculumSourceFileSupersession", fields: [supersededFileId], references: [id], onDelete: SetNull)
   replacementFiles CurriculumSourceFile[] @relation("CurriculumSourceFileSupersession")
+  processingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingFile")
+  sourceContents CurriculumSourceContent[] @relation("CurriculumSourceContentFile")
 
   @@unique([curriculumSourceId, sequenceOrder])
   @@index([curriculumSourceId, status, sequenceOrder])
@@ -1095,18 +1152,114 @@ model CurriculumSourceContent {
   sourceSection      String?                     @map("source_section") @db.VarChar(150)
   confidenceScore    Decimal?                    @map("confidence_score") @db.Decimal(5, 2)
   extractionMethod   String?                     @map("extraction_method") @db.VarChar(100)
+  reviewStatus       ContentReviewStatus         @default(DRAFT) @map("review_status")
+  createdById        String?                     @map("created_by_id") @db.Uuid
+  processingSessionId String?                    @map("processing_session_id") @db.Uuid
+  sectionId          String?                     @map("section_id") @db.Uuid
+  sourceFileId       String?                     @map("source_file_id") @db.Uuid
+  sourceFileVersion  String?                     @map("source_file_version") @db.VarChar(50)
+  sourceFileChecksum String?                     @map("source_file_checksum") @db.VarChar(128)
+  adaptationNote     String?                     @map("adaptation_note") @db.Text
   reviewed           Boolean                     @default(false) @map("reviewed")
   reviewedById       String?                     @map("reviewed_by_id") @db.Uuid
   reviewedAt         DateTime?                   @map("reviewed_at")
+  archivedAt         DateTime?                   @map("archived_at")
   createdAt          DateTime                    @default(now()) @map("created_at")
   updatedAt          DateTime                    @updatedAt @map("updated_at")
 
   curriculumSource CurriculumSource @relation("CurriculumSourceContents", fields: [curriculumSourceId], references: [id], onDelete: Restrict)
+  processingSession CurriculumSourceProcessingSession? @relation("CurriculumSourceProcessingSessionContents", fields: [processingSessionId], references: [id], onDelete: SetNull)
+  section CurriculumSourceSection? @relation("CurriculumSourceSectionContents", fields: [sectionId], references: [id], onDelete: SetNull)
+  sourceFile CurriculumSourceFile? @relation("CurriculumSourceContentFile", fields: [sourceFileId], references: [id], onDelete: SetNull)
+  createdByUser User? @relation("CurriculumSourceContentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 
   @@unique([curriculumSourceId, sequenceOrder])
   @@index([curriculumSourceId, contentType])
   @@index([reviewed, reviewedAt])
+  @@index([processingSessionId, reviewStatus])
+  @@index([sectionId])
+  @@index([sourceFileId])
   @@map("curriculum_source_contents")
+}
+
+model CurriculumSourceProcessingSession {
+  id                      String                           @id @default(uuid()) @map("processing_session_id") @db.Uuid
+  schoolId                String?                          @map("school_id") @db.Uuid
+  curriculumSourceId      String                           @map("curriculum_source_id") @db.Uuid
+  curriculumSourceFileId  String                           @map("curriculum_source_file_id") @db.Uuid
+  sourceFileVersion       String?                          @map("source_file_version") @db.VarChar(50)
+  status                  CurriculumSourceProcessingStatus @default(DRAFT) @map("status")
+  processingMethod        CurriculumSourceProcessingMethod @default(MANUAL) @map("processing_method")
+  startedById             String                           @map("started_by_id") @db.Uuid
+  assignedReviewerId      String?                          @map("assigned_reviewer_id") @db.Uuid
+  startedAt               DateTime                         @default(now()) @map("started_at")
+  submittedAt             DateTime?                        @map("submitted_at")
+  reviewedAt              DateTime?                        @map("reviewed_at")
+  approvedAt              DateTime?                        @map("approved_at")
+  completedAt             DateTime?                        @map("completed_at")
+  archivedAt              DateTime?                        @map("archived_at")
+  revisionNumber          Int                              @default(1) @map("revision_number")
+  lastKnownSourceChecksum String                           @map("last_known_source_checksum") @db.VarChar(128)
+  notes                   String?                          @map("notes") @db.Text
+  metadata                Json?                            @map("metadata")
+  revisionReason          String?                          @map("revision_reason") @db.Text
+  archiveReason           String?                          @map("archive_reason") @db.Text
+  previousSessionId       String?                          @map("previous_session_id") @db.Uuid
+  createdAt               DateTime                         @default(now()) @map("created_at")
+  updatedAt               DateTime                         @updatedAt @map("updated_at")
+
+  school            School?                            @relation("CurriculumSourceProcessingSchool", fields: [schoolId], references: [id], onDelete: SetNull)
+  curriculumSource  CurriculumSource                   @relation("CurriculumSourceProcessingSessions", fields: [curriculumSourceId], references: [id], onDelete: Restrict)
+  curriculumSourceFile CurriculumSourceFile            @relation("CurriculumSourceProcessingFile", fields: [curriculumSourceFileId], references: [id], onDelete: Restrict)
+  startedByUser     User                               @relation("CurriculumSourceProcessingStartedBy", fields: [startedById], references: [id], onDelete: Restrict)
+  assignedReviewerUser User?                           @relation("CurriculumSourceProcessingAssignedReviewer", fields: [assignedReviewerId], references: [id], onDelete: SetNull)
+  previousSession   CurriculumSourceProcessingSession? @relation("CurriculumSourceProcessingRevision", fields: [previousSessionId], references: [id], onDelete: SetNull)
+  childRevisions    CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingRevision")
+  sections          CurriculumSourceSection[]          @relation("CurriculumSourceSessionSections")
+  sourceContents    CurriculumSourceContent[]          @relation("CurriculumSourceProcessingSessionContents")
+
+  @@unique([curriculumSourceId, revisionNumber])
+  @@index([schoolId, status])
+  @@index([curriculumSourceId, status, revisionNumber])
+  @@index([curriculumSourceFileId, status])
+  @@index([assignedReviewerId, status])
+  @@index([previousSessionId])
+  @@map("curriculum_source_processing_sessions")
+}
+
+model CurriculumSourceSection {
+  id                     String                               @id @default(uuid()) @map("source_section_id") @db.Uuid
+  processingSessionId    String                               @map("processing_session_id") @db.Uuid
+  parentSectionId        String?                              @map("parent_section_id") @db.Uuid
+  sectionType            CurriculumSourceSectionType          @map("section_type")
+  heading                String                               @map("heading") @db.VarChar(255)
+  rawText                String                               @map("raw_text") @db.Text
+  structuredData         Json?                                @map("structured_data")
+  pageStart              Int?                                 @map("page_start")
+  pageEnd                Int?                                 @map("page_end")
+  sourceSectionReference String?                              @map("source_section_reference") @db.VarChar(150)
+  sequenceOrder          Int                                  @map("sequence_order")
+  reviewStatus           CurriculumSourceSectionReviewStatus  @default(DRAFT) @map("review_status")
+  reviewNote             String?                              @map("review_note") @db.Text
+  createdById            String                               @map("created_by_id") @db.Uuid
+  updatedById            String?                              @map("updated_by_id") @db.Uuid
+  createdAt              DateTime                             @default(now()) @map("created_at")
+  updatedAt              DateTime                             @updatedAt @map("updated_at")
+  archivedAt             DateTime?                            @map("archived_at")
+
+  processingSession CurriculumSourceProcessingSession @relation("CurriculumSourceSessionSections", fields: [processingSessionId], references: [id], onDelete: Restrict)
+  parentSection     CurriculumSourceSection?          @relation("CurriculumSourceSectionHierarchy", fields: [parentSectionId], references: [id], onDelete: SetNull)
+  childSections     CurriculumSourceSection[]         @relation("CurriculumSourceSectionHierarchy")
+  createdByUser     User                              @relation("CurriculumSourceSectionCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedByUser     User?                             @relation("CurriculumSourceSectionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  sourceContents    CurriculumSourceContent[]         @relation("CurriculumSourceSectionContents")
+
+  @@unique([processingSessionId, parentSectionId, sequenceOrder])
+  @@index([processingSessionId, sectionType])
+  @@index([processingSessionId, reviewStatus])
+  @@index([parentSectionId])
+  @@index([pageStart, pageEnd])
+  @@map("curriculum_source_sections")
 }
 
 model MasterCurriculumUnit {

@@ -1,4 +1,9 @@
 import type {
+  CurriculumSourceContent,
+  CurriculumSourceProcessingAuditItem,
+  CurriculumSourceProcessingSession,
+  CurriculumSourceRevisionComparison,
+  CurriculumSourceSection,
   CurriculumSource,
   CurriculumSourceContentType,
   CurriculumSourceFormat,
@@ -814,6 +819,264 @@ export const curriculumClient = {
     apiRequest<CurriculumSource>(
       `/curriculum/sources/${sourceId}/files/${fileId}/purge`,
       { method: 'DELETE', body: { reason, lastKnownUpdatedAt } },
+      session,
+    ),
+  listProcessingSessions: (session: AuthSession, sourceId: string) =>
+    apiRequest<CurriculumSourceProcessingSession[]>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions`,
+      { method: 'GET' },
+      session,
+    ),
+  createProcessingSession: (
+    session: AuthSession,
+    sourceId: string,
+    payload: {
+      curriculumSourceFileId: string;
+      notes?: string;
+      metadata?: Record<string, unknown>;
+      basedOnSessionId?: string;
+    },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  getProcessingSession: (session: AuthSession, sourceId: string, sessionId: string) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}`,
+      { method: 'GET' },
+      session,
+    ),
+  updateProcessingSession: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: {
+      notes?: string;
+      metadata?: Record<string, unknown>;
+      assignedReviewerId?: string | null;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  submitProcessingSessionReview: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: { comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}/submit-review`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  requestProcessingSessionRevision: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: { requestedChanges: string; comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}/request-revision`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  approveProcessingSession: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: { comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}/approve`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  rejectProcessingSession: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: { rejectionReason: string; comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}/reject`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  completeProcessingSession: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: { comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}/complete`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  archiveProcessingSession: (
+    session: AuthSession,
+    sourceId: string,
+    sessionId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceProcessingSession>(
+      `/curriculum/curriculum-sources/${sourceId}/processing-sessions/${sessionId}/archive`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  listProcessingSections: (session: AuthSession, sessionId: string) =>
+    apiRequest<CurriculumSourceSection[]>(`/curriculum/processing-sessions/${sessionId}/sections`, { method: 'GET' }, session),
+  createProcessingSection: (
+    session: AuthSession,
+    sessionId: string,
+    payload: {
+      parentSectionId?: string;
+      sectionType:
+        | 'DOCUMENT_HEADING'
+        | 'INTRODUCTION'
+        | 'CLASS_LEVEL'
+        | 'TERM'
+        | 'SUBJECT'
+        | 'UNIT'
+        | 'TOPIC'
+        | 'CONCEPT'
+        | 'SKILL'
+        | 'LEARNING_OUTCOME'
+        | 'ACTIVITY'
+        | 'PROJECT'
+        | 'RESOURCE'
+        | 'ASSESSMENT'
+        | 'NOTE'
+        | 'OTHER';
+      heading: string;
+      rawText: string;
+      structuredData?: Record<string, unknown>;
+      pageStart?: number;
+      pageEnd?: number;
+      sourceSectionReference?: string;
+      sequenceOrder?: number;
+    },
+  ) =>
+    apiRequest<CurriculumSourceSection>(
+      `/curriculum/processing-sessions/${sessionId}/sections`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  updateProcessingSection: (
+    session: AuthSession,
+    sessionId: string,
+    sectionId: string,
+    payload: {
+      sectionType?:
+        | 'DOCUMENT_HEADING'
+        | 'INTRODUCTION'
+        | 'CLASS_LEVEL'
+        | 'TERM'
+        | 'SUBJECT'
+        | 'UNIT'
+        | 'TOPIC'
+        | 'CONCEPT'
+        | 'SKILL'
+        | 'LEARNING_OUTCOME'
+        | 'ACTIVITY'
+        | 'PROJECT'
+        | 'RESOURCE'
+        | 'ASSESSMENT'
+        | 'NOTE'
+        | 'OTHER';
+      heading?: string;
+      rawText?: string;
+      structuredData?: Record<string, unknown>;
+      pageStart?: number;
+      pageEnd?: number;
+      sourceSectionReference?: string;
+      reviewStatus?: 'DRAFT' | 'PENDING_REVIEW' | 'REVISION_REQUIRED' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
+      reviewNote?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumSourceSection>(
+      `/curriculum/processing-sessions/${sessionId}/sections/${sectionId}`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  deleteProcessingSection: (session: AuthSession, sessionId: string, sectionId: string, lastKnownUpdatedAt: string) =>
+    apiRequest<CurriculumSourceSection[]>(
+      `/curriculum/processing-sessions/${sessionId}/sections/${sectionId}`,
+      { method: 'DELETE', body: { lastKnownUpdatedAt } },
+      session,
+    ),
+  reorderProcessingSections: (
+    session: AuthSession,
+    sessionId: string,
+    payload: { orderedSectionIds: string[]; parentSectionId?: string; lastKnownSessionUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceSection[]>(
+      `/curriculum/processing-sessions/${sessionId}/sections/reorder`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  moveProcessingSection: (
+    session: AuthSession,
+    sessionId: string,
+    sectionId: string,
+    payload: { targetParentSectionId?: string; targetSequenceOrder?: number; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<CurriculumSourceSection>(
+      `/curriculum/processing-sessions/${sessionId}/sections/${sectionId}/move`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  createStructuredRecordFromSection: (
+    session: AuthSession,
+    sessionId: string,
+    sectionId: string,
+    payload: {
+      contentType?: CurriculumSourceContentType;
+      heading?: string;
+      rawText?: string;
+      structuredData?: Record<string, unknown>;
+      adaptationNote?: string;
+      reviewStatus?: 'DRAFT' | 'PENDING_REVIEW' | 'REVISION_REQUIRED' | 'APPROVED' | 'REJECTED' | 'ARCHIVED';
+      sourcePage?: string;
+      sourceSection?: string;
+      lastKnownSectionUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<CurriculumSourceContent>(
+      `/curriculum/processing-sessions/${sessionId}/sections/${sectionId}/structured-records`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  listProcessingStructuredRecords: (session: AuthSession, sessionId: string) =>
+    apiRequest<CurriculumSourceContent[]>(
+      `/curriculum/processing-sessions/${sessionId}/structured-records`,
+      { method: 'GET' },
+      session,
+    ),
+  listProcessingRevisions: (session: AuthSession, sessionId: string) =>
+    apiRequest<CurriculumSourceProcessingSession[]>(`/curriculum/processing-sessions/${sessionId}/revisions`, { method: 'GET' }, session),
+  compareProcessingRevisions: (
+    session: AuthSession,
+    sessionId: string,
+    leftRevisionId?: string,
+    rightRevisionId?: string,
+  ) =>
+    apiRequest<CurriculumSourceRevisionComparison>(
+      `/curriculum/processing-sessions/${sessionId}/compare${queryString({ leftRevisionId, rightRevisionId })}`,
+      { method: 'GET' },
+      session,
+    ),
+  getProcessingAuditHistory: (session: AuthSession, sessionId: string) =>
+    apiRequest<CurriculumSourceProcessingAuditItem[]>(
+      `/curriculum/processing-sessions/${sessionId}/audit-history`,
+      { method: 'GET' },
       session,
     ),
   masterContent: masterContentClient,
