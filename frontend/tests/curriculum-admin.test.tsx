@@ -60,4 +60,17 @@ describe('Curriculum administrative routes', () => {
 
     expect(screen.getByText('Master-content administration dashboard')).toBeInTheDocument();
   });
+
+  it('blocks the source-processing review queue when permission is missing', () => {
+    const restrictedSession: AuthSession = {
+      userId: 'u-1',
+      schoolId: 's-1',
+      permissions: ['curriculum.view'],
+    };
+
+    renderApp('/admin/curriculum-processing/review-queue', restrictedSession);
+
+    expect(screen.getByText('Permission required')).toBeInTheDocument();
+    expect(screen.getByText('You do not currently hold curriculum_source.processing.view.')).toBeInTheDocument();
+  });
 });

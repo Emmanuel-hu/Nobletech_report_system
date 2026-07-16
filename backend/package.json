@@ -20,6 +20,8 @@
     "phase2m:constraints": "tsx src/scripts/phase2m-source-processing-constraints-check.ts",
     "phase2m:rbac:audit": "tsx src/scripts/phase2m-rbac-audit.ts",
     "phase2m:rbac:apply": "tsx src/scripts/phase2m-rbac-audit.ts --apply",
+    "phase2m:rbac:bootstrap": "tsx src/scripts/phase2m-rbac-bootstrap.ts --bootstrap-school-if-empty",
+    "phase2m:rbac:verify": "tsx src/scripts/phase2m-rbac-verify.ts",
     "validate:phase2m": "tsx src/scripts/run-phase2m-validation.ts",
     "phase2g:constraints": "tsx src/scripts/phase2g-curriculum-constraints-check.ts",
     "lint": "eslint . --max-warnings=0",

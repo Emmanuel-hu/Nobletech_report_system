@@ -1,128 +1,17 @@
 import { env } from '../config/env';
 import { prisma } from '../config/prisma';
-
-type PermissionSpec = {
-  code: string;
-  name: string;
-  resource: string;
-  action: string;
-  description: string;
-};
-
-const requiredPermissions: PermissionSpec[] = [
-  {
-    code: 'curriculum_source.processing.view',
-    name: 'View Curriculum Source Processing Sessions',
-    resource: 'curriculum_source_processing',
-    action: 'view',
-    description: 'Allows viewing manual curriculum source processing sessions and related records.',
-  },
-  {
-    code: 'curriculum_source.processing.create',
-    name: 'Create Curriculum Source Processing Sessions',
-    resource: 'curriculum_source_processing',
-    action: 'create',
-    description: 'Allows creating manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.edit',
-    name: 'Edit Curriculum Source Processing Sessions',
-    resource: 'curriculum_source_processing',
-    action: 'edit',
-    description: 'Allows editing manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.submit_review',
-    name: 'Submit Curriculum Source Processing Review',
-    resource: 'curriculum_source_processing',
-    action: 'submit_review',
-    description: 'Allows submitting manual curriculum source processing sessions for review.',
-  },
-  {
-    code: 'curriculum_source.processing.request_revision',
-    name: 'Request Curriculum Source Processing Revision',
-    resource: 'curriculum_source_processing',
-    action: 'request_revision',
-    description: 'Allows requesting revisions for manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.approve',
-    name: 'Approve Curriculum Source Processing Session',
-    resource: 'curriculum_source_processing',
-    action: 'approve',
-    description: 'Allows approving manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.reject',
-    name: 'Reject Curriculum Source Processing Session',
-    resource: 'curriculum_source_processing',
-    action: 'reject',
-    description: 'Allows rejecting manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.complete',
-    name: 'Complete Curriculum Source Processing Session',
-    resource: 'curriculum_source_processing',
-    action: 'complete',
-    description: 'Allows completing approved manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.archive',
-    name: 'Archive Curriculum Source Processing Session',
-    resource: 'curriculum_source_processing',
-    action: 'archive',
-    description: 'Allows archiving manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.compare_versions',
-    name: 'Compare Curriculum Source Processing Revisions',
-    resource: 'curriculum_source_processing',
-    action: 'compare_versions',
-    description: 'Allows comparing revisions of manual curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.processing.view_audit',
-    name: 'View Curriculum Source Processing Audit History',
-    resource: 'curriculum_source_processing',
-    action: 'view_audit',
-    description: 'Allows viewing audit logs for curriculum source processing sessions.',
-  },
-  {
-    code: 'curriculum_source.section.create',
-    name: 'Create Curriculum Source Sections',
-    resource: 'curriculum_source_section',
-    action: 'create',
-    description: 'Allows creating extracted source sections within processing sessions.',
-  },
-  {
-    code: 'curriculum_source.section.edit',
-    name: 'Edit Curriculum Source Sections',
-    resource: 'curriculum_source_section',
-    action: 'edit',
-    description: 'Allows editing extracted source sections within processing sessions.',
-  },
-  {
-    code: 'curriculum_source.section.delete',
-    name: 'Delete Curriculum Source Sections',
-    resource: 'curriculum_source_section',
-    action: 'delete',
-    description: 'Allows deleting extracted source sections within processing sessions.',
-  },
-  {
-    code: 'curriculum_source.section.reorder',
-    name: 'Reorder Curriculum Source Sections',
-    resource: 'curriculum_source_section',
-    action: 'reorder',
-    description: 'Allows reordering and moving extracted source sections within processing sessions.',
-  },
-];
+import {
+  phase2mRequiredPermissions,
+  phase2mRoleCodes,
+  phase2mRoleMappingsByCode,
+} from './phase2m-rbac-policy';
 
 void env;
 
 const main = async (): Promise<void> => {
   const apply = process.argv.includes('--apply');
 
-  const expectedCodes = requiredPermissions.map((item) => item.code);
+  const expectedCodes = phase2mRequiredPermissions.map((item) => item.code);
 
   const existingPermissions = await prisma.permission.findMany({
     where: { code: { in: expectedCodes } },
@@ -133,7 +22,7 @@ const main = async (): Promise<void> => {
   const missingPermissionCodes = expectedCodes.filter((code) => !existingCodeSet.has(code.toLowerCase()));
 
   if (apply && missingPermissionCodes.length > 0) {
-    for (const spec of requiredPermissions) {
+    for (const spec of phase2mRequiredPermissions) {
       await prisma.permission.upsert({
         where: { code: spec.code },
         create: {
@@ -160,37 +49,16 @@ const main = async (): Promise<void> => {
     select: { id: true, code: true, isActive: true },
   });
 
-  const superAdminRoles = await prisma.role.findMany({
+  const targetRoles = await prisma.role.findMany({
     where: {
       isActive: true,
-      code: { equals: 'SUPER_ADMIN', mode: 'insensitive' },
-    },
-    select: { id: true, code: true, schoolId: true },
-  });
-
-  const curriculumRoles = await prisma.role.findMany({
-    where: {
-      isActive: true,
-      rolePermissions: {
-        some: {
-          permission: {
-            code: {
-              startsWith: 'curriculum.',
-              mode: 'insensitive',
-            },
-          },
-        },
+      code: {
+        in: phase2mRoleCodes,
       },
     },
     select: { id: true, code: true, schoolId: true },
+    orderBy: [{ schoolId: 'asc' }, { code: 'asc' }],
   });
-
-  const roleMap = new Map<string, { id: string; code: string; schoolId: string | null }>();
-  for (const role of [...superAdminRoles, ...curriculumRoles]) {
-    roleMap.set(role.id, role);
-  }
-
-  const targetRoles = Array.from(roleMap.values());
 
   const rolePermissionRows = await prisma.rolePermission.findMany({
     where: {
@@ -206,7 +74,12 @@ const main = async (): Promise<void> => {
 
   if (apply && targetRoles.length > 0 && permissionRows.length > 0) {
     for (const role of targetRoles) {
-      for (const permission of permissionRows) {
+      const mapping = phase2mRoleMappingsByCode.get(role.code.toUpperCase());
+      if (!mapping) {
+        continue;
+      }
+
+      for (const permission of permissionRows.filter((item) => mapping.permissions.includes(item.code))) {
         const key = `${role.id}:${permission.id}`;
         if (assignmentSet.has(key)) {
           continue;
@@ -226,40 +99,56 @@ const main = async (): Promise<void> => {
     }
   }
 
-  const finalMissingPermissions = requiredPermissions
+  const finalMissingPermissions = phase2mRequiredPermissions
     .map((item) => item.code)
     .filter((code) => !permissionRows.some((row) => row.code.toLowerCase() === code.toLowerCase()));
 
   const perRoleCoverage = targetRoles.map((role) => {
+    const mapping = phase2mRoleMappingsByCode.get(role.code.toUpperCase());
     const coveredCodes = permissionRows
       .filter((permission) => assignmentSet.has(`${role.id}:${permission.id}`))
       .map((permission) => permission.code)
       .sort();
 
-    const missingCodes = requiredPermissions
-      .map((item) => item.code)
+    const expectedRoleCodes = mapping?.permissions ?? [];
+    const missingCodes = expectedRoleCodes
       .filter((code) => !coveredCodes.some((covered) => covered.toLowerCase() === code.toLowerCase()));
+
+    const unexpectedCodes = coveredCodes.filter(
+      (code) => !expectedRoleCodes.some((expected) => expected.toLowerCase() === code.toLowerCase()),
+    );
 
     return {
       roleId: role.id,
       roleCode: role.code,
       schoolId: role.schoolId,
       coveredCount: coveredCodes.length,
+      expectedCount: expectedRoleCodes.length,
       missingCount: missingCodes.length,
       missingCodes,
+      unexpectedCount: unexpectedCodes.length,
+      unexpectedCodes,
     };
   });
 
+  const missingTargetRoleCodes = phase2mRoleCodes.filter(
+    (code) => !targetRoles.some((role) => role.code.toUpperCase() === code.toUpperCase()),
+  );
+
   const summary = {
     mode: apply ? 'apply' : 'audit',
-    requiredPermissionCount: requiredPermissions.length,
+    requiredPermissionCount: phase2mRequiredPermissions.length,
     targetRoleCount: targetRoles.length,
+    missingTargetRoleCodes,
     initiallyMissingPermissionCodes: missingPermissionCodes,
     finalMissingPermissionCodes: finalMissingPermissions,
     assignmentsCreated,
     roleCoverage: perRoleCoverage,
     allPermissionsPresent: finalMissingPermissions.length === 0,
-    allTargetRolesFullyCovered: perRoleCoverage.every((role) => role.missingCount === 0),
+    allTargetRolesFullyCovered:
+      targetRoles.length > 0 &&
+      missingTargetRoleCodes.length === 0 &&
+      perRoleCoverage.every((role) => role.missingCount === 0 && role.unexpectedCount === 0),
   };
 
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
