@@ -36,6 +36,45 @@ Auditor
 
 ---
 
+# Phase 2N Master Content Promotion RBAC
+
+## Promotion Permissions
+
+- `master_content.promotion.view`: List and retrieve promotions, items, and audit history. Granted to CURRICULUM_SUPERVISOR, TEACHER, AUDITOR.
+- `master_content.promotion.create`: Initialize new promotions from processing sessions. Granted to CURRICULUM_SUPERVISOR, TEACHER.
+- `master_content.promotion.edit`: Modify promotion metadata and items when promotion is in DRAFT or REVISION_REQUIRED states. Granted to CURRICULUM_SUPERVISOR, TEACHER (creator only).
+- `master_content.promotion.add_item`: Add items to promotions in editable states. Granted to CURRICULUM_SUPERVISOR, TEACHER (creator only).
+- `master_content.promotion.update_item`: Modify promotion items including action and mapping. Granted to CURRICULUM_SUPERVISOR, TEACHER (creator only).
+- `master_content.promotion.remove_item`: Delete items from promotions in editable states. Granted to CURRICULUM_SUPERVISOR, TEACHER (creator only).
+- `master_content.promotion.reorder_items`: Reorder items within a promotion. Granted to CURRICULUM_SUPERVISOR, TEACHER (creator only).
+- `master_content.promotion.submit_review`: Transition promotion from DRAFT to READY_FOR_REVIEW. Granted to CURRICULUM_SUPERVISOR, TEACHER (creator only).
+- `master_content.promotion.request_revision`: Request changes to promotion under review. Granted to CURRICULUM_SUPERVISOR (reviewer authority).
+- `master_content.promotion.approve`: Transition promotion from UNDER_REVIEW to APPROVED. Granted to CURRICULUM_SUPERVISOR.
+- `master_content.promotion.reject`: Reject promotion, transition to rejected state. Granted to CURRICULUM_SUPERVISOR.
+- `master_content.promotion.complete`: Mark promotion as completed after approval. Granted to CURRICULUM_SUPERVISOR.
+- `master_content.promotion.archive`: Archive promotion for audit retention. Granted to SUPER_ADMIN, SCHOOL_ADMIN.
+
+## Promotion Status Lifecycle
+
+- DRAFT: Editable state for item addition and configuration; created on promotion initialization.
+- READY_FOR_REVIEW: Preparation state; after submit-review, awaiting reviewer action.
+- UNDER_REVIEW: Active review state; items locked for review completion.
+- REVISION_REQUIRED: Feedback state; returned to DRAFT-like editability pending author changes.
+- APPROVED: Approved state; ready for completion or archive.
+- REJECTED: Terminal rejection state; no further transitions.
+- COMPLETED: Terminal completion state; processing finished.
+- ARCHIVED: Terminal archive state; read-only for audit retention.
+
+## Promotion Data Rules
+
+1. Promotions are scoped by school; cross-school visibility is denied.
+2. Promotion items support 10 master-content entity types (curriculum unit, topic, concept, skill, learning outcome, activity, project, project implementation, resource, assessment template).
+3. Each promotion item must specify an action: CREATE_DRAFT (new master), LINK_EXISTING (existing master), SKIP (no action), MARK_DUPLICATE (redundancy), ADAPT (modified).
+4. Duplicate detection uses normalized code/title matching with deterministic rules; manual override supported.
+5. Lineage tracking preserved for all draft-created master content linking back to source.
+6. All state transitions are auditable with actor, reason, and timestamp metadata.
+7. Optimistic concurrency enforced via lastKnownUpdatedAt on all mutable operations.
+
 # Business Rules
 
 1. Curriculum status values are restricted to GENERATED_DRAFT, DRAFT, UNDER_REVIEW, REVISION_REQUIRED, APPROVED, PUBLISHED, and ARCHIVED.

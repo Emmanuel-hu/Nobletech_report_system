@@ -21,6 +21,12 @@ import { CurriculumVersionsPage } from '../pages/admin/curricula/CurriculumVersi
 import { MasterContentDashboardPage } from '../pages/admin/master-content/MasterContentDashboardPage';
 import { MasterContentEntityPage } from '../pages/admin/master-content/MasterContentEntityPage';
 import { MasterContentReviewQueuePage } from '../pages/admin/master-content/MasterContentReviewQueuePage';
+import { MasterContentPromotionsPage } from '../pages/admin/master-content/MasterContentPromotionsPage';
+import { MasterContentPromotionCreatePage } from '../pages/admin/master-content/MasterContentPromotionCreatePage';
+import { MasterContentPromotionDetailPage } from '../pages/admin/master-content/MasterContentPromotionDetailPage';
+import { MasterContentPromotionReviewPage } from '../pages/admin/master-content/MasterContentPromotionReviewPage';
+import { MasterContentPromotionReviewQueuePage } from '../pages/admin/master-content/MasterContentPromotionReviewQueuePage';
+import { MasterContentPromotionComparePage } from '../pages/admin/master-content/MasterContentPromotionComparePage';
 import HealthPage from '../pages/HealthPage';
 import HomePage from '../pages/HomePage';
 
@@ -50,6 +56,13 @@ const AppRoutes = (): JSX.Element => {
         <Route path="master-content" element={<MasterContentDashboardPage />} />
         <Route path="master-content/review-queue" element={<MasterContentReviewQueuePage />} />
         <Route path="master-content/:entityType" element={<MasterContentEntityPage />} />
+        {/* Phase 2N: Master Content Promotion routes */}
+        <Route path="master-content-promotions" element={<MasterContentPromotionsPage />} />
+        <Route path="master-content-promotions/new" element={<MasterContentPromotionCreatePage />} />
+        <Route path="master-content-promotions/review-queue" element={<MasterContentPromotionReviewQueuePage />} />
+        <Route path="master-content-promotions/:promotionId" element={<MasterContentPromotionDetailPage />} />
+        <Route path="master-content-promotions/:promotionId/review" element={<MasterContentPromotionReviewPage />} />
+        <Route path="master-content-promotions/:promotionId/compare" element={<MasterContentPromotionComparePage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

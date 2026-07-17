@@ -10,6 +10,8 @@ const navLinks = [
   { to: '/admin/curricula/create', label: 'Create', permission: 'curriculum.create' },
   { to: '/admin/master-content', label: 'Master Content', permission: 'master_content.view' },
   { to: '/admin/master-content/review-queue', label: 'Review Queue', permission: 'master_content.view' },
+  { to: '/admin/master-content-promotions', label: 'Promotions', permission: 'master_content.promotion.view' },
+  { to: '/admin/master-content-promotions/review-queue', label: 'Promotion Queue', permission: 'master_content.promotion.view' },
   { to: '/health', label: 'Health', permission: 'curriculum.view' },
 ];
 

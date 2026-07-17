@@ -558,58 +558,83 @@ export class MasterContentPromotionService {
       throw forbidden('School-scoped sources cannot create global master-content drafts.');
     }
 
-    const created = await masterContentService.createEntity(
-      auth,
-      descriptor.entityType,
-      {
-        isGlobal: payload.isGlobal ?? promotion.schoolId === null,
-        data: mapped,
-      },
-      requestId,
-    );
+    // NOTE: createEntity and createLineage are called outside a shared Prisma transaction because
+    // masterContentService does not currently expose a transactional interface.
+    // If createLineage or the item-update transaction fails after createEntity succeeds, an orphaned
+    // DRAFT master-content record may remain. The promotion item stays DRAFT so the operator can retry.
+    // A future architectural improvement should pass a transaction client through the service layer.
+    let created: unknown = null;
 
-    await masterContentService.createLineage(
-      auth,
-      this.entityTypeToLineageType(descriptor.entityType),
-      String((created as Record<string, unknown>).id),
-      {
-        sourceId: promotion.curriculumSourceId,
-        sourceVersionLabel: item.sourceFileVersion ?? undefined,
-        sourcePage: this.pageLabel(item.sourcePageStart, item.sourcePageEnd),
-        sourceSection: item.sourceSectionReference ?? undefined,
-        extractionNote: undefined,
-        adaptationNote: item.adaptationNote ?? promotion.adaptationNote ?? undefined,
-        attribution: item.attribution ?? undefined,
-        usageRestriction: undefined,
-      },
-      requestId,
-    );
-
-    const updated = await prisma.$transaction(async (tx) => {
-      const data: Prisma.MasterContentPromotionItemUpdateInput = {
-        action: 'CREATE_DRAFT',
-        status: 'APPROVED',
-        duplicateDecision: 'CREATE_NEW',
-        updatedById: auth.userId,
-        [descriptor.linkField]: String((created as Record<string, unknown>).id),
-      } as Prisma.MasterContentPromotionItemUpdateInput;
-
-      const next = await tx.masterContentPromotionItem.update({ where: { id: item.id }, data });
-
-      await this.createAuditLogTx(tx, {
-        action: 'master_content.promotion.item.create_draft',
-        entityType: 'master_content_promotion_item',
-        entityId: item.id,
-        schoolId: promotion.schoolId,
-        actorUserId: auth.userId,
-        newValues: { draftId: String((created as Record<string, unknown>).id), targetMasterContentType: item.targetMasterContentType },
+    try {
+      created = await masterContentService.createEntity(
+        auth,
+        descriptor.entityType,
+        {
+          isGlobal: payload.isGlobal ?? promotion.schoolId === null,
+          data: mapped,
+        },
         requestId,
+      );
+
+      await masterContentService.createLineage(
+        auth,
+        this.entityTypeToLineageType(descriptor.entityType),
+        String((created as Record<string, unknown>).id),
+        {
+          sourceId: promotion.curriculumSourceId,
+          sourceVersionLabel: item.sourceFileVersion ?? undefined,
+          sourcePage: this.pageLabel(item.sourcePageStart, item.sourcePageEnd),
+          sourceSection: item.sourceSectionReference ?? undefined,
+          extractionNote: undefined,
+          adaptationNote: item.adaptationNote ?? promotion.adaptationNote ?? undefined,
+          attribution: item.attribution ?? undefined,
+          usageRestriction: undefined,
+        },
+        requestId,
+      );
+
+      const updated = await prisma.$transaction(async (tx) => {
+        const data: Prisma.MasterContentPromotionItemUpdateInput = {
+          action: 'CREATE_DRAFT',
+          status: 'APPROVED',
+          duplicateDecision: 'CREATE_NEW',
+          updatedById: auth.userId,
+          [descriptor.linkField]: String((created as Record<string, unknown>).id),
+        } as Prisma.MasterContentPromotionItemUpdateInput;
+
+        const next = await tx.masterContentPromotionItem.update({ where: { id: item.id }, data });
+
+        await this.createAuditLogTx(tx, {
+          action: 'master_content.promotion.item.create_draft',
+          entityType: 'master_content_promotion_item',
+          entityId: item.id,
+          schoolId: promotion.schoolId,
+          actorUserId: auth.userId,
+          newValues: { draftId: String((created as Record<string, unknown>).id), targetMasterContentType: item.targetMasterContentType },
+          requestId,
+        });
+
+        return next;
       });
 
-      return next;
-    });
-
-    return updated;
+      return updated;
+    } catch (err) {
+      // If master content was created but a subsequent step failed, attempt to archive the orphan
+      // directly via Prisma to avoid needing lastKnownUpdatedAt from transitionLifecycle.
+      if (created !== null) {
+        try {
+          const createdId = String((created as Record<string, unknown>).id);
+          const model = this.entityModel(descriptor.entityType);
+          await model.update({
+            where: { id: createdId },
+            data: { status: 'ARCHIVED', isActive: false, archivedAt: new Date() },
+          });
+        } catch {
+          // Best-effort cleanup; do not mask the original error.
+        }
+      }
+      throw err;
+    }
   }
 
   async submitReview(
@@ -827,13 +852,14 @@ export class MasterContentPromotionService {
 
   async audit(auth: AuthContext, promotionId: string) {
     const promotion = await this.requirePromotionInScope(auth, promotionId);
+    const itemIds = promotion.items.map((item) => item.id);
 
     return prisma.auditLog.findMany({
       where: {
         schoolId: promotion.schoolId,
         OR: [
           { entityType: 'master_content_promotion', entityId: promotion.id },
-          { entityType: 'master_content_promotion_item' },
+          { entityType: 'master_content_promotion_item', entityId: { in: itemIds } },
         ],
       },
       orderBy: { createdAt: 'desc' },

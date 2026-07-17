@@ -726,6 +726,7 @@ export type MasterContentPromotionItem = {
   mappedFields: Record<string, unknown> | null;
   transformationData: Record<string, unknown> | null;
   duplicateCandidates: Record<string, unknown>[] | null;
+  duplicateDecision: MasterContentPromotionDuplicateDecision | null;
   sourcePageStart: number | null;
   sourcePageEnd: number | null;
   sourceSectionReference: string | null;
@@ -739,6 +740,26 @@ export type MasterContentPromotionItem = {
   createdAt: string;
   updatedAt: string;
   archivedAt: string | null;
+};
+
+export type MasterContentPromotionCompareResult = {
+  promotion: {
+    id: string;
+    status: MasterContentPromotionStatus;
+    sourceRevisionNumber: number;
+    sourceChecksum: string;
+    updatedAt: string;
+  };
+  itemSummary: Array<{
+    id: string;
+    sequenceOrder: number;
+    sourceContentId: string;
+    targetMasterContentType: MasterContentPromotionTargetType;
+    action: MasterContentPromotionAction;
+    linkedMasterId: string | null;
+    duplicateDecision: MasterContentPromotionDuplicateDecision | null;
+    updatedAt: string;
+  }>;
 };
 
 export type MasterContentPromotion = {

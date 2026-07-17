@@ -30,6 +30,18 @@
 - Added scoped migration checksum audit coverage for the Phase 2L migrations.
 - Deferred boundary retained: OCR parsing, AI extraction, and AI-assisted generation remain out of scope.
 
+## Phase 2N Status Update
+
+- Completed: master-content promotion system database foundation with promotion lifecycle and item management.
+- Added migration `20260716100211_phase2n_master_content_promotion_foundation` creating 2 tables (MasterContentPromotion, MasterContentPromotionItem).
+- MasterContentPromotion table: 27 columns supporting lifecycle status (8-value enum), requestor/reviewer/approver/completer audit fields, source checksum and revision number for reconciliation, adaptation and review notes, duplicate decision tracking, metadata JSON field.
+- MasterContentPromotionItem table: 34 columns supporting polymorphic master-content linking (10 entity FKs: masterCurriculumUnitId, masterTopicId, masterConceptId, masterSkillId, masterLearningOutcomeId, masterActivityId, masterProjectId, masterProjectImplementationId, masterResourceId, masterAssessmentTemplateId), action enum (5 values: CREATE_DRAFT, LINK_EXISTING, SKIP, MARK_DUPLICATE, ADAPT), target type enum (10 values), sequence ordering, duplicate candidates JSON, mapping fields JSON, transformation data JSON.
+- Added 6 indexes for efficient querying by school, session, status, and source content.
+- Added 10 foreign key constraints enforcing referential integrity to master-content entities, processing sessions, and users.
+- Added unique constraints preventing duplicate source-content entries within promotion and enforcing sequence ordering per promotion.
+- Added verification scripts for Phase 2N table, index, constraint coverage, and relational-constraint behavior checks.
+- Deferred boundary retained: OCR parsing, AI extraction, and automatic generation remain out of scope.
+
 ## Phase 2M Status Update
 
 - Completed: manual curriculum source processing database foundation with processing-session and source-section entities.

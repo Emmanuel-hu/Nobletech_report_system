@@ -18,6 +18,20 @@
 - Delivered assessment-template to rubric relationship as explicit reusable mapping model (`master_assessment_template_rubrics`) with typed API mapping support.
 - Deferred boundary remains active: AI extraction, OCR, file upload ingestion, and AI-assisted curriculum generation are not implemented in this milestone.
 
+## Phase 2N Delivery Update
+
+- Milestone completed: Master Content Promotion System Foundation.
+- Delivered promotion lifecycle management: DRAFT → READY_FOR_REVIEW → UNDER_REVIEW → REVISION_REQUIRED → APPROVED → REJECTED/COMPLETED/ARCHIVED state machine.
+- Delivered item-level granularity: 34 fields per promotion item supporting polymorphic master-content linking (10 entity types: curriculum unit, topic, concept, skill, learning outcome, activity, project, project implementation, resource, assessment template).
+- Delivered promotion actions: CREATE_DRAFT (new master content), LINK_EXISTING (existing master content), SKIP (no action), MARK_DUPLICATE (content redundancy), ADAPT (modified copy).
+- Delivered duplicate detection: normalized code/title matching with deterministic rules and manual override capability.
+- Delivered concurrency controls: optimistic locking via lastKnownUpdatedAt with stale-write conflict detection.
+- Delivered RBAC enforcement: 12 permissions across 5 roles (SUPER_ADMIN, SCHOOL_ADMIN, CURRICULUM_SUPERVISOR, TEACHER, AUDITOR) covering view, create, edit, review, approve, reject, complete, and archive actions.
+- Delivered audit trail: full history with actor, action, timestamp, reason metadata for all state transitions.
+- Delivered data integrity: transactional operations with atomic batch updates and best-effort orphan cleanup on failure.
+- Delivered multi-tenant isolation: school-scoped promotion visibility with FK enforcement and query filtering.
+- Deferred boundary remains active: OCR, AI extraction, AI curriculum generation, lesson notes, assessments, CBT, reports, attendance, and student portal remain out of scope.
+
 ## Phase 2L Delivery Update
 
 - Milestone completed: Curriculum Source File-Storage and Upload Foundation.

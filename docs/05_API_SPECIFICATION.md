@@ -1,3 +1,15 @@
+## Phase 2N API Completion Update
+
+- Added master-content-promotion resource endpoints at `POST /api/v1/master-content-promotions` (create), `GET /api/v1/master-content-promotions` (list), `GET /api/v1/master-content-promotions/:promotionId` (detail), `PATCH /api/v1/master-content-promotions/:promotionId` (update).
+- Added promotion lifecycle transition endpoints: `POST /:promotionId/submit-review`, `POST /:promotionId/request-revision`, `POST /:promotionId/approve`, `POST /:promotionId/reject`, `POST /:promotionId/complete`, `POST /:promotionId/archive`.
+- Added item management endpoints: `GET /:promotionId/items` (list), `POST /:promotionId/items` (add), `PATCH /:promotionId/items/:itemId` (update), `DELETE /:promotionId/items/:itemId` (remove), `POST /:promotionId/items/reorder` (reorder with sequence ordering).
+- Added item action endpoints: `POST /:promotionId/items/:itemId/check-duplicates` (duplicate detection), `POST /:promotionId/items/:itemId/link-existing` (link to existing master content), `POST /:promotionId/items/:itemId/create-draft` (create new master content).
+- Added audit and comparison endpoints: `GET /:promotionId/history` (full history), `GET /:promotionId/compare` (promotion version comparison), `GET /:promotionId/audit` (audit trail with scoped item filtering).
+- All endpoints require `x-school-id` tenant header and permission validation via `requirePermission` middleware.
+- All endpoints support optimistic concurrency token validation via `lastKnownUpdatedAt` on mutable operations.
+- Error responses normalized through application error envelope with `code`, `message`, and optional `details` for client-side handling.
+- Deferred boundary retained: AI-assisted processing and OCR remain out of scope.
+
 ## Phase 2J.1 API Completion Update
 
 - Added operational concept endpoints:

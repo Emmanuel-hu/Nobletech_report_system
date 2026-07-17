@@ -1,3 +1,19 @@
+## Phase 2N Workflow Completion
+
+- Promotion initialization workflow: select processing session -> set adaptation note -> create promotion with DRAFT status.
+- Item addition workflow: select source content -> choose target master-content type -> select action (CREATE_DRAFT/LINK_EXISTING/SKIP/MARK_DUPLICATE/ADAPT) -> save item to promotion.
+- Duplicate detection workflow: submit item for duplicate check -> receive normalized code/title matches -> manually override duplicate decision if needed.
+- Draft creation workflow: choose item marked CREATE_DRAFT -> provide master-content details -> create new DRAFT master record -> link to promotion item -> create lineage entry.
+- Existing linkage workflow: choose item marked LINK_EXISTING -> search master catalog -> select matching record -> link to promotion item.
+- Item reordering workflow: view promotion items in sequence order -> drag-reorder or specify sequence values -> persist reordered state with optimistic concurrency.
+- Promotion submission workflow: complete item configuration -> submit for review -> promotion transitions DRAFT → READY_FOR_REVIEW → UNDER_REVIEW.
+- Review action workflow: inspect promotion details -> view all items -> choose action (request revision, approve, reject, complete, archive) -> record reason/metadata.
+- Revision request workflow: reviewer requests changes -> promotion transitions to REVISION_REQUIRED -> author makes changes -> resubmit for review.
+- Approval workflow: reviewer approves -> promotion transitions UNDER_REVIEW → APPROVED.
+- Completion workflow: promotion marked complete -> transitions APPROVED → COMPLETED -> items processed and linked.
+- Conflict workflow: stale promotion detected -> display refresh action -> reload latest state before retry.
+- Audit workflow: all state transitions logged with actor, action, timestamp, reason metadata retrievable from audit endpoint.
+
 ## Phase 2J.1 Workflow Completion
 
 - Topic workflow: create, update, reorder, and delete topic entries within editable lifecycle states; week-number overlap is allowed and no fixed week cap is enforced.
