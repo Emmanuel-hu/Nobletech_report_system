@@ -132,6 +132,60 @@ enum MasterContentStatus {
   ARCHIVED
 }
 
+enum MasterContentPromotionStatus {
+  DRAFT
+  READY_FOR_REVIEW
+  UNDER_REVIEW
+  REVISION_REQUIRED
+  APPROVED
+  REJECTED
+  COMPLETED
+  ARCHIVED
+}
+
+enum MasterContentPromotionRecordType {
+  UNIT
+  TOPIC
+  CONCEPT
+  SKILL
+  LEARNING_OUTCOME
+  ACTIVITY
+  PROJECT
+  PROJECT_IMPLEMENTATION
+  RESOURCE
+  ASSESSMENT_REFERENCE
+  OTHER
+}
+
+enum MasterContentPromotionTargetType {
+  CURRICULUM_UNIT
+  TOPIC
+  CONCEPT
+  SKILL
+  LEARNING_OUTCOME
+  ACTIVITY
+  PROJECT
+  PROJECT_IMPLEMENTATION
+  RESOURCE
+  ASSESSMENT_TEMPLATE
+}
+
+enum MasterContentPromotionAction {
+  CREATE_DRAFT
+  LINK_EXISTING
+  SKIP
+  MARK_DUPLICATE
+  ADAPT
+}
+
+enum MasterContentPromotionDuplicateDecision {
+  CREATE_NEW
+  LINK_EXISTING
+  REVISE_MAPPING
+  SKIP
+  MARK_DUPLICATE
+}
+
 enum CurriculumSourceContentType {
   SECTION
   UNIT
@@ -310,6 +364,7 @@ model School {
   curriculumConcepts CurriculumConcept[]
   curriculumAssignments CurriculumAssignment[]
   curriculumSourceProcessingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingSchool")
+  masterContentPromotions MasterContentPromotion[] @relation("MasterContentPromotionSchool")
 
   @@index([status])
   @@map("schools")
@@ -391,6 +446,13 @@ model User {
   createdCurriculumSourceSections CurriculumSourceSection[]      @relation("CurriculumSourceSectionCreatedBy")
   updatedCurriculumSourceSections CurriculumSourceSection[]      @relation("CurriculumSourceSectionUpdatedBy")
   createdCurriculumSourceContents CurriculumSourceContent[]      @relation("CurriculumSourceContentCreatedBy")
+  requestedMasterContentPromotions MasterContentPromotion[]       @relation("MasterContentPromotionRequestedBy")
+  reviewedMasterContentPromotions MasterContentPromotion[]        @relation("MasterContentPromotionReviewer")
+  approvedMasterContentPromotions MasterContentPromotion[]        @relation("MasterContentPromotionApprovedBy")
+  completedMasterContentPromotions MasterContentPromotion[]       @relation("MasterContentPromotionCompletedBy")
+  archivedMasterContentPromotions MasterContentPromotion[]        @relation("MasterContentPromotionArchivedBy")
+  createdMasterContentPromotionItems MasterContentPromotionItem[] @relation("MasterContentPromotionItemCreatedBy")
+  updatedMasterContentPromotionItems MasterContentPromotionItem[] @relation("MasterContentPromotionItemUpdatedBy")
 
   @@unique([id, schoolId])
   @@index([schoolId, status])
@@ -1078,6 +1140,7 @@ model CurriculumSource {
   sourceFiles        CurriculumSourceFile[]              @relation("CurriculumSourceFiles")
   masterContentLinks CurriculumSourceMasterContentLink[] @relation("CurriculumSourceMasterContentLinks")
   processingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingSessions")
+  masterContentPromotions MasterContentPromotion[]       @relation("CurriculumSourcePromotions")
 
   @@index([schoolId, status])
   @@index([schoolId, reviewStatus])
@@ -1129,6 +1192,7 @@ model CurriculumSourceFile {
   replacementFiles CurriculumSourceFile[] @relation("CurriculumSourceFileSupersession")
   processingSessions CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingFile")
   sourceContents CurriculumSourceContent[] @relation("CurriculumSourceContentFile")
+  masterContentPromotions MasterContentPromotion[] @relation("MasterContentPromotionSourceFile")
 
   @@unique([curriculumSourceId, sequenceOrder])
   @@index([curriculumSourceId, status, sequenceOrder])
@@ -1172,6 +1236,7 @@ model CurriculumSourceContent {
   section CurriculumSourceSection? @relation("CurriculumSourceSectionContents", fields: [sectionId], references: [id], onDelete: SetNull)
   sourceFile CurriculumSourceFile? @relation("CurriculumSourceContentFile", fields: [sourceFileId], references: [id], onDelete: SetNull)
   createdByUser User? @relation("CurriculumSourceContentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  promotionItems MasterContentPromotionItem[] @relation("MasterContentPromotionSourceContent")
 
   @@unique([curriculumSourceId, sequenceOrder])
   @@index([curriculumSourceId, contentType])
@@ -1217,6 +1282,7 @@ model CurriculumSourceProcessingSession {
   childRevisions    CurriculumSourceProcessingSession[] @relation("CurriculumSourceProcessingRevision")
   sections          CurriculumSourceSection[]          @relation("CurriculumSourceSessionSections")
   sourceContents    CurriculumSourceContent[]          @relation("CurriculumSourceProcessingSessionContents")
+  masterContentPromotions MasterContentPromotion[]     @relation("MasterContentPromotionSession")
 
   @@unique([curriculumSourceId, revisionNumber])
   @@index([schoolId, status])
@@ -1253,6 +1319,7 @@ model CurriculumSourceSection {
   createdByUser     User                              @relation("CurriculumSourceSectionCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
   updatedByUser     User?                             @relation("CurriculumSourceSectionUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   sourceContents    CurriculumSourceContent[]         @relation("CurriculumSourceSectionContents")
+  promotionItems    MasterContentPromotionItem[]      @relation("MasterContentPromotionSectionItems")
 
   @@unique([processingSessionId, parentSectionId, sequenceOrder])
   @@index([processingSessionId, sectionType])
@@ -1260,6 +1327,112 @@ model CurriculumSourceSection {
   @@index([parentSectionId])
   @@index([pageStart, pageEnd])
   @@map("curriculum_source_sections")
+}
+
+model MasterContentPromotion {
+  id                     String                               @id @default(uuid()) @map("master_content_promotion_id") @db.Uuid
+  schoolId               String?                              @map("school_id") @db.Uuid
+  curriculumSourceId     String                               @map("curriculum_source_id") @db.Uuid
+  processingSessionId    String                               @map("processing_session_id") @db.Uuid
+  curriculumSourceFileId String                               @map("curriculum_source_file_id") @db.Uuid
+  status                 MasterContentPromotionStatus         @default(DRAFT) @map("status")
+  requestedById          String                               @map("requested_by_id") @db.Uuid
+  reviewerId             String?                              @map("reviewer_id") @db.Uuid
+  approvedById           String?                              @map("approved_by_id") @db.Uuid
+  completedById          String?                              @map("completed_by_id") @db.Uuid
+  archivedById           String?                              @map("archived_by_id") @db.Uuid
+  requestedAt            DateTime                             @default(now()) @map("requested_at")
+  submittedAt            DateTime?                            @map("submitted_at")
+  reviewedAt             DateTime?                            @map("reviewed_at")
+  approvedAt             DateTime?                            @map("approved_at")
+  completedAt            DateTime?                            @map("completed_at")
+  archivedAt             DateTime?                            @map("archived_at")
+  sourceChecksum         String                               @map("source_checksum") @db.VarChar(128)
+  sourceRevisionNumber   Int                                  @map("source_revision_number")
+  duplicateDecision      MasterContentPromotionDuplicateDecision? @map("duplicate_decision")
+  adaptationNote         String?                              @map("adaptation_note") @db.Text
+  reviewNote             String?                              @map("review_note") @db.Text
+  metadata               Json?                                @map("metadata")
+  createdAt              DateTime                             @default(now()) @map("created_at")
+  updatedAt              DateTime                             @updatedAt @map("updated_at")
+
+  school               School?                           @relation("MasterContentPromotionSchool", fields: [schoolId], references: [id], onDelete: SetNull)
+  curriculumSource     CurriculumSource                  @relation("CurriculumSourcePromotions", fields: [curriculumSourceId], references: [id], onDelete: Restrict)
+  processingSession    CurriculumSourceProcessingSession @relation("MasterContentPromotionSession", fields: [processingSessionId], references: [id], onDelete: Restrict)
+  curriculumSourceFile CurriculumSourceFile              @relation("MasterContentPromotionSourceFile", fields: [curriculumSourceFileId], references: [id], onDelete: Restrict)
+  requestedByUser      User                              @relation("MasterContentPromotionRequestedBy", fields: [requestedById], references: [id], onDelete: Restrict)
+  reviewerUser         User?                             @relation("MasterContentPromotionReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  approvedByUser       User?                             @relation("MasterContentPromotionApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  completedByUser      User?                             @relation("MasterContentPromotionCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
+  archivedByUser       User?                             @relation("MasterContentPromotionArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
+  items                MasterContentPromotionItem[]      @relation("MasterContentPromotionItems")
+
+  @@index([schoolId, status])
+  @@index([processingSessionId, status])
+  @@index([curriculumSourceId, createdAt])
+  @@map("master_content_promotions")
+}
+
+model MasterContentPromotionItem {
+  id                            String                                 @id @default(uuid()) @map("master_content_promotion_item_id") @db.Uuid
+  promotionId                   String                                 @map("promotion_id") @db.Uuid
+  sourceContentId               String                                 @map("source_content_id") @db.Uuid
+  sourceSectionId               String?                                @map("source_section_id") @db.Uuid
+  sourceRecordType              MasterContentPromotionRecordType       @map("source_record_type")
+  targetMasterContentType       MasterContentPromotionTargetType       @map("target_master_content_type")
+  action                        MasterContentPromotionAction           @default(CREATE_DRAFT) @map("action")
+  status                        MasterContentPromotionStatus           @default(DRAFT) @map("status")
+  sequenceOrder                 Int                                    @map("sequence_order")
+  mappedFields                  Json?                                  @map("mapped_fields")
+  transformationData            Json?                                  @map("transformation_data")
+  duplicateCandidates           Json?                                  @map("duplicate_candidates")
+  duplicateDecision             MasterContentPromotionDuplicateDecision? @map("duplicate_decision")
+  sourcePageStart               Int?                                   @map("source_page_start")
+  sourcePageEnd                 Int?                                   @map("source_page_end")
+  sourceSectionReference        String?                                @map("source_section_reference") @db.VarChar(150)
+  sourceFileVersion             String?                                @map("source_file_version") @db.VarChar(50)
+  sourceFileChecksum            String?                                @map("source_file_checksum") @db.VarChar(128)
+  processingRevisionNumber      Int                                    @map("processing_revision_number")
+  adaptationNote                String?                                @map("adaptation_note") @db.Text
+  attribution                   String?                                @map("attribution") @db.Text
+  masterCurriculumUnitId        String?                                @map("master_curriculum_unit_id") @db.Uuid
+  masterTopicId                 String?                                @map("master_topic_id") @db.Uuid
+  masterConceptId               String?                                @map("master_concept_id") @db.Uuid
+  masterSkillId                 String?                                @map("master_skill_id") @db.Uuid
+  masterLearningOutcomeId       String?                                @map("master_learning_outcome_id") @db.Uuid
+  masterActivityId              String?                                @map("master_activity_id") @db.Uuid
+  masterProjectId               String?                                @map("master_project_id") @db.Uuid
+  masterProjectImplementationId String?                                @map("master_project_implementation_id") @db.Uuid
+  masterResourceId              String?                                @map("master_resource_id") @db.Uuid
+  masterAssessmentTemplateId    String?                                @map("master_assessment_template_id") @db.Uuid
+  createdById                   String                                 @map("created_by_id") @db.Uuid
+  updatedById                   String?                                @map("updated_by_id") @db.Uuid
+  createdAt                     DateTime                               @default(now()) @map("created_at")
+  updatedAt                     DateTime                               @updatedAt @map("updated_at")
+  archivedAt                    DateTime?                              @map("archived_at")
+
+  promotion                   MasterContentPromotion       @relation("MasterContentPromotionItems", fields: [promotionId], references: [id], onDelete: Restrict)
+  sourceContent               CurriculumSourceContent      @relation("MasterContentPromotionSourceContent", fields: [sourceContentId], references: [id], onDelete: Restrict)
+  sourceSection               CurriculumSourceSection?     @relation("MasterContentPromotionSectionItems", fields: [sourceSectionId], references: [id], onDelete: SetNull)
+  createdByUser               User                         @relation("MasterContentPromotionItemCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  updatedByUser               User?                        @relation("MasterContentPromotionItemUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  masterCurriculumUnit        MasterCurriculumUnit?        @relation("MasterCurriculumUnitPromotionItems", fields: [masterCurriculumUnitId], references: [id], onDelete: SetNull)
+  masterTopic                 MasterTopic?                 @relation("MasterTopicPromotionItems", fields: [masterTopicId], references: [id], onDelete: SetNull)
+  masterConcept               MasterConcept?               @relation("MasterConceptPromotionItems", fields: [masterConceptId], references: [id], onDelete: SetNull)
+  masterSkill                 MasterSkill?                 @relation("MasterSkillPromotionItems", fields: [masterSkillId], references: [id], onDelete: SetNull)
+  masterLearningOutcome       MasterLearningOutcome?       @relation("MasterLearningOutcomePromotionItems", fields: [masterLearningOutcomeId], references: [id], onDelete: SetNull)
+  masterActivity              MasterActivity?              @relation("MasterActivityPromotionItems", fields: [masterActivityId], references: [id], onDelete: SetNull)
+  masterProject               MasterProject?               @relation("MasterProjectPromotionItems", fields: [masterProjectId], references: [id], onDelete: SetNull)
+  masterProjectImplementation MasterProjectImplementation? @relation("MasterProjectImplementationPromotionItems", fields: [masterProjectImplementationId], references: [id], onDelete: SetNull)
+  masterResource              MasterResource?              @relation("MasterResourcePromotionItems", fields: [masterResourceId], references: [id], onDelete: SetNull)
+  masterAssessmentTemplate    MasterAssessmentTemplate?    @relation("MasterAssessmentTemplatePromotionItems", fields: [masterAssessmentTemplateId], references: [id], onDelete: SetNull)
+
+  @@unique([promotionId, sourceContentId])
+  @@unique([promotionId, sequenceOrder])
+  @@index([promotionId, status])
+  @@index([sourceContentId])
+  @@index([targetMasterContentType, action])
+  @@map("master_content_promotion_items")
 }
 
 model MasterCurriculumUnit {
@@ -1289,6 +1462,7 @@ model MasterCurriculumUnit {
   integrationDomainLinks  MasterCurriculumUnitIntegrationDomain[]  @relation("MasterCurriculumUnitIntegrationDomainLinks")
   programmeComponentLinks MasterCurriculumUnitProgrammeComponent[] @relation("MasterCurriculumUnitProgrammeComponentLinks")
   sourceLinks             CurriculumSourceMasterContentLink[]      @relation("MasterCurriculumUnitSourceLinks")
+  promotionItems          MasterContentPromotionItem[]             @relation("MasterCurriculumUnitPromotionItems")
   curriculumUnits         CurriculumUnit[]
 
   @@index([schoolId, status])
@@ -1325,6 +1499,7 @@ model MasterTopic {
   activityLinks          MasterTopicActivity[]               @relation("MasterTopicActivityLinks")
   projectLinks           MasterTopicProject[]                @relation("MasterTopicProjectLinks")
   sourceLinks            CurriculumSourceMasterContentLink[] @relation("MasterTopicSourceLinks")
+  promotionItems         MasterContentPromotionItem[]        @relation("MasterTopicPromotionItems")
   curriculumTopics       CurriculumTopic[]
 
   @@unique([masterCurriculumUnitId, sequenceOrder])
@@ -1351,6 +1526,7 @@ model MasterConcept {
 
   topicLinks  MasterTopicConcept[]                @relation("MasterConceptTopicLinks")
   sourceLinks CurriculumSourceMasterContentLink[] @relation("MasterConceptSourceLinks")
+  promotionItems MasterContentPromotionItem[]     @relation("MasterConceptPromotionItems")
   curriculumConcepts CurriculumConcept[]
   curriculumTopicConcepts CurriculumTopicConcept[]
 
@@ -1377,6 +1553,7 @@ model MasterSkill {
   topicLinks   MasterTopicSkill[]                  @relation("MasterSkillTopicLinks")
   projectLinks MasterProjectSkill[]                @relation("MasterSkillProjectLinks")
   sourceLinks  CurriculumSourceMasterContentLink[] @relation("MasterSkillSourceLinks")
+  promotionItems MasterContentPromotionItem[]      @relation("MasterSkillPromotionItems")
 
   @@index([category, status])
   @@index([status, isActive])
@@ -1403,6 +1580,7 @@ model MasterLearningOutcome {
   projectLinks            MasterProjectLearningOutcome[]            @relation("MasterLearningOutcomeProjectLinks")
   assessmentTemplateLinks MasterAssessmentTemplateLearningOutcome[] @relation("MasterLearningOutcomeAssessmentTemplateLinks")
   sourceLinks             CurriculumSourceMasterContentLink[]       @relation("MasterLearningOutcomeSourceLinks")
+  promotionItems          MasterContentPromotionItem[]              @relation("MasterLearningOutcomePromotionItems")
   curriculumLearningOutcomes CurriculumLearningOutcome[]
 
   @@index([bloomLevel, status])
@@ -1432,6 +1610,7 @@ model MasterActivity {
   topicLinks    MasterTopicActivity[]               @relation("MasterActivityTopicLinks")
   resourceLinks MasterActivityResource[]            @relation("MasterActivityResourceLinks")
   sourceLinks   CurriculumSourceMasterContentLink[] @relation("MasterActivitySourceLinks")
+  promotionItems MasterContentPromotionItem[]       @relation("MasterActivityPromotionItems")
 
   @@index([status, isActive])
   @@map("master_activities")
@@ -1463,6 +1642,7 @@ model MasterProject {
   skillLinks           MasterProjectSkill[]                @relation("MasterProjectSkillLinks")
   learningOutcomeLinks MasterProjectLearningOutcome[]      @relation("MasterProjectLearningOutcomeLinks")
   sourceLinks          CurriculumSourceMasterContentLink[] @relation("MasterProjectSourceLinks")
+  promotionItems       MasterContentPromotionItem[]        @relation("MasterProjectPromotionItems")
   curriculumProjects   CurriculumProject[]
 
   @@index([difficultyLevel, status])
@@ -1491,6 +1671,7 @@ model MasterProjectImplementation {
 
   masterProject MasterProject                       @relation("MasterProjectImplementations", fields: [masterProjectId], references: [id], onDelete: Restrict)
   sourceLinks   CurriculumSourceMasterContentLink[] @relation("MasterProjectImplementationSourceLinks")
+  promotionItems MasterContentPromotionItem[]       @relation("MasterProjectImplementationPromotionItems")
   curriculumProjectImplementations CurriculumProjectImplementation[]
 
   @@unique([masterProjectId, sequenceOrder])
@@ -1527,6 +1708,7 @@ model MasterResource {
   activityLinks MasterActivityResource[]            @relation("MasterResourceActivityLinks")
   projectLinks  MasterProjectResource[]             @relation("MasterResourceProjectLinks")
   sourceLinks   CurriculumSourceMasterContentLink[] @relation("MasterResourceSourceLinks")
+  promotionItems MasterContentPromotionItem[]       @relation("MasterResourcePromotionItems")
   curriculumResources CurriculumResource[]
 
   @@index([resourceType, reviewStatus])
@@ -1557,6 +1739,7 @@ model MasterAssessmentTemplate {
   learningOutcomeLinks MasterAssessmentTemplateLearningOutcome[] @relation("MasterAssessmentTemplateLearningOutcomeLinks")
   rubricLinks         MasterAssessmentTemplateRubric[]          @relation("MasterAssessmentTemplateRubricLinks")
   sourceLinks          CurriculumSourceMasterContentLink[]       @relation("MasterAssessmentTemplateSourceLinks")
+  promotionItems       MasterContentPromotionItem[]              @relation("MasterAssessmentTemplatePromotionItems")
 
   @@index([assessmentType, status])
   @@index([status, isActive])

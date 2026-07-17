@@ -673,3 +673,98 @@ export type CurriculumSource = {
   sourceContents: CurriculumSourceContent[];
   masterContentLinks: CurriculumSourceMasterContentLink[];
 };
+
+export type MasterContentPromotionStatus =
+  | 'DRAFT'
+  | 'READY_FOR_REVIEW'
+  | 'UNDER_REVIEW'
+  | 'REVISION_REQUIRED'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'COMPLETED'
+  | 'ARCHIVED';
+
+export type MasterContentPromotionRecordType =
+  | 'UNIT'
+  | 'TOPIC'
+  | 'CONCEPT'
+  | 'SKILL'
+  | 'LEARNING_OUTCOME'
+  | 'ACTIVITY'
+  | 'PROJECT'
+  | 'PROJECT_IMPLEMENTATION'
+  | 'RESOURCE'
+  | 'ASSESSMENT_REFERENCE'
+  | 'OTHER';
+
+export type MasterContentPromotionTargetType =
+  | 'CURRICULUM_UNIT'
+  | 'TOPIC'
+  | 'CONCEPT'
+  | 'SKILL'
+  | 'LEARNING_OUTCOME'
+  | 'ACTIVITY'
+  | 'PROJECT'
+  | 'PROJECT_IMPLEMENTATION'
+  | 'RESOURCE'
+  | 'ASSESSMENT_TEMPLATE';
+
+export type MasterContentPromotionAction = 'CREATE_DRAFT' | 'LINK_EXISTING' | 'SKIP' | 'MARK_DUPLICATE' | 'ADAPT';
+
+export type MasterContentPromotionDuplicateDecision = 'CREATE_NEW' | 'LINK_EXISTING' | 'REVISE_MAPPING' | 'SKIP' | 'MARK_DUPLICATE';
+
+export type MasterContentPromotionItem = {
+  id: string;
+  promotionId: string;
+  sourceContentId: string;
+  sourceSectionId: string | null;
+  sourceRecordType: MasterContentPromotionRecordType;
+  targetMasterContentType: MasterContentPromotionTargetType;
+  action: MasterContentPromotionAction;
+  status: MasterContentPromotionStatus;
+  sequenceOrder: number;
+  mappedFields: Record<string, unknown> | null;
+  transformationData: Record<string, unknown> | null;
+  duplicateCandidates: Record<string, unknown>[] | null;
+  sourcePageStart: number | null;
+  sourcePageEnd: number | null;
+  sourceSectionReference: string | null;
+  sourceFileVersion: string | null;
+  sourceFileChecksum: string | null;
+  processingRevisionNumber: number;
+  adaptationNote: string | null;
+  attribution: string | null;
+  createdById: string;
+  updatedById: string | null;
+  createdAt: string;
+  updatedAt: string;
+  archivedAt: string | null;
+};
+
+export type MasterContentPromotion = {
+  id: string;
+  schoolId: string | null;
+  curriculumSourceId: string;
+  processingSessionId: string;
+  curriculumSourceFileId: string;
+  status: MasterContentPromotionStatus;
+  requestedById: string;
+  reviewerId: string | null;
+  approvedById: string | null;
+  completedById: string | null;
+  archivedById: string | null;
+  requestedAt: string;
+  submittedAt: string | null;
+  reviewedAt: string | null;
+  approvedAt: string | null;
+  completedAt: string | null;
+  archivedAt: string | null;
+  sourceChecksum: string;
+  sourceRevisionNumber: number;
+  adaptationNote: string | null;
+  reviewNote: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+  items: MasterContentPromotionItem[];
+};

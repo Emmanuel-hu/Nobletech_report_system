@@ -18,6 +18,12 @@ import type {
   CurriculumVersionSnapshot,
   CurriculumVersion,
   CurriculumVisibility,
+  MasterContentPromotionStatus,
+  MasterContentPromotionRecordType,
+  MasterContentPromotionTargetType,
+  MasterContentPromotionAction,
+  MasterContentPromotionItem,
+  MasterContentPromotion,
 } from '../types/curriculum';
 import type { AuthSession } from '../types/auth';
 
@@ -1076,6 +1082,249 @@ export const curriculumClient = {
   getProcessingAuditHistory: (session: AuthSession, sessionId: string) =>
     apiRequest<CurriculumSourceProcessingAuditItem[]>(
       `/curriculum/processing-sessions/${sessionId}/audit-history`,
+      { method: 'GET' },
+      session,
+    ),
+  // Master Content Promotion API methods
+  listMasterContentPromotions: (
+    session: AuthSession,
+    filters?: {
+      status?: MasterContentPromotionStatus;
+      recordType?: MasterContentPromotionRecordType;
+      targetType?: MasterContentPromotionTargetType;
+      curriculumSourceId?: string;
+      processingSessionId?: string;
+      requestedById?: string;
+      includeArchived?: boolean;
+      page?: number;
+      pageSize?: number;
+    },
+  ) =>
+    apiRequest<{ items: MasterContentPromotion[]; total: number; page: number; pageSize: number }>(
+      `/curriculum/master-content-promotions${queryString({
+        status: filters?.status,
+        recordType: filters?.recordType,
+        targetType: filters?.targetType,
+        curriculumSourceId: filters?.curriculumSourceId,
+        processingSessionId: filters?.processingSessionId,
+        requestedById: filters?.requestedById,
+        includeArchived: filters?.includeArchived ? 'true' : undefined,
+        page: typeof filters?.page === 'number' ? String(filters.page) : undefined,
+        pageSize: typeof filters?.pageSize === 'number' ? String(filters.pageSize) : undefined,
+      })}`,
+      { method: 'GET' },
+      session,
+    ),
+  getMasterContentPromotion: (session: AuthSession, promotionId: string) =>
+    apiRequest<MasterContentPromotion>(`/curriculum/master-content-promotions/${promotionId}`, { method: 'GET' }, session),
+  createMasterContentPromotion: (
+    session: AuthSession,
+    payload: {
+      curriculumSourceId: string;
+      processingSessionId: string;
+      curriculumSourceFileId: string;
+      sourceChecksum: string;
+      adaptationNote?: string;
+      metadata?: Record<string, unknown>;
+    },
+  ) =>
+    apiRequest<MasterContentPromotion>('/curriculum/master-content-promotions', { method: 'POST', body: payload }, session),
+  updateMasterContentPromotion: (
+    session: AuthSession,
+    promotionId: string,
+    payload: {
+      adaptationNote?: string;
+      metadata?: Record<string, unknown>;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  submitMasterContentPromotionReview: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/submit-review`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  requestMasterContentPromotionRevision: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { requestedChanges: string; comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/request-revision`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  approveMasterContentPromotion: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/approve`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  rejectMasterContentPromotion: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { rejectionReason: string; comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/reject`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  completeMasterContentPromotion: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { comment?: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/complete`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  archiveMasterContentPromotion: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { reason: string; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/archive`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  addMasterContentPromotionItem: (
+    session: AuthSession,
+    promotionId: string,
+    payload: {
+      sourceContentId: string;
+      sourceSectionId?: string;
+      sourceRecordType?: MasterContentPromotionRecordType;
+      targetMasterContentType: MasterContentPromotionTargetType;
+      action: MasterContentPromotionAction;
+      sequenceOrder?: number;
+      mappedFields?: Record<string, unknown>;
+      transformationData?: Record<string, unknown>;
+      duplicateCandidates?: Record<string, unknown>[];
+      sourcePageStart?: number;
+      sourcePageEnd?: number;
+      sourceSectionReference?: string;
+      sourceFileVersion?: string;
+      sourceFileChecksum?: string;
+      adaptationNote?: string;
+      attribution?: string;
+    },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/items`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  updateMasterContentPromotionItem: (
+    session: AuthSession,
+    itemId: string,
+    payload: {
+      action?: MasterContentPromotionAction;
+      status?: MasterContentPromotionStatus;
+      sequenceOrder?: number;
+      mappedFields?: Record<string, unknown>;
+      transformationData?: Record<string, unknown>;
+      duplicateCandidates?: Record<string, unknown>[];
+      adaptationNote?: string;
+      attribution?: string;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/items/${itemId}`,
+      { method: 'PATCH', body: payload },
+      session,
+    ),
+  removeMasterContentPromotionItem: (session: AuthSession, itemId: string, promotionId: string, lastKnownUpdatedAt: string) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/items/${itemId}`,
+      { method: 'DELETE', body: { promotionId, lastKnownUpdatedAt } },
+      session,
+    ),
+  reorderMasterContentPromotionItems: (
+    session: AuthSession,
+    promotionId: string,
+    payload: { orderedItemIds: string[]; lastKnownUpdatedAt: string },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/items/reorder`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  checkMasterContentPromotionItemDuplicates: (
+    session: AuthSession,
+    promotionId: string,
+    itemId: string,
+  ) =>
+    apiRequest<{ candidates: Array<{ id: string; code: string; title: string; score: number }> }>(
+      `/curriculum/master-content-promotions/${promotionId}/items/${itemId}/check-duplicates`,
+      { method: 'GET' },
+      session,
+    ),
+  linkMasterContentPromotionItem: (
+    session: AuthSession,
+    promotionId: string,
+    itemId: string,
+    masterContentId: string,
+    lastKnownUpdatedAt: string,
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/items/${itemId}/link`,
+      { method: 'POST', body: { masterContentId, lastKnownUpdatedAt } },
+      session,
+    ),
+  createMasterContentPromotionItemDraft: (
+    session: AuthSession,
+    promotionId: string,
+    itemId: string,
+    payload: {
+      draftMasterContent?: Record<string, unknown>;
+      lastKnownUpdatedAt: string;
+    },
+  ) =>
+    apiRequest<MasterContentPromotion>(
+      `/curriculum/master-content-promotions/${promotionId}/items/${itemId}/create-draft`,
+      { method: 'POST', body: payload },
+      session,
+    ),
+  getMasterContentPromotionHistory: (session: AuthSession, promotionId: string) =>
+    apiRequest<Array<{ action: string; timestamp: string; userId: string; details: Record<string, unknown> }>>(
+      `/curriculum/master-content-promotions/${promotionId}/history`,
+      { method: 'GET' },
+      session,
+    ),
+  getMasterContentPromotionCompare: (
+    session: AuthSession,
+    promotionId: string,
+    leftVersion: number,
+    rightVersion: number,
+  ) =>
+    apiRequest<{ differences: Record<string, unknown> }>(
+      `/curriculum/master-content-promotions/${promotionId}/compare${queryString({
+        leftVersion: String(leftVersion),
+        rightVersion: String(rightVersion),
+      })}`,
+      { method: 'GET' },
+      session,
+    ),
+  getMasterContentPromotionAudit: (session: AuthSession, promotionId: string) =>
+    apiRequest<Array<{ action: string; userId: string; timestamp: string; details: Record<string, unknown> }>>(
+      `/curriculum/master-content-promotions/${promotionId}/audit`,
       { method: 'GET' },
       session,
     ),
